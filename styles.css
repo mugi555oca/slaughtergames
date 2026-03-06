@@ -173,12 +173,30 @@ h1 {
 }
 
 .axe-icon {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
     display: inline-block;
-    vertical-align: middle;
-    margin-left: 10px;
+    margin-left: 3px;
+    animation: axe-glow 2s ease-in-out infinite;
+}
+
+.axe-collection {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap;
+    max-width: 200px;
+    justify-content: flex-end;
+}
+
+@keyframes axe-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 3px rgba(255, 0, 0, 0.5));
+    }
+    50% {
+        filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.9));
+    }
 }
 
 .spirit-glyph {
