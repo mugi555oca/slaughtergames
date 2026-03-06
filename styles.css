@@ -292,3 +292,84 @@ footer {
         height: 180px;
     }
 }
+/* Cube Links Section */
+.cube-links {
+    margin-top: 40px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 0, 0, 0.5);
+    text-align: center;
+}
+
+.links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.cube-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(139, 0, 0, 0.1));
+    border: 2px solid rgba(255, 0, 0, 0.3);
+    border-radius: 10px;
+    color: #ff3333;
+    text-decoration: none;
+    font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cube-link:hover {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(139, 0, 0, 0.2));
+    border-color: #ff0000;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.cube-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+    z-index: -1;
+}
+
+.cube-link:hover::before {
+    width: 300%;
+    height: 300%;
+}
+
+.cube-icon {
+    font-size: 1.5rem;
+    animation: cube-pulse 2s ease-in-out infinite;
+}
+
+@keyframes cube-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+@media (min-width: 600px) {
+    .links-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
