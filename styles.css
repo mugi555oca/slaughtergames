@@ -373,3 +373,24 @@ footer {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+/* Header Axe Icon */
+.header-axe {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin: 0 5px;
+    animation: header-pulse 2s ease-in-out infinite;
+}
+
+@keyframes header-pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.5));
+    }
+    50% {
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.9));
+    }
+}
