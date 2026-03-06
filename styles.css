@@ -172,6 +172,21 @@ h1 {
     font-family: 'Creepster', cursive;
 }
 
+.axe-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.spirit-glyph {
+    margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 /* Individual Tournaments */
 .individual-rankings {
     margin-top: 40px;
