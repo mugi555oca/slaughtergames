@@ -95,26 +95,144 @@ h1 {
     }
 }
 
-/* Welcome Section */
-.welcome-section {
+/* Eternal Ranking */
+.eternal-ranking {
     text-align: center;
-    padding: 30px;
-    background: rgba(255, 0, 0, 0.1);
-    border-radius: 10px;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 0, 0, 0.3);
+    padding: 40px;
+    background: rgba(255, 0, 0, 0.2);
+    border-radius: 15px;
+    margin-bottom: 40px;
+    border: 3px solid #ff0000;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
 }
 
-.welcome-section h2 {
-    font-size: 1.5rem;
-    color: #ff3333;
-    margin-bottom: 15px;
+.ranking-title {
+    font-size: 2rem;
+    color: #ff0000;
+    margin-bottom: 25px;
+    text-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
     text-transform: uppercase;
 }
 
-.welcome-section p {
-    color: #ff6666;
+.ranking-container {
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    background: rgba(255, 0, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.ranking-list.small .ranking-item {
+    padding: 8px;
+    font-size: 0.9rem;
+}
+
+.ranking-item:nth-child(1) {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.3));
+    border: 2px solid #gold;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.ranking-item:nth-child(2) {
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.3), rgba(169, 169, 169, 0.3));
+    border: 2px solid #c0c0c0;
+}
+
+.ranking-item:nth-child(3) {
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.3), rgba(160, 82, 45, 0.3));
+    border: 2px solid #cd7f32;
+}
+
+.rank {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff0000;
+    min-width: 40px;
+}
+
+.name {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-family: 'Creepster', cursive;
+}
+
+/* Individual Tournaments */
+.individual-rankings {
+    margin-top: 40px;
+}
+
+.tournament-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+.tournament {
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    border: 2px solid rgba(255, 0, 0, 0.5);
+}
+
+.tournament h3 {
+    font-size: 1.3rem;
+    color: #ff4444;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    font-family: 'Creepster', cursive;
+}
+
+.tournament .ranking-list {
+    gap: 8px;
+}
+
+.tournament .ranking-list.small .rank {
+    font-size: 1.2rem;
+}
+
+.tournament .ranking-list.small .name {
     font-size: 1rem;
+}
+
+/* Screens > 800px */
+@media (min-width: 800px) {
+    .tournament-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    .ranking-title {
+        font-size: 1.5rem;
+    }
+
+    .ranking-container {
+        max-height: 300px;
+    }
+
+    .name {
+        font-size: 1rem;
+    }
 }
 
 /* Footer */
