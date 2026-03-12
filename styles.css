@@ -277,10 +277,37 @@ footer {
     text-transform: uppercase;
 }
 
+/* Blog Post Specifics */
+.blog-post p, .blog-post li {
+    font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 1.5px;
+    line-height: 1.6;
+    text-align: center;
+    color: #f0f0f0;
+    margin-bottom: 15px;
+}
+.blog-post ul {
+    list-style-position: inside;
+    text-align: left;
+    display: inline-block;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .container {
-        padding: 20px;
+        padding: 15px;
+        width: 95%;
+    }
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .home-logo-link .nav-logo {
+        width: 60px;
+        height: 60px;
     }
 
     h1 {
