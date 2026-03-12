@@ -419,10 +419,10 @@ footer {
 /* Main Navigation */
 .main-nav {
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: -10px; /* Moves it closer to the title */
+    margin-bottom: 40px;
 }
-.main-nav a {
+.nav-link-blog {
     color: #ffffff;
     text-decoration: none;
     font-family: 'Creepster', cursive;
@@ -430,10 +430,47 @@ footer {
     letter-spacing: 3px;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
     transition: all 0.3s ease;
+    padding: 10px 20px;
+    border: 2px solid #ff0000;
+    border-radius: 10px;
+    background: rgba(255, 0, 0, 0.1);
+    display: inline-block;
 }
-.main-nav a:hover {
+.nav-link-blog:hover, .nav-link-blog.active {
+    color: #ffffff;
+    background: rgba(255, 0, 0, 0.25);
+    text-shadow: 0 0 20px #ff0000, 0 0 30px #ffffff;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+}
+.nav-icon {
+    margin-right: 10px;
+    display: inline-block;
+    animation: axe-glow 2s ease-in-out infinite;
+}
+
+/* Header styles for blog pages */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+.home-logo-link .nav-logo {
+    width: 80px;
+    height: 80px;
+    transition: transform 0.3s ease;
+}
+.home-logo-link .nav-logo:hover {
+    transform: scale(1.1);
+}
+/* Re-style h1 for blog pages */
+.blog-post h1, .blog-list h2 a {
     color: #ff0000;
-    text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    font-family: 'Creepster', cursive;
+}
+.blog-list h2 {
+    margin-bottom: 10px;
 }
 
 /* Latest Blog Post Section */
