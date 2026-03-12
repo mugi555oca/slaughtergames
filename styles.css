@@ -202,6 +202,27 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
 
 @media (min-width: 800px) { .tournament-list { grid-template-columns: repeat(2, 1fr); } }
 
+/* Coming Soon Tournament Style */
+.tournament.coming-soon {
+    background: linear-gradient(135deg, rgba(50, 50, 50, 0.2), rgba(20, 20, 20, 0.2));
+    border-style: dashed;
+}
+.coming-soon-text {
+    text-align: center;
+    padding: 20px;
+}
+.announcement {
+    font-size: 2.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 15px #ffffff;
+}
+.date {
+    font-size: 1.5rem;
+    color: #ff0000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Readable font for date */
+    margin-top: 10px;
+}
+
 /* === MOBILE STYLES === */
 @media (max-width: 600px) {
     .container {
