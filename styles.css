@@ -94,6 +94,15 @@ h1.logo-font {
 }
 
 /* Blog Post Specifics */
+.blog-list h2 a, .blog-list h2 a:visited {
+    color: #ff0000;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.blog-list h2 a:hover {
+    text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
 .blog-post p, .blog-post li {
     font-size: 1.1rem;
     line-height: 1.7;
