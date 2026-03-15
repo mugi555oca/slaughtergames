@@ -80,7 +80,7 @@ create table if not exists public.matches (
   player_b_id uuid references public.players(id) on delete set null,
   is_bye boolean not null default false,
   result text not null default 'pending' check (
-    result in ('pending', '2:0', '2:1', '1:2', '0:2', '1:1', '0:0', 'ID', 'BYE')
+    result in ('pending', '2:0', '2:1', '1:2', '0:2', '1:1', '1:0', '0:1', '0:0', 'ID', 'BYE')
   ),
   submitted_at timestamptz,
   created_at timestamptz not null default now(),

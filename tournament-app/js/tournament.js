@@ -6,6 +6,8 @@ const RESULT_TO_MATCH = {
   '1:2': { a: 'L', b: 'W', gwA:1, glA:2, gdA:0, gwB:2, glB:1, gdB:0 },
   '0:2': { a: 'L', b: 'W', gwA:0, glA:2, gdA:0, gwB:2, glB:0, gdB:0 },
   '1:1': { a: 'D', b: 'D', gwA:1, glA:1, gdA:0, gwB:1, glB:1, gdB:0 },
+  '1:0': { a: 'W', b: 'L', gwA:1, glA:0, gdA:0, gwB:0, glB:1, gdB:0 },
+  '0:1': { a: 'L', b: 'W', gwA:0, glA:1, gdA:0, gwB:1, glB:0, gdB:0 },
   '0:0': { a: 'D', b: 'D', gwA:0, glA:0, gdA:0, gwB:0, glB:0, gdB:0 },
   'ID':  { a: 'D', b: 'D', gwA:0, glA:0, gdA:0, gwB:0, glB:0, gdB:0 },
   'BYE': { a: 'W', b: null, gwA:2, glA:0, gdA:0, gwB:0, glB:0, gdB:0 },

@@ -15,7 +15,7 @@ import {
 function $(id){ return document.getElementById(id); }
 function qParam(name){ return new URLSearchParams(window.location.search).get(name); }
 
-const RESULTS = ['pending','2:0','2:1','1:2','0:2','1:1','0:0','ID'];
+const RESULTS = ['pending','2:0','2:1','1:2','0:2','1:1','1:0','0:1','0:0','ID'];
 
 let currentTournamentId = null;
 let playerNameById = {};
