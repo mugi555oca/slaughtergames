@@ -20,6 +20,10 @@
 3. In Supabase Auth sicherstellen, dass Email/Password Login aktiv ist.
 4. `login.html` öffnen.
 
+### Falls Fehler kommt: "Could not find table public.tournaments in schema cache"
+- `repair.sql` im Supabase SQL Editor ausführen.
+- Script enthält auch `notify pgrst, 'reload schema';`.
+
 ## Tiebreaker (exakt im Code markiert)
 Berechnung in `js/tournament.js`:
 - `computeDerived(...)` berechnet MW%/GW%/OMW%/OGW%
