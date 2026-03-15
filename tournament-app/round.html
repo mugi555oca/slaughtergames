@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slaughter Games – Runde</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1 id="title">Turnier Runde</h1>
+      <div style="display:flex;gap:8px">
+        <a id="openBracket" href="#"><button class="secondary">Pairing-Ansicht</button></a>
+        <a href="./profile.html"><button class="secondary">Profil</button></a>
+        <a href="./dashboard.html"><button class="secondary">Dashboard</button></a>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Runde <span id="roundNo">-</span></h2>
+      <p class="muted">Ergebnisse eintragen und dann Runde finalisieren.</p>
+      <div class="kpi-row">
+        <span class="badge" id="kpiActivePlayers">Aktive: -</span>
+        <span class="badge" id="kpiDroppedPlayers">Dropped: -</span>
+        <span class="badge" id="kpiRoundState">Rundenstatus: -</span>
+      </div>
+      <p id="pairingMeta" class="helper"></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tisch</th><th>Spieler A</th><th>Spieler B</th><th>Ergebnis</th><th>Speichern</th></tr></thead>
+          <tbody id="matchesBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button id="finalizeRoundBtn" class="success">Runde finalisieren</button>
+        <button id="nextRoundBtn">Nächste Runde generieren</button>
+        <button id="finishTournamentBtn" class="warn">Turnier abschließen</button>
+        <button id="exportCsvBtn" class="secondary">CSV Export</button>
+        <button id="exportPdfBtn" class="secondary">PDF Export (Print)</button>
+      </div>
+      <p id="roundMsg" class="muted"></p>
+    </section>
+
+    <section class="card">
+      <h2>Live Standings</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th><th>Name</th><th>Record</th><th>MP</th><th>OMW%</th><th>GW%</th><th>OGW%</th><th>Drop</th>
+            </tr>
+          </thead>
+          <tbody id="standingsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="./js/round-page.js"></script>
+</body>
+</html>

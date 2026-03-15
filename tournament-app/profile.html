@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slaughter Games – Profil</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Profil</h1>
+      <div style="display:flex;gap:8px">
+        <a href="./dashboard.html"><button class="secondary">Dashboard</button></a>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Account</h2>
+      <p class="muted" id="mailText"></p>
+      <form id="profileForm">
+        <label for="displayName">Anzeigename</label>
+        <input id="displayName" required />
+        <div style="margin-top:10px">
+          <button type="submit">Speichern</button>
+        </div>
+      </form>
+      <p class="muted" id="profileMsg"></p>
+    </section>
+  </div>
+
+  <script type="module" src="./js/profile-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slaughter Games – Admin</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Admin Cockpit</h1>
+      <div style="display:flex;gap:8px">
+        <a href="./dashboard.html"><button class="secondary">Dashboard</button></a>
+        <a href="./profile.html"><button class="secondary">Profil</button></a>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Turnierübersicht</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th><th>Status</th><th>Runden</th><th>Aktive Spieler</th><th>Erstellt</th><th>Aktion</th>
+          </tr>
+        </thead>
+        <tbody id="adminTable"></tbody>
+      </table>
+      <p id="adminMsg" class="muted"></p>
+    </section>
+  </div>
+
+  <script type="module" src="./js/admin-page.js"></script>
+</body>
+</html>

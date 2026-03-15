@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slaughter Games – Bracket/Pairings</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1 id="bTitle">Bracket / Pairings</h1>
+      <div style="display:flex;gap:8px">
+        <a id="toRoundLink" href="#"><button class="secondary">Zur Runde</button></a>
+        <a href="./dashboard.html"><button class="secondary">Dashboard</button></a>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Rundenübersicht</h2>
+      <p class="muted">Swiss ist kein KO-Tree – daher visualisieren wir einen Round-Ladder mit allen Tischen je Runde.</p>
+      <div class="kpi-row">
+        <span class="badge" id="bKpiRounds">Runden: -</span>
+        <span class="badge" id="bKpiMatches">Matches: -</span>
+      </div>
+      <div id="roundLadder"></div>
+    </section>
+  </div>
+
+  <script type="module" src="./js/bracket-page.js"></script>
+</body>
+</html>

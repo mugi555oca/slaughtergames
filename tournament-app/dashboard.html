@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slaughter Games – Dashboard</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h1>Turnier Dashboard</h1>
+      <div style="display:flex;gap:8px">
+        <a href="./admin.html"><button class="secondary">Admin</button></a>
+        <a href="./profile.html"><button class="secondary">Profil</button></a>
+        <button id="logoutBtn" class="secondary">Logout</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Neues Turnier erstellen</h2>
+      <form id="createTournamentForm">
+        <div class="row">
+          <div class="col-6">
+            <label for="tName">Turniername</label>
+            <input id="tName" required placeholder="Friday Night Draft" />
+          </div>
+          <div class="col-3">
+            <label for="tRounds">Runden</label>
+            <input id="tRounds" type="number" min="1" max="15" value="3" required />
+          </div>
+          <div class="col-3">
+            <label for="tPlayerCount">Anzahl Spieler (4-16)</label>
+            <input id="tPlayerCount" type="number" min="4" max="16" value="8" required />
+          </div>
+        </div>
+
+        <label for="tPlayers">Spielernamen (1 pro Zeile)</label>
+        <textarea id="tPlayers" rows="8" placeholder="Alice&#10;Bob&#10;Charlie&#10;..."></textarea>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0">
+          <label><input id="tAvoidRematches" type="checkbox" checked /> Rematches vermeiden</label>
+          <label><input id="tAllowBye" type="checkbox" checked /> Bye erlauben</label>
+        </div>
+
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="submit">Turnier erstellen</button>
+          <button type="button" id="fillTestData" class="secondary">8 Testspieler laden</button>
+        </div>
+      </form>
+      <p id="createMsg" class="muted"></p>
+    </section>
+
+    <section class="card">
+      <h2>Meine Turniere</h2>
+      <table>
+        <thead><tr><th>Name</th><th>Status</th><th>Runde</th><th>Aktion</th></tr></thead>
+        <tbody id="tournamentsTable"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script type="module" src="./js/dashboard-page.js"></script>
+</body>
+</html>
