@@ -56,7 +56,6 @@ function compareStanding(a,b){
 
 function didPlay(a,b,playedSet){ return playedSet.has(`${a}::${b}`) || playedSet.has(`${b}::${a}`); }
 
-// Backtracking pairing optimizer (minimizes rematches deterministically)
 function bestPairing(players, playedSet, avoidRematches=true){
   let best = null;
   let explored = 0;
@@ -76,16 +75,13 @@ function bestPairing(players, playedSet, avoidRematches=true){
     const a = unpaired[0];
     const rest = unpaired.slice(1);
 
-    // Deterministic ordering: prefer non-rematch and close seeding
     const candidates = rest
       .map((b, idx) => ({ b, idx, rematch: didPlay(a.id, b.id, playedSet) }))
       .sort((x,y) => Number(x.rematch)-Number(y.rematch) || x.idx-y.idx);
 
     for(const c of candidates){
       const b = c.b;
-      if(avoidRematches && c.rematch && rest.some(o => !didPlay(a.id, o.id, playedSet))){
-        continue;
-      }
+      if(avoidRematches && c.rematch && rest.some(o => !didPlay(a.id, o.id, playedSet))) continue;
       const remaining = rest.filter(x => x.id !== b.id);
       pairs.push([a,b]);
       rec(remaining, pairs, rematches + (c.rematch ? 1 : 0));
@@ -108,7 +104,6 @@ function pairGroupWithFloater(group, playedSet, avoidRematches=true){
 
   let best = null;
   for(let i=group.length-1;i>=0;i--){
-    // Prefer lower-ranked player as floater in ties (iterate from tail)
     const floater = group[i];
     const rest = group.filter((_, idx) => idx !== i);
     const paired = bestPairing(rest, playedSet, avoidRematches);
@@ -240,7 +235,6 @@ async function saveRoundSnapshot(tournamentId, roundNo, standings){
     match_points: s.matchPoints, game_points: s.gamePoints,
     omw: s.omw, gw: s.gw, ogw: s.ogw,
   }));
-
   const { error } = await supabase.from('player_round_stats').upsert(rows, { onConflict: 'tournament_id,player_id,round_no' });
   if(error) throw error;
 }
@@ -314,15 +308,12 @@ export async function generateNextRound(tournamentId){
   }
 
   if(byePlayer) await supabase.from('players').update({ had_bye: true }).eq('id', byePlayer.id);
-
   const { error: uErr } = await supabase.from('tournaments').update({ current_round: roundNo }).eq('id', tournamentId);
   if(uErr) throw uErr;
 
   const rematchTables = [];
   if(roundNo > 1){
-    for(const [idx, pair] of pairs.entries()){
-      if(didPlay(pair[0].id, pair[1].id, playedSet)) rematchTables.push(idx + 1);
-    }
+    for(const [idx, pair] of pairs.entries()) if(didPlay(pair[0].id, pair[1].id, playedSet)) rematchTables.push(idx + 1);
   }
 
   return {
@@ -385,19 +376,47 @@ export async function getRoundMatches(tournamentId, roundNo){
   return data;
 }
 
+export async function getGlobalRanking(){
+  const { data: tournaments, error: te } = await supabase.from('tournaments').select('id,current_round,status');
+  if(te) throw te;
+
+  const out = new Map();
+  for(const t of tournaments){
+    if((t.current_round || 0) < 1) continue;
+    const { data: stats, error: se } = await supabase
+      .from('player_round_stats')
+      .select('player_id,match_points,round_no')
+      .eq('tournament_id', t.id)
+      .eq('round_no', t.current_round);
+    if(se) throw se;
+
+    const { data: players, error: pe } = await supabase
+      .from('players')
+      .select('id,name')
+      .eq('tournament_id', t.id);
+    if(pe) throw pe;
+
+    const nameById = Object.fromEntries(players.map(p => [p.id, p.name]));
+    for(const s of stats){
+      const name = nameById[s.player_id];
+      if(!name) continue;
+      if(!out.has(name)) out.set(name, { name, totalMatchPoints: 0, totalTournaments: 0 });
+      const row = out.get(name);
+      row.totalMatchPoints += s.match_points || 0;
+      row.totalTournaments += 1;
+    }
+  }
+
+  return [...out.values()].sort((a,b)=>b.totalMatchPoints-a.totalMatchPoints || a.name.localeCompare(b.name));
+}
+
 export function formatPct(value){ return `${round2((value || 0) * 100).toFixed(2)}%`; }
 
 export function standingsToCsvRows(standings){
   const header = ['Rank','Name','Record','Match Points','OMW%','GW%','OGW%','Dropped'];
   const rows = standings.map((s, idx) => [
-    String(idx+1),
-    s.name,
-    `${s.wins}-${s.losses}-${s.draws}`,
-    String(s.matchPoints),
-    formatPct(s.omw),
-    formatPct(s.gw),
-    formatPct(s.ogw),
-    s.dropped ? 'yes' : 'no'
+    String(idx+1), s.name, `${s.wins}-${s.losses}-${s.draws}`,
+    String(s.matchPoints), formatPct(s.omw), formatPct(s.gw), formatPct(s.ogw), s.dropped ? 'yes' : 'no'
   ]);
   return [header, ...rows];
 }

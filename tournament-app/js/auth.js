@@ -23,7 +23,9 @@ export async function register(email, password, displayName){
   return data;
 }
 
-export async function login(email, password){
+export async function login(emailOrLogin, password){
+  let email = emailOrLogin.trim();
+  if(!email.includes('@')) email = `${email}@slaughtergames.local`;
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if(error) throw error;
   return data;
@@ -36,7 +38,6 @@ export async function logout(){
 
 export function bindAuthUI(){
   const loginForm = $('loginForm');
-  const registerForm = $('registerForm');
   const msg = $('authMsg');
 
   if(loginForm){
@@ -45,20 +46,6 @@ export function bindAuthUI(){
       try{
         await login($('loginEmail').value.trim(), $('loginPassword').value);
         window.location.href = './dashboard.html';
-      }catch(err){ msg.textContent = err.message; }
-    });
-  }
-
-  if(registerForm){
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try{
-        await register(
-          $('regEmail').value.trim(),
-          $('regPassword').value,
-          $('regDisplayName').value.trim()
-        );
-        msg.textContent = 'Registrierung erfolgreich. Bitte E-Mail bestätigen (falls aktiviert), dann einloggen.';
       }catch(err){ msg.textContent = err.message; }
     });
   }

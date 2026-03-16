@@ -1,6 +1,5 @@
 import { requireAuthOrRedirect } from './auth.js';
 import {
-  generateNextRound,
   getTournamentBundle,
   getRoundMatches,
   submitMatchResult,
@@ -9,7 +8,8 @@ import {
   formatPct,
   finishTournament,
   setPlayerDropped,
-  standingsToCsvRows
+  standingsToCsvRows,
+  generateNextRound
 } from './tournament.js';
 
 function $(id){ return document.getElementById(id); }
@@ -109,8 +109,6 @@ async function renderStandings(){
       await refreshAll();
     });
   });
-
-  return standings;
 }
 
 async function renderMatches(roundNo){
@@ -132,18 +130,16 @@ async function renderMatches(roundNo){
       <td>${playerA}</td>
       <td>${playerB}</td>
       <td><select id="res-${m.id}">${opts}</select></td>
-      <td><button data-save="${m.id}">Save</button></td>
     `;
     body.appendChild(tr);
   }
 
-  body.querySelectorAll('button[data-save]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.getAttribute('data-save');
-      const result = document.getElementById(`res-${id}`).value;
+  body.querySelectorAll('select[id^="res-"]').forEach(sel => {
+    sel.addEventListener('change', async () => {
+      const id = sel.id.replace('res-','');
       try{
-        await submitMatchResult(id, result);
-        setMsg('Ergebnis gespeichert.');
+        await submitMatchResult(id, sel.value);
+        setMsg('Ergebnis automatisch gespeichert.');
         await refreshAll();
       }catch(err){ setMsg(err.message); }
     });
@@ -165,7 +161,7 @@ async function refreshAll(){
   playerNameById = Object.fromEntries(bundle.players.map(p => [p.id, p.name]));
 
   if(t.current_round === 0){
-    $('matchesBody').innerHTML = '<tr><td colspan="5">Noch keine Runde erzeugt.</td></tr>';
+    $('matchesBody').innerHTML = '<tr><td colspan="4">Noch keine Runde erzeugt.</td></tr>';
     $('kpiRoundState').textContent = 'Rundenstatus: noch nicht gestartet';
     $('pairingMeta').textContent = 'Sobald du Runde 1 erzeugst, siehst du hier Pairing-Hinweise.';
   } else {
@@ -194,8 +190,7 @@ async function init(){
       const note = gen.rematchCount > 0
         ? `Runde ${gen.roundNo} erzeugt. Achtung: ${gen.rematchCount} Rematch(es) unvermeidbar (Tisch ${gen.rematchTables.join(', ')}).`
         : `Runde ${gen.roundNo} erzeugt.`;
-      const perf = gen.pairingExploredNodes ? ` Pairing-Suche: ${gen.pairingExploredNodes} Knoten.` : '';
-      setMsg(note + perf);
+      setMsg(note);
       await refreshAll();
     }catch(err){ setMsg(err.message); }
     finally{ setBusy(btn, false); }

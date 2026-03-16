@@ -6,6 +6,7 @@
   <title>Slaughter Games – Dashboard</title>
   <link rel="stylesheet" href="./styles.css" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="container">
@@ -31,13 +32,12 @@
             <input id="tRounds" type="number" min="1" max="15" value="3" required />
           </div>
           <div class="col-3">
-            <label for="tPlayerCount">Anzahl Spieler (4-16)</label>
-            <input id="tPlayerCount" type="number" min="4" max="16" value="8" required />
+            <label>Auswahl Spieler</label>
+            <span class="helper">Wähle 4-16 Spieler aus (inkl. Gast 1-5)</span>
           </div>
         </div>
 
-        <label for="tPlayers">Spielernamen (1 pro Zeile)</label>
-        <textarea id="tPlayers" rows="8" placeholder="Alice&#10;Bob&#10;Charlie&#10;..."></textarea>
+        <div class="row" id="playerSelects"></div>
 
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0">
           <label><input id="tAvoidRematches" type="checkbox" checked /> Rematches vermeiden</label>
@@ -53,11 +53,24 @@
     </section>
 
     <section class="card">
-      <h2>Meine Turniere</h2>
-      <table>
-        <thead><tr><th>Name</th><th>Status</th><th>Runde</th><th>Aktion</th></tr></thead>
-        <tbody id="tournamentsTable"></tbody>
-      </table>
+      <h2>Alle Turnier-Events</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Status</th><th>Runde</th><th>Aktion</th></tr></thead>
+          <tbody id="tournamentsTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Globales Ranking (Tool-intern)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Rank</th><th>Name</th><th>Total Match Points</th><th>Turniere</th></tr></thead>
+          <tbody id="globalRankBody"></tbody>
+        </table>
+      </div>
+      <canvas id="rankingChart" height="120"></canvas>
     </section>
   </div>
 

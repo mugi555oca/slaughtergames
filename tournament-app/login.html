@@ -14,31 +14,17 @@
       <span class="badge">Login</span>
     </div>
 
-    <div class="grid2">
-      <section class="card">
-        <h2>Anmelden</h2>
-        <form id="loginForm">
-          <label for="loginEmail">E-Mail</label>
-          <input id="loginEmail" type="email" required />
-          <label for="loginPassword">Passwort</label>
-          <input id="loginPassword" type="password" required />
-          <div style="margin-top:12px"><button type="submit">Einloggen</button></div>
-        </form>
-      </section>
-
-      <section class="card">
-        <h2>Registrieren</h2>
-        <form id="registerForm">
-          <label for="regDisplayName">Anzeigename</label>
-          <input id="regDisplayName" type="text" required />
-          <label for="regEmail">E-Mail</label>
-          <input id="regEmail" type="email" required />
-          <label for="regPassword">Passwort</label>
-          <input id="regPassword" type="password" minlength="6" required />
-          <div style="margin-top:12px"><button type="submit">Konto erstellen</button></div>
-        </form>
-      </section>
-    </div>
+    <section class="card">
+      <h2>Anmelden</h2>
+      <form id="loginForm">
+        <label for="loginEmail">Login-Name oder E-Mail</label>
+        <input id="loginEmail" type="text" required />
+        <label for="loginPassword">Passwort</label>
+        <input id="loginPassword" type="password" required />
+        <div style="margin-top:12px"><button type="submit">Einloggen</button></div>
+      </form>
+      <p class="helper">Registrierung ist deaktiviert. User werden vom Admin angelegt.</p>
+    </section>
 
     <p id="authMsg" class="muted"></p>
   </div>
