@@ -189,7 +189,7 @@ async function init(){
       });
 
       await generateNextRound(t.id, { firstRoundMode: mode });
-      msg(`Turnier erstellt. Runde 1 erzeugt (${mode === 'cross' ? 'Cross Pairings 1vs4/2vs5...' : 'Random Pairings'}).`);
+      msg(`Turnier erstellt. Runde 1 erzeugt (${mode === 'cross' ? 'Cross Pairings (erste Hälfte vs zweite Hälfte, z. B. 1vs5)' : 'Random Pairings'}).`);
       window.location.href = `./round.html?tournament=${t.id}`;
     }catch(err){ msg(err.message); }
     finally{ setBusy(btn, false); }
