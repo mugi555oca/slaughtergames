@@ -42,6 +42,7 @@ function formatLabel(key){
     'uncommon-cube':'Uncommon Cube',
     'oldboarder-cube':'Oldboarder Cube',
     'blube':'Blube',
+    'shube':'Shube',
     'multicolor-cube':'Multicolor Cube',
     'other-cube':'Other Cube'
   };
