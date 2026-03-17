@@ -176,6 +176,8 @@ h1.logo-font {
 .ranking-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: rgba(255, 0, 0, 0.1); border-radius: 8px; border: 1px solid rgba(255, 0, 0, 0.3); }
 .rank { font-size: 1.5rem; font-weight: bold; color: #ff0000; min-width: 40px; }
 .name { font-size: 1.1rem; }
+.name a, .name a:visited { color: #ffffff; text-decoration: none; }
+.name a:hover { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
 .axe-icon { width: 20px; height: 20px; object-fit: contain; display: inline-block; margin-left: 3px; }
 .axe-collection { display: flex; align-items: center; gap: 2px; }
 footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; }
