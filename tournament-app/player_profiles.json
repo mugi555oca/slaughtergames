@@ -4,12 +4,30 @@
     "name": "Burni, the Voracious Weeder",
     "realName": "Burni",
     "login": "Burni",
-    "participations": 5,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "M",
-      "M",
-      "C",
-      "C"
+      {
+        "sg": "SG2",
+        "rarity": "M"
+      },
+      {
+        "sg": "SG3",
+        "rarity": "M"
+      },
+      {
+        "sg": "SG4",
+        "rarity": "C"
+      },
+      {
+        "sg": "SG5",
+        "rarity": "C"
+      }
     ],
     "badges": [
       "TD"
@@ -22,12 +40,30 @@
     "name": "Thiny Skinny Vince, the Escalating One",
     "realName": "Vinc",
     "login": "Vinc",
-    "participations": 5,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "M",
-      "R",
-      "M",
-      "R"
+      {
+        "sg": "SG1",
+        "rarity": "M"
+      },
+      {
+        "sg": "SG3",
+        "rarity": "R"
+      },
+      {
+        "sg": "SG4",
+        "rarity": "M"
+      },
+      {
+        "sg": "SG5",
+        "rarity": "R"
+      }
     ],
     "badges": [
       "PQ",
@@ -41,9 +77,16 @@
     "name": "Substitute Simon",
     "realName": "Simon",
     "login": "Simon",
-    "participations": 3,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG5"
+    ],
     "axes": [
-      "U"
+      {
+        "sg": "SG2",
+        "rarity": "U"
+      }
     ],
     "badges": [
       "KC"
@@ -56,11 +99,25 @@
     "name": "Papa of Runes",
     "realName": "Silvio",
     "login": "Silvio",
-    "participations": 4,
+    "participations": [
+      "SG1",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "U",
-      "R",
-      "C"
+      {
+        "sg": "SG1",
+        "rarity": "U"
+      },
+      {
+        "sg": "SG3",
+        "rarity": "C"
+      },
+      {
+        "sg": "SG4",
+        "rarity": "R"
+      }
     ],
     "badges": [
       "KC",
@@ -75,11 +132,26 @@
     "name": "Felix, the Great Conceder",
     "realName": "Felix",
     "login": "Felix",
-    "participations": 5,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "C",
-      "C",
-      "M"
+      {
+        "sg": "SG1",
+        "rarity": "C"
+      },
+      {
+        "sg": "SG2",
+        "rarity": "C"
+      },
+      {
+        "sg": "SG5",
+        "rarity": "M"
+      }
     ],
     "badges": [
       "ÜN",
@@ -93,11 +165,24 @@
     "name": "David, Ride-Power IX",
     "realName": "David",
     "login": "David",
-    "participations": 3,
+    "participations": [
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "U",
-      "U",
-      "U"
+      {
+        "sg": "SG3",
+        "rarity": "U"
+      },
+      {
+        "sg": "SG4",
+        "rarity": "U"
+      },
+      {
+        "sg": "SG5",
+        "rarity": "U"
+      }
     ],
     "badges": [
       "ÜL",
@@ -111,9 +196,18 @@
     "name": "Ivo, the Whining One",
     "realName": "Ivo",
     "login": "Ivo",
-    "participations": 5,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "R"
+      {
+        "sg": "SG1",
+        "rarity": "R"
+      }
     ],
     "badges": [
       "BK",
@@ -128,7 +222,13 @@
     "name": "Niki-Jiki, Mirror Faker",
     "realName": "Niki",
     "login": "Niki",
-    "participations": 4,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [
       "PQ",
@@ -142,7 +242,13 @@
     "name": "Ostibot, from another Kingdom",
     "realName": "Osti",
     "login": "Osti",
-    "participations": 5,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [
       "PQ"
@@ -155,7 +261,13 @@
     "name": "Ulamugi, the Great Highländer Dumper",
     "realName": "Mugi",
     "login": "maugi555@gmail",
-    "participations": 5,
+    "participations": [
+      "SG1",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [
       "FF",
@@ -174,7 +286,12 @@
     "name": "Fridi, Master of (A)Ether Waves",
     "realName": "Frido",
     "login": "Frido",
-    "participations": 5,
+    "participations": [
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [
       "ÜN",
@@ -192,7 +309,11 @@
     "name": "Mutscho Gusto",
     "realName": "Luki",
     "login": "Luki",
-    "participations": 3,
+    "participations": [
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [],
     "description": "Tree4one-Mann – Mittelfeldkämpfer, schnuppert manchmal an den Topplätzen.",
@@ -203,7 +324,10 @@
     "name": "Leogoyf",
     "realName": "Leo",
     "login": "Leo",
-    "participations": 3,
+    "participations": [
+      "SG1",
+      "SG2"
+    ],
     "axes": [],
     "badges": [
       "KC",
@@ -217,7 +341,11 @@
     "name": "Saint Slow Paul III",
     "realName": "Paul",
     "login": "Paul",
-    "participations": 2,
+    "participations": [
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [
       "SP"
@@ -230,7 +358,10 @@
     "name": "Bouncer",
     "realName": "Wenzl",
     "login": "Wenzl",
-    "participations": 2,
+    "participations": [
+      "SG4",
+      "SG5"
+    ],
     "axes": [],
     "badges": [],
     "description": "Wenzel – GP-Winner, deutsche Magic-Legende.",
@@ -241,9 +372,17 @@
     "name": "Heber, the Pipe Smoking Beardo",
     "realName": "Heber",
     "login": "Heber",
-    "participations": 4,
+    "participations": [
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+    ],
     "axes": [
-      "R"
+      {
+        "sg": "SG2",
+        "rarity": "R"
+      }
     ],
     "badges": [],
     "description": "Heber – ein Reisender, künftiger Kanzler (so hofft man).",
@@ -254,7 +393,9 @@
     "name": "Johann, Aprentice Sorcerer",
     "realName": "Hansi",
     "login": "Hansi",
-    "participations": 1,
+    "participations": [
+      "SG5"
+    ],
     "axes": [],
     "badges": [],
     "description": "Hansi – Three4One-Mann, Izzet forever.",
@@ -265,7 +406,9 @@
     "name": "Evil Twin",
     "realName": "Fabi",
     "login": "Fabi",
-    "participations": 1,
+    "participations": [
+      "SG5"
+    ],
     "axes": [],
     "badges": [],
     "description": "Fabi – kommt aus einer GP-winning Familie, die Gene hätte er.",
@@ -276,7 +419,9 @@
     "name": "Aetherwuzl Marvelking",
     "realName": "Marc",
     "login": "Marc",
-    "participations": 1,
+    "participations": [
+      "SG5"
+    ],
     "axes": [],
     "badges": [],
     "description": "Marc – Meister des Wuzels und Salzburger Magic-Legende.",
@@ -287,7 +432,11 @@
     "name": "Raul Passion",
     "realName": "Raul",
     "login": "Raul",
-    "participations": 4,
+    "participations": [
+      "SG2",
+      "SG3",
+      "SG4"
+    ],
     "axes": [],
     "badges": [],
     "description": "Von Reschen wird man verdreschen – oft.",
@@ -298,7 +447,10 @@
     "name": "Sash a Cubic Check",
     "realName": "Sasha",
     "login": "Sasha",
-    "participations": 2,
+    "participations": [
+      "SG3",
+      "SG4"
+    ],
     "axes": [],
     "badges": [],
     "description": "Sascha – baut ein Haus und ist raus.",

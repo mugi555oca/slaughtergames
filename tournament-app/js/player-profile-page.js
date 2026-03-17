@@ -27,23 +27,26 @@ async function init(){
 
   const parts = document.getElementById('ppParts');
   parts.innerHTML = '';
-  for(let i=1;i<=Number(p.participations||0);i++){
+  (p.participations || []).forEach((sg) => {
+    const num = String(sg).replace('SG','');
     const el = document.createElement('img');
-    el.src = `Logos_x/SG_Logo_${i}.png`;
-    el.alt = `SG ${i}`;
-    el.title = `Teilnahme SG ${i}`;
+    el.src = `Logos_x/SG_Logo_${num}.png`;
+    el.alt = sg;
+    el.title = `Teilnahme ${sg}`;
     el.style.height = '26px';
     el.style.marginRight = '6px';
     parts.appendChild(el);
-  }
+  });
 
   const axes = document.getElementById('ppAxes');
   axes.innerHTML = '';
-  (p.axes || []).forEach((a, idx) => {
+  (p.axes || []).forEach((a) => {
+    const rarity = a.rarity || a;
+    const sg = a.sg || '';
     const wrap = document.createElement('span');
     wrap.className = 'chip';
-    wrap.title = `Gewonnen bei SG ${idx+1}`;
-    wrap.innerHTML = `<img src="${axeImg[a] || ''}" alt="${a}" style="height:14px;vertical-align:middle;margin-right:6px"/>${axeMap[a] || a} (SG ${idx+1})`;
+    wrap.title = `Gewonnen bei ${sg}`;
+    wrap.innerHTML = `<img src="${axeImg[rarity] || ''}" alt="${rarity}" style="height:14px;vertical-align:middle;margin-right:6px"/>${axeMap[rarity] || rarity} (${sg})`;
     axes.appendChild(wrap);
   });
 
