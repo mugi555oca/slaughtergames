@@ -56,9 +56,9 @@ on public.tournaments for update
 using (auth.uid() = owner_id or public.is_app_admin())
 with check (auth.uid() = owner_id or public.is_app_admin());
 
-create policy "tournaments_delete_admin_only"
+create policy "tournaments_delete_owner_or_admin"
 on public.tournaments for delete
-using (public.is_app_admin());
+using (auth.uid() = owner_id or public.is_app_admin());
 
 -- players
 create policy "players_read_all_authenticated"
