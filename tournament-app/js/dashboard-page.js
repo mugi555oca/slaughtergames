@@ -159,29 +159,37 @@ async function init(){
     try{ makeSeating(); }catch(err){ msg(err.message); }
   });
 
-  $('rerollSeatingBtn').addEventListener('click', () => {
-    try{ makeSeating(); }catch(err){ msg(err.message); }
-  });
-
   const createAndPair = async (mode, btn) => {
     setBusy(btn, true, 'Erstelle...');
     try{
       const roundsTotal = Number($('tRounds').value);
       if(roundsTotal < 1 || roundsTotal > 15) throw new Error('Rundenzahl muss 1-15 sein.');
 
-      if(!currentSeating.length) makeSeating();
+      const selected = selectedPlayers();
+      if(selected.length < 4 || selected.length > 16) throw new Error('Es müssen 4-16 Spieler ausgewählt sein.');
+
+      if(!currentSeating.length){
+        if(mode === 'cross'){
+          // direct cross without seating click -> use slot order as input
+          currentSeating = selected;
+          renderSeatingPreview(currentSeating);
+        } else {
+          // random mode without seating click -> random pairings from randomized player list
+          currentSeating = [...selected];
+        }
+      }
 
       const t = await createTournament(user.id, {
         name: $('tName').value.trim(),
         roundsTotal,
         avoidRematches: $('tAvoidRematches').checked,
         allowBye: $('tAllowBye').checked,
-        playerNames: currentSeating,
+        playerNames: selected,
         seatingOrder: currentSeating
       });
 
       await generateNextRound(t.id, { firstRoundMode: mode });
-      msg(`Turnier erstellt. Runde 1 erzeugt (${mode === 'cross' ? 'Cross Pairings' : 'Random Pairings'}).`);
+      msg(`Turnier erstellt. Runde 1 erzeugt (${mode === 'cross' ? 'Cross Pairings 1vs4/2vs5...' : 'Random Pairings'}).`);
       window.location.href = `./round.html?tournament=${t.id}`;
     }catch(err){ msg(err.message); }
     finally{ setBusy(btn, false); }

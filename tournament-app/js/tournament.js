@@ -297,8 +297,10 @@ export async function generateNextRound(tournamentId, options = {}){
         const out=[];
         if(firstRoundMode === 'cross'){
           const arr = [...pool];
-          while(arr.length >= 2){
-            out.push([arr.shift(), arr.pop()]);
+          const n = arr.length;
+          const half = Math.floor(n / 2);
+          for(let i=0; i<half; i++){
+            out.push([arr[i], arr[i + half]]);
           }
         } else {
           for(let i=0;i<pool.length;i+=2) out.push([pool[i],pool[i+1]]);
