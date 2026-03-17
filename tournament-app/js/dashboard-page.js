@@ -35,17 +35,17 @@ function buildPlayerSelectors(profiles){
   const container = $('playerSelects');
   container.innerHTML = '';
 
+  const allOptions = [
+    ...profiles.map(p => p.full_name),
+    ...Array.from({length:5}, (_,g)=>`Gast ${g+1}`)
+  ];
+
   for(let i=1;i<=16;i++){
     const wrap = document.createElement('div');
     wrap.className = 'col-3';
 
     const select = document.createElement('select');
     select.id = `p${i}`;
-    select.innerHTML = [
-      '<option value="">-- kein Spieler --</option>',
-      ...profiles.map(p => `<option value="${p.full_name}">${p.full_name}</option>`),
-      ...Array.from({length:5}, (_,g)=>`<option value="Gast ${g+1}">Gast ${g+1}</option>`)
-    ].join('');
 
     const label = document.createElement('label');
     label.textContent = `Slot ${i}`;
@@ -55,6 +55,36 @@ function buildPlayerSelectors(profiles){
     wrap.appendChild(select);
     container.appendChild(wrap);
   }
+
+  const refreshOptions = () => {
+    const selected = [];
+    for(let i=1;i<=16;i++){
+      const v = $(`p${i}`)?.value || '';
+      if(v) selected.push(v);
+    }
+
+    for(let i=1;i<=16;i++){
+      const sel = $(`p${i}`);
+      const current = sel.value || '';
+      const takenByOthers = new Set(selected.filter(v => v !== current));
+
+      sel.innerHTML = '<option value="">-- kein Spieler --</option>';
+      for(const opt of allOptions){
+        if(takenByOthers.has(opt)) continue;
+        const o = document.createElement('option');
+        o.value = opt;
+        o.textContent = opt;
+        if(opt === current) o.selected = true;
+        sel.appendChild(o);
+      }
+    }
+  };
+
+  for(let i=1;i<=16;i++){
+    $(`p${i}`).addEventListener('change', refreshOptions);
+  }
+
+  refreshOptions();
 }
 
 function selectedPlayers(){
