@@ -16,6 +16,15 @@ function setBusy(button, busy=true, busyLabel='Bitte warten...'){
   }
 }
 
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
 async function loadPlayerProfiles(){
   const res = await fetch('./user_profiles.json', { cache: 'no-store' });
   if(!res.ok) throw new Error('user_profiles.json konnte nicht geladen werden.');
@@ -63,6 +72,16 @@ function selectedPlayers(){
   return vals;
 }
 
+function renderSeatingPreview(order){
+  const host = $('seatingPreview');
+  host.innerHTML = '';
+  order.forEach(name => {
+    const li = document.createElement('li');
+    li.textContent = name;
+    host.appendChild(li);
+  });
+}
+
 async function refreshTable(){
   const rows = await listTournaments();
   const body = $('tournamentsTable');
@@ -106,10 +125,7 @@ async function refreshGlobalRanking(){
   if(window._rankingChart) window._rankingChart.destroy();
   window._rankingChart = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{ label: 'Total Match Points', data }]
-    },
+    data: { labels, datasets: [{ label: 'Total Match Points', data }] },
     options: { responsive: true, plugins: { legend: { display: false } } }
   });
 }
@@ -122,6 +138,8 @@ async function init(){
   const profiles = await loadPlayerProfiles();
   buildPlayerSelectors(profiles);
 
+  let currentSeating = [];
+
   $('fillTestData').addEventListener('click', () => {
     for(let i=1;i<=8;i++){
       const el = $(`p${i}`);
@@ -129,33 +147,52 @@ async function init(){
     }
   });
 
-  $('createTournamentForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    setBusy(submitBtn, true, 'Erstelle...');
+  const makeSeating = () => {
+    const names = selectedPlayers();
+    if(names.length < 4 || names.length > 16) throw new Error('Es müssen 4-16 Spieler ausgewählt sein.');
+    currentSeating = shuffle(names);
+    renderSeatingPreview(currentSeating);
+    msg('Seatings randomisiert. Du kannst neu würfeln oder direkt Pairing-Modus wählen.');
+  };
+
+  $('buildSeatingBtn').addEventListener('click', () => {
+    try{ makeSeating(); }catch(err){ msg(err.message); }
+  });
+
+  $('rerollSeatingBtn').addEventListener('click', () => {
+    try{ makeSeating(); }catch(err){ msg(err.message); }
+  });
+
+  const createAndPair = async (mode, btn) => {
+    setBusy(btn, true, 'Erstelle...');
     try{
       const roundsTotal = Number($('tRounds').value);
-      const names = selectedPlayers();
-
-      if(names.length < 4 || names.length > 16) throw new Error('Es müssen 4-16 Spieler ausgewählt sein.');
       if(roundsTotal < 1 || roundsTotal > 15) throw new Error('Rundenzahl muss 1-15 sein.');
+
+      if(!currentSeating.length) makeSeating();
 
       const t = await createTournament(user.id, {
         name: $('tName').value.trim(),
         roundsTotal,
         avoidRematches: $('tAvoidRematches').checked,
         allowBye: $('tAllowBye').checked,
-        playerNames: names
+        playerNames: currentSeating,
+        seatingOrder: currentSeating
       });
 
-      await generateNextRound(t.id); // auto-generate round 1
-      msg('Turnier erstellt. Runde 1 wurde automatisch generiert.');
+      await generateNextRound(t.id, { firstRoundMode: mode });
+      msg(`Turnier erstellt. Runde 1 erzeugt (${mode === 'cross' ? 'Cross Pairings' : 'Random Pairings'}).`);
       window.location.href = `./round.html?tournament=${t.id}`;
-    }catch(err){
-      msg(err.message);
-    } finally {
-      setBusy(submitBtn, false);
-    }
+    }catch(err){ msg(err.message); }
+    finally{ setBusy(btn, false); }
+  };
+
+  $('createRandomBtn').addEventListener('click', async () => {
+    await createAndPair('random', $('createRandomBtn'));
+  });
+
+  $('createCrossBtn').addEventListener('click', async () => {
+    await createAndPair('cross', $('createCrossBtn'));
   });
 
   await refreshTable();

@@ -21,7 +21,7 @@
 
     <section class="card">
       <h2>Neues Turnier erstellen</h2>
-      <form id="createTournamentForm">
+      <form id="createTournamentForm" onsubmit="return false;">
         <div class="row">
           <div class="col-6">
             <label for="tName">Turniername</label>
@@ -45,8 +45,16 @@
         </div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button type="submit">Turnier erstellen</button>
+          <button type="button" id="buildSeatingBtn">Seatings randomisieren</button>
+          <button type="button" id="rerollSeatingBtn" class="secondary">Seatings neu würfeln</button>
+          <button type="button" id="createRandomBtn">Erstellen + Random Pairings</button>
+          <button type="button" id="createCrossBtn" class="warn">Erstellen + Cross Pairings</button>
           <button type="button" id="fillTestData" class="secondary">8 Testspieler laden</button>
+        </div>
+        <p class="helper">Cross Pairings (Runde 1): Sitzplatz 1 vs letzter, 2 vs vorletzter, usw.</p>
+        <div class="card" style="margin-top:10px">
+          <h3>Seatings Preview</h3>
+          <ol id="seatingPreview"></ol>
         </div>
       </form>
       <p id="createMsg" class="muted"></p>

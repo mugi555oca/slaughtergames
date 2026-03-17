@@ -160,8 +160,20 @@ export async function createTournament(ownerId, payload){
 
   const tournament = tRows[0];
   const playersInsert = payload.playerNames.map((n, i) => ({ tournament_id: tournament.id, name: n, seat: i+1 }));
-  const { error: pErr } = await supabase.from('players').insert(playersInsert);
+  const { data: pRows, error: pErr } = await supabase.from('players').insert(playersInsert).select('*');
   if(pErr) throw pErr;
+
+  if(payload.seatingOrder && Array.isArray(payload.seatingOrder) && payload.seatingOrder.length){
+    let seatNo = 1;
+    for(const name of payload.seatingOrder){
+      const row = pRows.find(r => r.name === name);
+      if(!row) continue;
+      const { error: sErr } = await supabase.from('players').update({ seat: seatNo }).eq('id', row.id);
+      if(sErr) throw sErr;
+      seatNo++;
+    }
+  }
+
   return tournament;
 }
 
@@ -239,7 +251,7 @@ async function saveRoundSnapshot(tournamentId, roundNo, standings){
   if(error) throw error;
 }
 
-export async function generateNextRound(tournamentId){
+export async function generateNextRound(tournamentId, options = {}){
   const bundle = await getTournamentBundle(tournamentId);
   const t = bundle.tournament;
 
@@ -259,8 +271,18 @@ export async function generateNextRound(tournamentId){
   const playedSet = new Set(bundle.opps.map(o => `${o.player_id}::${o.opponent_id}`));
 
   let pool = roundNo === 1
-    ? shuffle(standings.filter(s => !bundle.players.find(p=>p.id===s.id)?.dropped))
+    ? standings.filter(s => !bundle.players.find(p=>p.id===s.id)?.dropped)
     : standings.filter(s => !bundle.players.find(p=>p.id===s.id)?.dropped);
+
+  const firstRoundMode = options.firstRoundMode || 'random';
+  if(roundNo === 1){
+    if(firstRoundMode === 'cross'){
+      const seatById = Object.fromEntries(bundle.players.map(p => [p.id, p.seat || 999]));
+      pool = [...pool].sort((a,b) => (seatById[a.id] || 999) - (seatById[b.id] || 999));
+    } else {
+      pool = shuffle(pool);
+    }
+  }
 
   let byePlayer = null;
   if(pool.length % 2 === 1){
@@ -271,7 +293,18 @@ export async function generateNextRound(tournamentId){
   }
 
   const pairingResult = roundNo === 1
-    ? { pairs: (() => { const out=[]; for(let i=0;i<pool.length;i+=2) out.push([pool[i],pool[i+1]]); return out; })(), leftover: null }
+    ? { pairs: (() => {
+        const out=[];
+        if(firstRoundMode === 'cross'){
+          const arr = [...pool];
+          while(arr.length >= 2){
+            out.push([arr.shift(), arr.pop()]);
+          }
+        } else {
+          for(let i=0;i<pool.length;i+=2) out.push([pool[i],pool[i+1]]);
+        }
+        return out;
+      })(), leftover: null }
     : swissPairings(pool, playedSet, t.avoid_rematches);
 
   const { pairs, leftover } = pairingResult;
@@ -321,7 +354,8 @@ export async function generateNextRound(tournamentId){
     byePlayerId: byePlayer?.id || null,
     rematchTables,
     rematchCount: rematchTables.length,
-    pairingExploredNodes: pairingResult?.explored || 0
+    pairingExploredNodes: pairingResult?.explored || 0,
+    firstRoundMode: roundNo === 1 ? firstRoundMode : 'swiss'
   };
 }
 
