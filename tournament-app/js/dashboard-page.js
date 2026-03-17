@@ -25,6 +25,21 @@ function shuffle(arr){
   return a;
 }
 
+function formatLabel(key){
+  const map = {
+    'aktuelle-edi':'Aktuelle Edi',
+    'vintage-cube':'Vintage Cube',
+    'legacy-cube':'Legacy Cube',
+    'pauper-cube':'Pauper Cube',
+    'uncommon-cube':'Uncommon Cube',
+    'oldboarder-cube':'Oldboarder Cube',
+    'blube':'Blube',
+    'multicolor-cube':'Multicolor Cube',
+    'other-cube':'Other Cube'
+  };
+  return map[key] || key;
+}
+
 async function loadPlayerProfiles(){
   const res = await fetch('./user_profiles.json', { cache: 'no-store' });
   if(!res.ok) throw new Error('user_profiles.json konnte nicht geladen werden.');
@@ -119,8 +134,9 @@ async function refreshTable(){
 
   for(const t of rows){
     const tr = document.createElement('tr');
+    const formatText = `${formatLabel(t.format_key || 'other-cube')}${t.edi_code ? ` (${t.edi_code})` : ''}`;
     tr.innerHTML = `
-      <td>${t.name}</td>
+      <td>${t.name}<br><span class="helper">${formatText}</span></td>
       <td>${t.status}</td>
       <td>${t.current_round}/${t.rounds_total}</td>
       <td>
@@ -133,7 +149,13 @@ async function refreshTable(){
 }
 
 async function refreshGlobalRanking(){
-  const rows = await getGlobalRanking();
+  const formatKey = $('globalFormatFilter').value;
+  const ediCode = ($('globalEdiFilter').value || '').trim().toUpperCase();
+  const rows = await getGlobalRanking({
+    formatKey: formatKey === 'all' ? null : formatKey,
+    ediCode: ediCode || null
+  });
+
   const body = $('globalRankBody');
   body.innerHTML = '';
 
@@ -170,6 +192,16 @@ async function init(){
 
   let currentSeating = [];
 
+  $('tFormat').addEventListener('change', () => {
+    const isEdi = $('tFormat').value === 'aktuelle-edi';
+    $('tEdiCode').disabled = !isEdi;
+    if(!isEdi) $('tEdiCode').value = '';
+  });
+  $('tFormat').dispatchEvent(new Event('change'));
+
+  $('globalFormatFilter').addEventListener('change', refreshGlobalRanking);
+  $('globalEdiFilter').addEventListener('input', refreshGlobalRanking);
+
   $('fillTestData').addEventListener('click', () => {
     for(let i=1;i<=8;i++){
       const el = $(`p${i}`);
@@ -182,7 +214,7 @@ async function init(){
     if(names.length < 4 || names.length > 16) throw new Error('Es müssen 4-16 Spieler ausgewählt sein.');
     currentSeating = shuffle(names);
     renderSeatingPreview(currentSeating);
-    msg('Seatings randomisiert. Du kannst neu würfeln oder direkt Pairing-Modus wählen.');
+    msg('Seatings randomisiert. Du kannst direkt Pairing-Modus wählen.');
   };
 
   $('buildSeatingBtn').addEventListener('click', () => {
@@ -198,13 +230,18 @@ async function init(){
       const selected = selectedPlayers();
       if(selected.length < 4 || selected.length > 16) throw new Error('Es müssen 4-16 Spieler ausgewählt sein.');
 
+      const formatKey = $('tFormat').value;
+      const ediCodeRaw = ($('tEdiCode').value || '').trim().toUpperCase();
+      const ediCode = formatKey === 'aktuelle-edi' ? ediCodeRaw : null;
+      if(formatKey === 'aktuelle-edi' && !/^[A-Z]{2,5}$/.test(ediCodeRaw)){
+        throw new Error('Bei Aktuelle Edi muss ein Kürzel mit 2-5 Buchstaben eingegeben werden.');
+      }
+
       if(!currentSeating.length){
         if(mode === 'cross'){
-          // direct cross without seating click -> use slot order as input
           currentSeating = selected;
           renderSeatingPreview(currentSeating);
         } else {
-          // random mode without seating click -> random pairings from randomized player list
           currentSeating = [...selected];
         }
       }
@@ -215,7 +252,9 @@ async function init(){
         avoidRematches: $('tAvoidRematches').checked,
         allowBye: $('tAllowBye').checked,
         playerNames: selected,
-        seatingOrder: currentSeating
+        seatingOrder: currentSeating,
+        formatKey,
+        ediCode
       });
 
       await generateNextRound(t.id, { firstRoundMode: mode });

@@ -11,7 +11,10 @@
 <body>
   <div class="container">
     <div class="topbar">
-      <h1>Turnier Dashboard</h1>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="../index.html"><img src="../main_logo.png" alt="SG" style="height:42px;width:auto;border-radius:6px" /></a>
+        <h1 style="margin:0;">Turnier Dashboard</h1>
+      </div>
       <div style="display:flex;gap:8px">
         <a href="./admin.html"><button class="secondary">Admin</button></a>
         <a href="./profile.html"><button class="secondary">Profil</button></a>
@@ -32,6 +35,27 @@
             <input id="tRounds" type="number" min="1" max="15" value="3" required />
           </div>
           <div class="col-3">
+            <label for="tFormat">Format</label>
+            <select id="tFormat">
+              <option value="aktuelle-edi">Aktuelle Edi</option>
+              <option value="vintage-cube">Vintage Cube</option>
+              <option value="legacy-cube">Legacy Cube</option>
+              <option value="pauper-cube">Pauper Cube</option>
+              <option value="uncommon-cube">Uncommon Cube</option>
+              <option value="oldboarder-cube">Oldboarder Cube</option>
+              <option value="blube">Blube</option>
+              <option value="multicolor-cube">Multicolor Cube</option>
+              <option value="other-cube">Other Cube</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-3">
+            <label for="tEdiCode">Edi Kürzel (2-5 Buchstaben)</label>
+            <input id="tEdiCode" maxlength="5" placeholder="z.B. DFT" />
+          </div>
+          <div class="col-9">
             <label>Auswahl Spieler</label>
             <span class="helper">Wähle 4-16 Spieler aus (inkl. Gast 1-5)</span>
           </div>
@@ -63,7 +87,7 @@
       <h2>Alle Turnier-Events</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Name</th><th>Status</th><th>Runde</th><th>Aktion</th></tr></thead>
+          <thead><tr><th>Name / Format</th><th>Status</th><th>Runde</th><th>Aktion</th></tr></thead>
           <tbody id="tournamentsTable"></tbody>
         </table>
       </div>
@@ -71,6 +95,27 @@
 
     <section class="card">
       <h2>Globales Ranking (Tool-intern)</h2>
+      <div class="row">
+        <div class="col-4">
+          <label for="globalFormatFilter">Format-Filter</label>
+          <select id="globalFormatFilter">
+            <option value="all">Alle Formate</option>
+            <option value="aktuelle-edi">Aktuelle Edi</option>
+            <option value="vintage-cube">Vintage Cube</option>
+            <option value="legacy-cube">Legacy Cube</option>
+            <option value="pauper-cube">Pauper Cube</option>
+            <option value="uncommon-cube">Uncommon Cube</option>
+            <option value="oldboarder-cube">Oldboarder Cube</option>
+            <option value="blube">Blube</option>
+            <option value="multicolor-cube">Multicolor Cube</option>
+            <option value="other-cube">Other Cube</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="globalEdiFilter">Edi Kürzel-Filter (optional)</label>
+          <input id="globalEdiFilter" maxlength="5" placeholder="z.B. DFT" />
+        </div>
+      </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Rank</th><th>Name</th><th>Total Match Points</th><th>Turniere</th></tr></thead>

@@ -153,7 +153,9 @@ export async function createTournament(ownerId, payload){
       avoid_rematches: payload.avoidRematches,
       allow_bye: payload.allowBye,
       current_round: 0,
-      status: 'active'
+      status: 'active',
+      format_key: payload.formatKey || 'other-cube',
+      edi_code: payload.ediCode || null
     })
     .select('*');
   if(tErr) throw tErr;
@@ -412,8 +414,11 @@ export async function getRoundMatches(tournamentId, roundNo){
   return data;
 }
 
-export async function getGlobalRanking(){
-  const { data: tournaments, error: te } = await supabase.from('tournaments').select('id,current_round,status');
+export async function getGlobalRanking(filters = {}){
+  let q = supabase.from('tournaments').select('id,current_round,status,format_key,edi_code');
+  if(filters.formatKey) q = q.eq('format_key', filters.formatKey);
+  if(filters.ediCode) q = q.eq('edi_code', filters.ediCode);
+  const { data: tournaments, error: te } = await q;
   if(te) throw te;
 
   const out = new Map();
