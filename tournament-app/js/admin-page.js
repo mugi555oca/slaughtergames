@@ -28,6 +28,7 @@ async function renderOverview(){
       <td>${fmtDate(t.created_at)}</td>
       <td>
         <button data-archive="${t.id}" class="warn">Archivieren</button>
+        <button data-delete="${t.id}" class="danger">Löschen</button>
         <a href="./round.html?tournament=${t.id}"><button>Öffnen</button></a>
       </td>
     `;
@@ -41,6 +42,18 @@ async function renderOverview(){
       if(!ok) return;
       const { error } = await supabase.from('tournaments').update({ status: 'finished' }).eq('id', id);
       $('adminMsg').textContent = error ? error.message : 'Turnier archiviert.';
+      await renderOverview();
+    });
+  });
+
+  host.querySelectorAll('button[data-delete]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-delete');
+      const ok = confirm('Turnier wirklich endgültig löschen? Dieser Vorgang ist irreversibel.');
+      if(!ok) return;
+
+      const { error } = await supabase.from('tournaments').delete().eq('id', id);
+      $('adminMsg').textContent = error ? error.message : 'Turnier gelöscht.';
       await renderOverview();
     });
   });
