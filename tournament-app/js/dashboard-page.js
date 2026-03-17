@@ -33,6 +33,21 @@ function profileLink(name){
   return `<a href="../player-profile.html?slug=${encodeURIComponent(slug)}">${name}</a>`;
 }
 
+function ensureShubeOption(selectId){
+  const sel = $(selectId);
+  if(!sel) return;
+  const has = [...sel.options].some(o => o.value === 'shube');
+  if(has) return;
+
+  const opt = document.createElement('option');
+  opt.value = 'shube';
+  opt.textContent = 'Shube';
+
+  const other = [...sel.options].find(o => o.value === 'other-cube');
+  if(other) sel.insertBefore(opt, other);
+  else sel.appendChild(opt);
+}
+
 function formatLabel(key){
   const map = {
     'aktuelle-edi':'Aktuelle Edi',
@@ -205,6 +220,9 @@ async function init(){
   }catch{}
 
   let currentSeating = [];
+
+  ensureShubeOption('tFormat');
+  ensureShubeOption('globalFormatFilter');
 
   $('tFormat').addEventListener('change', () => {
     const isEdi = $('tFormat').value === 'aktuelle-edi';
