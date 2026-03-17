@@ -179,6 +179,12 @@ async function init(){
   const user = await requireAuthOrRedirect();
   if(!user) return;
 
+  try{
+    const pr = await fetch('./player_profiles.json', { cache:'no-store' });
+    const arr = await pr.json();
+    profileSlugByName = Object.fromEntries(arr.map(x => [x.name, x.slug]));
+  }catch{}
+
   currentTournamentId = qParam('tournament');
   if(!currentTournamentId){ setMsg('Kein Turnier gewählt.'); return; }
 
@@ -233,5 +239,8 @@ async function init(){
 
   await refreshAll();
 }
+
+init();
+
 
 init();

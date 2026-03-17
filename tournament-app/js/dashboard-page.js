@@ -25,6 +25,14 @@ function shuffle(arr){
   return a;
 }
 
+let profileSlugByName = {};
+
+function profileLink(name){
+  const slug = profileSlugByName[name];
+  if(!slug) return name;
+  return `<a href="../player-profile.html?slug=${encodeURIComponent(slug)}">${name}</a>`;
+}
+
 function formatLabel(key){
   const map = {
     'aktuelle-edi':'Aktuelle Edi',
@@ -163,7 +171,7 @@ async function refreshGlobalRanking(){
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${idx+1}</td>
-      <td>${r.name}</td>
+      <td>${profileLink(r.name)}</td>
       <td>${r.totalMatchPoints}</td>
       <td>${r.totalTournaments}</td>
     `;
@@ -189,6 +197,11 @@ async function init(){
 
   const profiles = await loadPlayerProfiles();
   buildPlayerSelectors(profiles);
+  try{
+    const pr = await fetch('./player_profiles.json', { cache:'no-store' });
+    const arr = await pr.json();
+    profileSlugByName = Object.fromEntries(arr.map(x => [x.name, x.slug]));
+  }catch{}
 
   let currentSeating = [];
 

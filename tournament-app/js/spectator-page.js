@@ -58,7 +58,7 @@ async function render(tournamentId){
   body.innerHTML = standings.map((s, idx) => `
     <tr>
       <td>${idx+1}</td>
-      <td>${s.name}</td>
+      <td>${profileLink(s.name)}</td>
       <td>${recordOf(s)}</td>
       <td>${s.matchPoints}</td>
       <td>${formatPct(s.omw)}</td>
@@ -71,6 +71,12 @@ async function render(tournamentId){
 }
 
 async function init(){
+  try{
+    const pr = await fetch('./player_profiles.json', { cache:'no-store' });
+    const arr = await pr.json();
+    profileSlugByName = Object.fromEntries(arr.map(x => [x.name, x.slug]));
+  }catch{}
+
   const tournamentId = qParam('tournament');
   if(!tournamentId){ $('sMeta').textContent = 'Kein Turnier gewählt.'; return; }
 
@@ -79,6 +85,13 @@ async function init(){
   supabase
     .channel(`spectator-${tournamentId}`)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'matches', filter: `tournament_id=eq.${tournamentId}` }, async () => {
+      await render(tournamentId);
+    })
+    .subscribe();
+}
+
+init();
+('postgres_changes', { event: '*', schema: 'public', table: 'matches', filter: `tournament_id=eq.${tournamentId}` }, async () => {
       await render(tournamentId);
     })
     .subscribe();
