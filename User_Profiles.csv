@@ -1,22 +1,22 @@
-Name,Real Name,Login,Passwort,Rechte,Äxte,Abzeichen,SG Teilnahmen ,Beschreibung,Profilbild
-"Burni, the Voracious Weeder",Burni,Burni,timewalk,"Turniere Erstellen, Turniere Einsehen",MMCC,TD,5,"Immer dicht, immer gut!",Burni_1.png
-"Thiny Skinny Vince, the Escalating One",Vinc,Vinc,timewalk,"Turniere Erstellen, Turniere Einsehen",MRMR,"PQ, PQ",5,"SG GOAT, maximal kompetitiv, eskaliert komplett – guter Mann.",Vinc_1.png
-Substitute Simon,Simon,Simon,timewalk,"Turniere Erstellen, Turniere Einsehen",U,KC,3,"Der Arzt, dem die Magic-Spieler vertrauen.",Simon_1.png
-Papa of Runes,Silvio,Silvio,timewalk,"Turniere Erstellen, Turniere Einsehen",URC,"KC, KC, KC",4,"Granddaddy of Magic – alt, aber reift noch gut.",Silvio_1.png
-"Felix, the Great Conceder",Felix,Felix,timewalk,"Turniere Erstellen, Turniere Einsehen",CCM,"ÜN, ÜN",5,"Wenn er nicht aufgibt, gewinnt er.",Felix_1.png
-"David, Ride-Power IX",David,David,timewalk,"Turniere Erstellen, Turniere Einsehen",UUU,"ÜL, GM",3,Der ewige Dritte. Gelbe Shirts im Siegerfoto? Einfach gejinxt.,David_1.png
-"Ivo, the Whining One",Ivo,Ivo,timewalk,"Turniere Erstellen, Turniere Einsehen",R,"BK, BK, BK",5,"Ivo, Master of Spelling und Lautstärke – bester Barkeeper.",Ivo_1.png
-"Niki-Jiki, Mirror Faker",Niki,Niki,timewalk,"Turniere Erstellen, Turniere Einsehen",,"PQ, PQ",4,"Niki – früher scheiße, jetzt über dem Durchschnitt.",Niki_1.png
-"Ostibot, from another Kingdom",Osti,Osti,timewalk,"Turniere Erstellen, Turniere Einsehen",,PQ,5,Osti – Mittelfeld ist sein Kingdom.,Osti_1.png
-"Ulamugi, the Great Highländer Dumper",Mugi,maugi555@gmail,Schnecke555,"Admin: Alles (Turniere Erstellen, Turniere Einsehen, Truniere löschen etc.)",,"FF, TD, SM, SM, SM, SM, SM",5,Founding Father of Slaughter Games – Legende und Kellerfighter.,Mugi_1.png
-"Fridi, Master of (A)Ether Waves",Frido,Frido,timewalk,"Turniere Erstellen, Turniere Einsehen",,"ÜN, ÜN, ME, ME, ME, ME",5,"Surfer Boy – hübsch, gibt auch völlig dicht nicht auf.",Frido_1.png
-Mutscho Gusto,Luki,Luki,timewalk,"Turniere Erstellen, Turniere Einsehen",,,3,"Tree4one-Mann – Mittelfeldkämpfer, schnuppert manchmal an den Topplätzen.",Luki_1.png
-Leogoyf,Leo,Leo,timewalk,"Turniere Erstellen, Turniere Einsehen",,"KC, GM",3,"Grillmeister, OG-SG, Logo-Creator – absolute Legende, guter Mann.",Leo_1.png
-Saint Slow Paul III,Paul,Paul,timewalk,"Turniere Erstellen, Turniere Einsehen",,SP,2,Der Albtraum – man wird gesoykat!,Paul_1.png
-Bouncer,Wenzl,Wenzl,timewalk,"Turniere Erstellen, Turniere Einsehen",,,2,"Wenzel – GP-Winner, deutsche Magic-Legende.",Wenzl_1.png
-"Heber, the Pipe Smoking Beardo",Heber,Heber,timewalk,"Turniere Erstellen, Turniere Einsehen",R,,4,"Heber – ein Reisender, künftiger Kanzler (so hofft man).",Heber_1.png
-"Johann, Aprentice Sorcerer",Hansi,Hansi,timewalk,"Turniere Erstellen, Turniere Einsehen",,,1,"Hansi – Three4One-Mann, Izzet forever.",Hansi_1.png
-Evil Twin,Fabi,Fabi,timewalk,"Turniere Erstellen, Turniere Einsehen",,,1,"Fabi – kommt aus einer GP-winning Familie, die Gene hätte er.",Fabi_1.png
-Aetherwuzl Marvelking,Marc,Marc,timewalk,"Turniere Erstellen, Turniere Einsehen",,,1,Marc – Meister des Wuzels und Salzburger Magic-Legende.,Marc_1.png
-Raul Passion,Raul,Raul,timewalk,"Turniere Erstellen, Turniere Einsehen",,,4,Von Reschen wird man verdreschen – oft.,Raul_1.png
-Sash a Cubic Check,Sasha,Sasha,timewalk,"Turniere Erstellen, Turniere Einsehen",,,2,Sascha – baut ein Haus und ist raus.,Sasha_1.png
+Name,Real Name,Login,Passwort,Rechte,SG1  Äxt,SG2  Äxt,SG3  Äxt,SG4  Äxt,SG5 Äxt,Abzeichen,SG Teilnahmen ,Beschreibung,Profilbild
+"Burni, the Voracious Weeder",Burni,Burni,timewalk,"Turniere Erstellen, Turniere Einsehen",,M,M,C,C,TD,SG1-5,"Immer dicht, immer gut!",Burni_1.png
+"Thiny Skinny Vince, the Escalating One",Vinc,Vinc,timewalk,"Turniere Erstellen, Turniere Einsehen",M,,R,M,R,"PQ, PQ",SG1-5,"SG GOAT, maximal kompetitiv, eskaliert komplett – guter Mann.",Vinc_1.png
+Substitute Simon,Simon,Simon,timewalk,"Turniere Erstellen, Turniere Einsehen",,U,,,,KC,"SG1,2,5","Der Arzt, dem die Magic-Spieler vertrauen.",Simon_1.png
+Papa of Runes,Silvio,Silvio,timewalk,"Turniere Erstellen, Turniere Einsehen",U,,C,R,,"KC, KC, KC","SG1,3,4,5","Granddaddy of Magic – alt, aber reift noch gut.",Silvio_1.png
+"Felix, the Great Conceder",Felix,Felix,timewalk,"Turniere Erstellen, Turniere Einsehen",C,C,,,M,"ÜN, ÜN",SG1-5,"Wenn er nicht aufgibt, gewinnt er.",Felix_1.png
+"David, Ride-Power IX",David,David,timewalk,"Turniere Erstellen, Turniere Einsehen",,,U,U,U,"ÜL, GM","SG3,4,5",Der ewige Dritte. Gelbe Shirts im Siegerfoto? Einfach gejinxt.,David_1.png
+"Ivo, the Whining One",Ivo,Ivo,timewalk,"Turniere Erstellen, Turniere Einsehen",R,,,,,"BK, BK, BK",SG1-5,"Ivo, Master of Spelling und Lautstärke – bester Barkeeper.",Ivo_1.png
+"Niki-Jiki, Mirror Faker",Niki,Niki,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,"PQ, PQ",SG1-5,"Niki – früher scheiße, jetzt über dem Durchschnitt.",Niki_1.png
+"Ostibot, from another Kingdom",Osti,Osti,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,PQ,SG1-5,Osti – Mittelfeld ist sein Kingdom.,Osti_1.png
+"Ulamugi, the Great Highländer Dumper",Mugi,maugi555@gmail,Schnecke555,"Admin: Alles (Turniere Erstellen, Turniere Einsehen, Truniere löschen etc.)",,,,,,"FF, TD, SM, SM, SM, SM, SM",SG1-5,Founding Father of Slaughter Games – Legende und Kellerfighter.,Mugi_1.png
+"Fridi, Master of (A)Ether Waves",Frido,Frido,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,"ÜN, ÜN, ME, ME, ME, ME","SG2,3,4,5","Surfer Boy – hübsch, gibt auch völlig dicht nicht auf.",Frido_1.png
+Mutscho Gusto,Luki,Luki,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,"SG3,4,5","Tree4one-Mann – Mittelfeldkämpfer, schnuppert manchmal an den Topplätzen.",Luki_1.png
+Leogoyf,Leo,Leo,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,"KC, GM","SG1,2","Grillmeister, OG-SG, Logo-Creator – absolute Legende, guter Mann.",Leo_1.png
+Saint Slow Paul III,Paul,Paul,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,SP,"SG3,4,5",Der Albtraum – man wird gesoykat!,Paul_1.png
+Bouncer,Wenzl,Wenzl,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,"SG4,5","Wenzel – GP-Winner, deutsche Magic-Legende.",Wenzl_1.png
+"Heber, the Pipe Smoking Beardo",Heber,Heber,timewalk,"Turniere Erstellen, Turniere Einsehen",,R,,,,,"SG2,3,4,5","Heber – ein Reisender, künftiger Kanzler (so hofft man).",Heber_1.png
+"Johann, Aprentice Sorcerer",Hansi,Hansi,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,SG5,"Hansi – Three4One-Mann, Izzet forever.",Hansi_1.png
+Evil Twin,Fabi,Fabi,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,SG5,"Fabi – kommt aus einer GP-winning Familie, die Gene hätte er.",Fabi_1.png
+Aetherwuzl Marvelking,Marc,Marc,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,SG5,Marc – Meister des Wuzels und Salzburger Magic-Legende.,Marc_1.png
+Raul Passion,Raul,Raul,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,"SG2,3,4",Von Reschen wird man verdreschen – oft.,Raul_1.png
+Sash a Cubic Check,Sasha,Sasha,timewalk,"Turniere Erstellen, Turniere Einsehen",,,,,,,"SG3,4",Sascha – baut ein Haus und ist raus.,Sasha_1.png
