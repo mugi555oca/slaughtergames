@@ -23,6 +23,51 @@ let playerNameById = {};
 function setMsg(text){ $('roundMsg').textContent = text || ''; }
 function recordOf(s){ return `${s.wins}-${s.losses}-${s.draws}`; }
 
+function nextRoundContext(tournament){
+  const currentRound = Number(tournament.current_round) || 0;
+  const roundsTotal = Number(tournament.rounds_total) || 0;
+  const nextRoundNo = currentRound + 1;
+  const isFinalUpcoming = nextRoundNo === roundsTotal;
+  return { currentRound, roundsTotal, nextRoundNo, isFinalUpcoming };
+}
+
+function updateFinalRoundModeUi(tournament){
+  const sel = $('finalRoundMode');
+  const hint = $('finalRoundModeHint');
+  if(!sel || !hint) return;
+
+  const { currentRound, nextRoundNo, roundsTotal, isFinalUpcoming } = nextRoundContext(tournament);
+  const round3Only = roundsTotal === 3;
+
+  if(tournament.status === 'finished'){
+    sel.value = 'swiss';
+    sel.disabled = true;
+    hint.textContent = 'Turnier ist abgeschlossen.';
+    return;
+  }
+
+  if(currentRound >= roundsTotal){
+    sel.value = 'swiss';
+    sel.disabled = true;
+    hint.textContent = 'Finalrunde wurde bereits erzeugt.';
+    return;
+  }
+
+  if(!isFinalUpcoming){
+    sel.value = 'swiss';
+    sel.disabled = true;
+    hint.textContent = `Auswahl aktiv vor der Finalrunde (nächste Runde ist ${nextRoundNo}/${roundsTotal}).`;
+    return;
+  }
+
+  sel.disabled = false;
+  if(round3Only){
+    hint.textContent = 'Finalrunde erkannt: Du kannst zwischen Standard Swiss und Bracket-Pairing wählen.';
+  } else {
+    hint.textContent = 'Bracket-Pairing ist auf den 3-Runden-Flow ausgelegt; bei anderen Rundenzahlen fällt das System auf Swiss zurück.';
+  }
+}
+
 function setBusy(button, busy=true, busyLabel='Bitte warten...'){
   if(!button) return;
   if(busy){
@@ -149,8 +194,12 @@ async function renderMatches(roundNo){
 async function refreshAll(){
   const bundle = await getTournamentBundle(currentTournamentId);
   const t = bundle.tournament;
+  const ctx = nextRoundContext(t);
+  const isFinished = t.status === 'finished';
+  const isRoundCapReached = ctx.currentRound >= ctx.roundsTotal;
+
   $('title').textContent = `${t.name} – Runde`;
-  $('roundNo').textContent = t.current_round || '-';
+  $('roundNo').textContent = ctx.currentRound || '-';
   $('openBracket').href = `./bracket.html?tournament=${currentTournamentId}`;
 
   const activePlayers = bundle.players.filter(p => !p.dropped).length;
@@ -160,30 +209,37 @@ async function refreshAll(){
 
   playerNameById = Object.fromEntries(bundle.players.map(p => [p.id, p.name]));
 
-  if(t.current_round === 0){
+  if(ctx.currentRound === 0){
     $('matchesBody').innerHTML = '<tr><td colspan="4">Noch keine Runde erzeugt.</td></tr>';
     $('kpiRoundState').textContent = 'Rundenstatus: noch nicht gestartet';
     $('pairingMeta').textContent = 'Sobald du Runde 1 erzeugst, siehst du hier Pairing-Hinweise.';
   } else {
-    const currentMatches = bundle.matches.filter(m => m.round_no === t.current_round);
+    const currentMatches = bundle.matches.filter(m => m.round_no === ctx.currentRound);
     const open = currentMatches.filter(m => m.result === 'pending').length;
     $('kpiRoundState').textContent = open > 0 ? `Rundenstatus: ${open} Ergebnis(se) offen` : 'Rundenstatus: vollständig';
     const byes = currentMatches.filter(m => m.is_bye).length;
-    $('pairingMeta').textContent = `Runde ${t.current_round}: ${currentMatches.length} Matches, ${byes} Bye(s).`;
-    await renderMatches(t.current_round);
+    $('pairingMeta').textContent = `Runde ${ctx.currentRound}: ${currentMatches.length} Matches, ${byes} Bye(s).`;
+    await renderMatches(ctx.currentRound);
   }
+
+  const nextRoundBtn = $('nextRoundBtn');
+  const finishTournamentBtn = $('finishTournamentBtn');
+
+  nextRoundBtn.disabled = isFinished || isRoundCapReached;
+  finishTournamentBtn.disabled = isFinished || !isRoundCapReached;
+
+  if(isFinished){
+    $('kpiRoundState').textContent = 'Rundenstatus: Turnier abgeschlossen';
+    setMsg('Turnier ist bereits abgeschlossen.');
+  }
+
+  updateFinalRoundModeUi(t);
   await renderStandings();
 }
 
 async function init(){
   const user = await requireAuthOrRedirect();
   if(!user) return;
-
-  try{
-    const pr = await fetch('./player_profiles.json', { cache:'no-store' });
-    const arr = await pr.json();
-    profileSlugByName = Object.fromEntries(arr.map(x => [x.name, x.slug]));
-  }catch{}
 
   currentTournamentId = qParam('tournament');
   if(!currentTournamentId){ setMsg('Kein Turnier gewählt.'); return; }
@@ -192,11 +248,23 @@ async function init(){
     const btn = $('nextRoundBtn');
     setBusy(btn, true, 'Generiere...');
     try{
-      const gen = await generateNextRound(currentTournamentId);
-      const note = gen.rematchCount > 0
-        ? `Runde ${gen.roundNo} erzeugt. Achtung: ${gen.rematchCount} Rematch(es) unvermeidbar (Tisch ${gen.rematchTables.join(', ')}).`
-        : `Runde ${gen.roundNo} erzeugt.`;
-      setMsg(note);
+      const bundleBefore = await getTournamentBundle(currentTournamentId);
+      const ctxBefore = nextRoundContext(bundleBefore.tournament);
+      const selectedFinalMode = $('finalRoundMode')?.value === 'bracket' ? 'bracket' : 'swiss';
+
+      if(bundleBefore.tournament.status === 'finished') throw new Error('Turnier ist bereits abgeschlossen.');
+      if(ctxBefore.currentRound >= ctxBefore.roundsTotal) throw new Error('Maximale Rundenzahl erreicht.');
+
+      const gen = await generateNextRound(currentTournamentId, {
+        finalRoundMode: ctxBefore.isFinalUpcoming ? selectedFinalMode : 'swiss'
+      });
+
+      const notes = [];
+      if(gen.rematchCount > 0) notes.push(`Achtung: ${gen.rematchCount} Rematch(es) unvermeidbar (Tisch ${gen.rematchTables.join(', ')}).`);
+      if(gen.finalRoundModeUsed) notes.push(`Finalrunde Modus: ${gen.finalRoundModeUsed}${gen.finalRoundModeRequested && gen.finalRoundModeRequested !== gen.finalRoundModeUsed ? ` (angefragt: ${gen.finalRoundModeRequested})` : ''}.`);
+      if(Array.isArray(gen.pairingNotes) && gen.pairingNotes.length) notes.push(gen.pairingNotes.join(' | '));
+
+      setMsg(notes.length ? `Runde ${gen.roundNo} erzeugt. ${notes.join(' ')}` : `Runde ${gen.roundNo} erzeugt.`);
       await refreshAll();
     }catch(err){ setMsg(err.message); }
     finally{ setBusy(btn, false); }
@@ -214,6 +282,24 @@ async function init(){
   });
 
   $('finishTournamentBtn').addEventListener('click', async () => {
+    try{
+      const bundleBefore = await getTournamentBundle(currentTournamentId);
+      const ctxBefore = nextRoundContext(bundleBefore.tournament);
+
+      if(bundleBefore.tournament.status === 'finished'){
+        setMsg('Turnier ist bereits abgeschlossen.');
+        return;
+      }
+
+      if(ctxBefore.currentRound < ctxBefore.roundsTotal){
+        setMsg(`Turnier kann erst nach Runde ${ctxBefore.roundsTotal} abgeschlossen werden (aktuell: ${ctxBefore.currentRound}/${ctxBefore.roundsTotal}).`);
+        return;
+      }
+    }catch(err){
+      setMsg(err.message);
+      return;
+    }
+
     const ok = confirm('Turnier wirklich abschließen? Danach werden keine neuen Runden mehr erzeugt.');
     if(!ok) return;
 
@@ -239,8 +325,5 @@ async function init(){
 
   await refreshAll();
 }
-
-init();
-
 
 init();

@@ -33,13 +33,21 @@
           <tbody id="matchesBody"></tbody>
         </table>
       </div>
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <label for="finalRoundMode" class="helper">Finalrunde Pairing-Modus</label><br />
+          <select id="finalRoundMode">
+            <option value="swiss" selected>Standard Swiss</option>
+            <option value="bracket">Bracket-Pairing (Runde 3)</option>
+          </select>
+        </div>
         <button id="finalizeRoundBtn" class="success">Runde finalisieren</button>
         <button id="nextRoundBtn">Nächste Runde generieren</button>
         <button id="finishTournamentBtn" class="warn">Turnier abschließen</button>
         <button id="exportCsvBtn" class="secondary">CSV Export</button>
         <button id="exportPdfBtn" class="secondary">PDF Export (Print)</button>
       </div>
+      <p id="finalRoundModeHint" class="helper"></p>
       <p id="roundMsg" class="muted"></p>
     </section>
 

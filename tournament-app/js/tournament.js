@@ -143,6 +143,145 @@ function swissPairings(players, playedSet, avoidRematches=true){
   return { pairs: outPairs, leftover: floater, rematches: totalRematches, explored: exploredNodes };
 }
 
+function pairGroupWithFallback(group, playedSet, avoidRematches=true){
+  if(!group || group.length === 0) return { pairs: [], floater: null, rematches: 0, explored: 0, usedRematchFallback: false };
+
+  let paired = pairGroupWithFloater(group, playedSet, avoidRematches);
+  let usedRematchFallback = false;
+
+  if(!paired && avoidRematches){
+    paired = pairGroupWithFloater(group, playedSet, false);
+    usedRematchFallback = Boolean(paired);
+  }
+
+  if(!paired) return null;
+  return { ...paired, usedRematchFallback };
+}
+
+function buildRoundOutcomeMap(matches, upToRoundNo){
+  const out = {};
+
+  const ensure = (pid) => {
+    if(!out[pid]) out[pid] = {};
+  };
+
+  for(const m of matches.filter(x => x.round_no <= upToRoundNo && x.result !== 'pending')){
+    if(m.is_bye){
+      ensure(m.player_a_id);
+      out[m.player_a_id][m.round_no] = 'W';
+      continue;
+    }
+
+    const res = RESULT_TO_MATCH[m.result];
+    if(!res) continue;
+
+    ensure(m.player_a_id);
+    ensure(m.player_b_id);
+    out[m.player_a_id][m.round_no] = res.a;
+    out[m.player_b_id][m.round_no] = res.b;
+  }
+
+  return out;
+}
+
+function bracketFinalRoundPairings(pool, standings, matches, playedSet, avoidRematches=true){
+  const standingsById = Object.fromEntries(standings.map(s => [s.id, s]));
+  const orderIndex = Object.fromEntries(standings.map((s, idx) => [s.id, idx]));
+
+  const sortByStanding = (arr) => [...arr].sort((a,b) => (orderIndex[a.id] ?? 9999) - (orderIndex[b.id] ?? 9999));
+  const pointsOf = (playerId) => standingsById[playerId]?.matchPoints ?? 0;
+
+  const bracket20 = sortByStanding(pool.filter(p => pointsOf(p.id) === 6));
+  const bracket11 = sortByStanding(pool.filter(p => pointsOf(p.id) === 3));
+  const bracket02 = sortByStanding(pool.filter(p => pointsOf(p.id) === 0));
+  const outsideBrackets = sortByStanding(pool.filter(p => ![6,3,0].includes(pointsOf(p.id))));
+
+  const outcomes = buildRoundOutcomeMap(matches, 2);
+  const oneOneWL = [];
+  const oneOneLW = [];
+  const oneOneOther = [];
+
+  for(const p of bracket11){
+    const r1 = outcomes[p.id]?.[1];
+    const r2 = outcomes[p.id]?.[2];
+    if(r1 === 'W' && r2 === 'L') oneOneWL.push(p);
+    else if(r1 === 'L' && r2 === 'W') oneOneLW.push(p);
+    else oneOneOther.push(p);
+  }
+
+  const top = pairGroupWithFallback(bracket20, playedSet, avoidRematches);
+  const bottom = pairGroupWithFallback(bracket02, playedSet, avoidRematches);
+  const wl = pairGroupWithFallback(oneOneWL, playedSet, avoidRematches);
+  const lw = pairGroupWithFallback(oneOneLW, playedSet, avoidRematches);
+
+  if(!top || !bottom || !wl || !lw){
+    const fallbackSwiss = swissPairings(pool, playedSet, avoidRematches);
+    return {
+      ...fallbackSwiss,
+      mode: 'swiss',
+      notes: ['Bracket-Fallback auf Standard-Swiss (keine stabile Bracket-Lösung gefunden).']
+    };
+  }
+
+  const pairs = [...top.pairs, ...bottom.pairs, ...wl.pairs, ...lw.pairs];
+  let rematches = top.rematches + bottom.rematches + wl.rematches + lw.rematches;
+  let explored = (top.explored || 0) + (bottom.explored || 0) + (wl.explored || 0) + (lw.explored || 0);
+
+  const midCarry = sortByStanding([
+    ...(wl.floater ? [wl.floater] : []),
+    ...(lw.floater ? [lw.floater] : []),
+    ...oneOneOther
+  ]);
+
+  const crossCarry = sortByStanding([
+    ...(top.floater ? [top.floater] : []),
+    ...(bottom.floater ? [bottom.floater] : []),
+    ...outsideBrackets
+  ]);
+
+  if(midCarry.length){
+    const midPairing = pairGroupWithFallback(midCarry, playedSet, avoidRematches);
+    if(!midPairing){
+      const fallbackSwiss = swissPairings(pool, playedSet, avoidRematches);
+      return {
+        ...fallbackSwiss,
+        mode: 'swiss',
+        notes: ['Bracket-Fallback auf Standard-Swiss (1:1-Restpool konnte nicht gepaart werden).']
+      };
+    }
+    pairs.push(...midPairing.pairs);
+    rematches += midPairing.rematches;
+    explored += (midPairing.explored || 0);
+    if(midPairing.floater) crossCarry.push(midPairing.floater);
+  }
+
+  const sortedCrossCarry = sortByStanding(crossCarry);
+  if(sortedCrossCarry.length){
+    const crossSwiss = swissPairings(sortedCrossCarry, playedSet, avoidRematches);
+    if(crossSwiss.leftover){
+      const fallbackSwiss = swissPairings(pool, playedSet, avoidRematches);
+      return {
+        ...fallbackSwiss,
+        mode: 'swiss',
+        notes: ['Bracket-Fallback auf Standard-Swiss (Cross-Bracket-Rest blieb übrig).']
+      };
+    }
+    pairs.push(...crossSwiss.pairs);
+    rematches += crossSwiss.rematches;
+    explored += (crossSwiss.explored || 0);
+  }
+
+  const notes = [];
+  if(top.floater) notes.push(`2:0 Floater: ${top.floater.name}`);
+  if(bottom.floater) notes.push(`0:2 Floater: ${bottom.floater.name}`);
+  if(wl.floater) notes.push(`1:1 W-L Floater: ${wl.floater.name}`);
+  if(lw.floater) notes.push(`1:1 L-W Floater: ${lw.floater.name}`);
+  if(oneOneOther.length) notes.push(`1:1 Sonstige: ${oneOneOther.map(p => p.name).join(', ')}`);
+  if(outsideBrackets.length) notes.push(`Außerhalb 2:0/1:1/0:2: ${outsideBrackets.map(p => p.name).join(', ')}`);
+
+  return { pairs, leftover: null, rematches, explored, mode: 'bracket', notes };
+}
+
 export async function createTournament(ownerId, payload){
   const { data: tRows, error: tErr } = await supabase
     .from('tournaments')
@@ -257,19 +396,22 @@ export async function generateNextRound(tournamentId, options = {}){
   const bundle = await getTournamentBundle(tournamentId);
   const t = bundle.tournament;
 
-  if(t.status !== 'active') throw new Error('Turnier ist bereits abgeschlossen.');
-  if(t.current_round >= t.rounds_total) throw new Error('Maximale Rundenzahl erreicht.');
+  const currentRound = Number(t.current_round) || 0;
+  const roundsTotal = Number(t.rounds_total) || 0;
 
-  if(t.current_round > 0){
-    const currentMatches = bundle.matches.filter(m => m.round_no === t.current_round);
+  if(t.status !== 'active') throw new Error('Turnier ist bereits abgeschlossen.');
+  if(currentRound >= roundsTotal) throw new Error('Maximale Rundenzahl erreicht.');
+
+  if(currentRound > 0){
+    const currentMatches = bundle.matches.filter(m => m.round_no === currentRound);
     if(currentMatches.some(m => m.result === 'pending')) throw new Error('Nicht alle Ergebnisse der aktuellen Runde sind eingetragen.');
   }
 
   const activePlayers = bundle.players.filter(p => !p.dropped);
   if(activePlayers.length < 2) throw new Error('Zu wenige aktive Spieler.');
 
-  const roundNo = t.current_round + 1;
-  const standings = buildStandings(bundle.players, bundle.matches, t.current_round);
+  const roundNo = currentRound + 1;
+  const standings = buildStandings(bundle.players, bundle.matches, currentRound);
   const playedSet = new Set(bundle.opps.map(o => `${o.player_id}::${o.opponent_id}`));
 
   let pool = roundNo === 1
@@ -294,6 +436,12 @@ export async function generateNextRound(tournamentId, options = {}){
     pool = pool.filter(p => p.id !== byePlayer.id);
   }
 
+  const requestedFinalRoundMode = options.finalRoundMode === 'bracket' ? 'bracket' : 'swiss';
+  const isFinalRound = roundNo === roundsTotal;
+
+  let pairingModeUsed = 'swiss';
+  let pairingNotes = [];
+
   const pairingResult = roundNo === 1
     ? { pairs: (() => {
         const out=[];
@@ -308,8 +456,24 @@ export async function generateNextRound(tournamentId, options = {}){
           for(let i=0;i<pool.length;i+=2) out.push([pool[i],pool[i+1]]);
         }
         return out;
-      })(), leftover: null }
-    : swissPairings(pool, playedSet, t.avoid_rematches);
+      })(), leftover: null, mode: firstRoundMode }
+    : (() => {
+        if(isFinalRound && requestedFinalRoundMode === 'bracket'){
+          if(roundNo !== 3){
+            const fallback = swissPairings(pool, playedSet, t.avoid_rematches);
+            return {
+              ...fallback,
+              mode: 'swiss',
+              notes: ['Bracket-Pairing ist aktuell für Runde 3 (3-Runden-Flow) ausgelegt – Swiss wurde verwendet.']
+            };
+          }
+          return bracketFinalRoundPairings(pool, standings, bundle.matches, playedSet, t.avoid_rematches);
+        }
+        return swissPairings(pool, playedSet, t.avoid_rematches);
+      })();
+
+  pairingModeUsed = pairingResult?.mode || 'swiss';
+  pairingNotes = pairingResult?.notes || [];
 
   const { pairs, leftover } = pairingResult;
   if(leftover) throw new Error('Konnte keine gültige Paarung erzeugen.');
@@ -359,7 +523,10 @@ export async function generateNextRound(tournamentId, options = {}){
     rematchTables,
     rematchCount: rematchTables.length,
     pairingExploredNodes: pairingResult?.explored || 0,
-    firstRoundMode: roundNo === 1 ? firstRoundMode : 'swiss'
+    firstRoundMode: roundNo === 1 ? firstRoundMode : 'swiss',
+    finalRoundModeRequested: isFinalRound ? requestedFinalRoundMode : null,
+    finalRoundModeUsed: isFinalRound ? pairingModeUsed : null,
+    pairingNotes
   };
 }
 
@@ -392,14 +559,33 @@ export async function getLiveStandings(tournamentId){
 
 export async function finishTournament(tournamentId){
   const bundle = await getTournamentBundle(tournamentId);
-  const roundNo = bundle.tournament.current_round;
+  const roundNo = Number(bundle.tournament.current_round) || 0;
+  const roundsTotal = Number(bundle.tournament.rounds_total) || 0;
+
+  if(bundle.tournament.status === 'finished') return;
+  if(roundNo < roundsTotal) throw new Error(`Turnier kann erst nach Runde ${roundsTotal} abgeschlossen werden (aktuell: ${roundNo}/${roundsTotal}).`);
+
   if(roundNo > 0){
     const roundMatches = bundle.matches.filter(m => m.round_no === roundNo);
     if(roundMatches.some(m => m.result === 'pending')) throw new Error('Aktuelle Runde ist noch nicht vollständig.');
     const standings = buildStandings(bundle.players, bundle.matches, roundNo);
     await saveRoundSnapshot(tournamentId, roundNo, standings);
+
+    const round = bundle.rounds.find(r => r.round_no === roundNo);
+    if(round && !round.finalized_at){
+      const { error: roundErr } = await supabase
+        .from('rounds')
+        .update({ finalized_at: new Date().toISOString() })
+        .eq('id', round.id);
+      if(roundErr) throw roundErr;
+    }
   }
-  const { error } = await supabase.from('tournaments').update({ status: 'finished' }).eq('id', tournamentId);
+
+  const { error } = await supabase
+    .from('tournaments')
+    .update({ status: 'finished' })
+    .eq('id', tournamentId)
+    .neq('status', 'finished');
   if(error) throw error;
 }
 
