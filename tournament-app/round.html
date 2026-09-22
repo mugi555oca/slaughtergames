@@ -52,6 +52,45 @@
     </section>
 
     <section class="card">
+      <h2>Ergebnis-Korrektur</h2>
+      <p class="muted">
+        Ergebnisse nachtr&auml;glich richtigstellen &ndash; auch f&uuml;r bereits finalisierte Runden
+        und abgeschlossene Turniere. Standings und Tiebreaker werden danach automatisch neu gerechnet.
+      </p>
+      <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div>
+          <label for="correctionRound" class="helper">Runde ausw&auml;hlen</label>
+          <select id="correctionRound"></select>
+        </div>
+        <button id="loadCorrectionBtn" class="secondary">Runde laden</button>
+        <button id="reopenTournamentBtn" class="warn">Turnier wieder &ouml;ffnen</button>
+      </div>
+
+      <p id="correctionState" class="helper"></p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tisch</th><th>Spieler A</th><th>Spieler B</th><th>Ergebnis</th></tr></thead>
+          <tbody id="correctionBody">
+            <tr><td colspan="4" class="muted">Runde w&auml;hlen und laden.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="repairBox" class="hidden" style="margin-top:12px;padding:12px;border-radius:8px;background:rgba(255,180,0,.12)">
+        <p class="helper" style="margin:0 0 8px">
+          <b>Achtung:</b> Die Paarungen der folgenden Runden wurden mit den <i>alten</i> Ergebnissen
+          ausgelost. Sie bleiben so stehen &ndash; korrigiert werden nur Punkte, Tiebreaker und Platzierung.
+          Wenn ab hier auch neu ausgelost werden soll, l&ouml;scht der Button alle sp&auml;teren Runden
+          <b>samt deren Ergebnissen</b>.
+        </p>
+        <button id="repairRoundsBtn" class="danger">Runden nach dieser l&ouml;schen &amp; neu auslosen</button>
+      </div>
+
+      <p id="correctionMsg" class="muted"></p>
+    </section>
+
+    <section class="card">
       <h2>Live Standings</h2>
       <div class="table-wrap">
         <table>

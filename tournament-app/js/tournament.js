@@ -589,6 +589,125 @@ export async function finishTournament(tournamentId){
   if(error) throw error;
 }
 
+// =====================================================================
+// Korrektur / Rueckfunktion
+// ---------------------------------------------------------------------
+// Standings werden immer aus `matches` neu berechnet - `player_round_stats`
+// ist nur ein Snapshot. Ein nachtraeglich korrigiertes Ergebnis muss diese
+// Snapshots deshalb neu schreiben, sonst bleiben abgeschlossene Runden und
+// das globale Ranking auf dem alten (falschen) Stand.
+// =====================================================================
+
+export async function listSnapshotRounds(tournamentId){
+  const { data, error } = await supabase
+    .from('player_round_stats')
+    .select('round_no')
+    .eq('tournament_id', tournamentId);
+  if(error) throw error;
+  return [...new Set((data || []).map(r => Number(r.round_no)))].sort((a,b) => a-b);
+}
+
+// Schreibt alle bereits vorhandenen Runden-Snapshots ab `fromRoundNo` neu.
+// Runden ohne Snapshot (= nie finalisiert) bleiben bewusst ohne Snapshot.
+export async function recomputeSnapshotsFrom(tournamentId, fromRoundNo = 1){
+  const from = Math.max(1, Number(fromRoundNo) || 1);
+  const bundle = await getTournamentBundle(tournamentId);
+  const snapshotRounds = (await listSnapshotRounds(tournamentId)).filter(r => r >= from);
+
+  for(const roundNo of snapshotRounds){
+    const standings = buildStandings(bundle.players, bundle.matches, roundNo);
+    await saveRoundSnapshot(tournamentId, roundNo, standings);
+  }
+  return snapshotRounds;
+}
+
+// Ergebnis nachtraeglich aendern - auch wenn die Runde finalisiert oder das
+// Turnier abgeschlossen ist. Danach werden die betroffenen Snapshots neu
+// berechnet. Die Pairings spaeterer Runden bleiben unangetastet; wer die
+// ebenfalls neu haben will, nutzt resetRoundsAfter().
+export async function correctMatchResult(matchId, result){
+  if(!RESULT_TO_MATCH[result]) throw new Error('Ungueltiges Ergebnis.');
+
+  const { data: match, error: mErr } = await supabase
+    .from('matches')
+    .select('id,tournament_id,round_no,is_bye,result')
+    .eq('id', matchId)
+    .single();
+  if(mErr) throw mErr;
+
+  if(match.is_bye && result !== 'BYE') throw new Error('Ein Bye kann nicht auf ein anderes Ergebnis geaendert werden.');
+  if(!match.is_bye && result === 'BYE') throw new Error('Nur ein Bye-Match kann das Ergebnis BYE haben.');
+
+  const previous = match.result;
+  if(previous === result) return { changed: false, tournamentId: match.tournament_id, roundNo: match.round_no, previous, result, refreshedRounds: [] };
+
+  const { error } = await supabase
+    .from('matches')
+    .update({ result, submitted_at: new Date().toISOString() })
+    .eq('id', matchId);
+  if(error) throw error;
+
+  const refreshedRounds = await recomputeSnapshotsFrom(match.tournament_id, match.round_no);
+  return { changed: true, tournamentId: match.tournament_id, roundNo: match.round_no, previous, result, refreshedRounds };
+}
+
+// Abgeschlossenes Turnier wieder oeffnen, damit korrigiert bzw. neu
+// ausgelost werden kann.
+export async function reopenTournament(tournamentId){
+  const { data, error } = await supabase
+    .from('tournaments')
+    .update({ status: 'active' })
+    .eq('id', tournamentId)
+    .select('id,status');
+  if(error) throw error;
+  if(!data || !data.length) throw new Error('Turnier konnte nicht wieder geoeffnet werden.');
+  return data[0];
+}
+
+// Loescht alle Runden NACH `keepThroughRoundNo` samt Matches, Gegner-Graph und
+// Snapshots, damit ab dort mit den korrigierten Ergebnissen neu ausgelost
+// werden kann. Destruktiv: die Ergebnisse dieser Runden sind danach weg.
+export async function resetRoundsAfter(tournamentId, keepThroughRoundNo){
+  const keep = Math.max(0, Number(keepThroughRoundNo) || 0);
+  const bundle = await getTournamentBundle(tournamentId);
+  const current = Number(bundle.tournament.current_round) || 0;
+  if(keep >= current) throw new Error(`Nach Runde ${keep} gibt es nichts zu loeschen (aktuell: Runde ${current}).`);
+
+  for(const table of ['player_round_stats', 'player_opponents', 'matches']){
+    const { error } = await supabase.from(table).delete().eq('tournament_id', tournamentId).gt('round_no', keep);
+    if(error) throw error;
+  }
+  const { error: rErr } = await supabase.from('rounds').delete().eq('tournament_id', tournamentId).gt('round_no', keep);
+  if(rErr) throw rErr;
+
+  // had_bye aus den verbliebenen Runden neu ableiten, sonst vergibt die
+  // naechste Auslosung das Bye an den Falschen.
+  const { data: byeMatches, error: bErr } = await supabase
+    .from('matches')
+    .select('player_a_id')
+    .eq('tournament_id', tournamentId)
+    .eq('is_bye', true);
+  if(bErr) throw bErr;
+
+  const byeIds = new Set((byeMatches || []).map(m => m.player_a_id).filter(Boolean));
+  for(const p of bundle.players){
+    const shouldHaveBye = byeIds.has(p.id);
+    if(Boolean(p.had_bye) !== shouldHaveBye){
+      const { error } = await supabase.from('players').update({ had_bye: shouldHaveBye }).eq('id', p.id);
+      if(error) throw error;
+    }
+  }
+
+  const { error: tErr } = await supabase
+    .from('tournaments')
+    .update({ current_round: keep, status: 'active' })
+    .eq('id', tournamentId);
+  if(tErr) throw tErr;
+
+  await recomputeSnapshotsFrom(tournamentId, 1);
+  return { keptThrough: keep, removedRounds: current - keep };
+}
+
 export async function setPlayerDropped(playerId, dropped=true){
   const { error } = await supabase.from('players').update({ dropped }).eq('id', playerId);
   if(error) throw error;

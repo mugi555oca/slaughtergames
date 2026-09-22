@@ -91,10 +91,3 @@ async function init(){
 }
 
 init();
-('postgres_changes', { event: '*', schema: 'public', table: 'matches', filter: `tournament_id=eq.${tournamentId}` }, async () => {
-      await render(tournamentId);
-    })
-    .subscribe();
-}
-
-init();

@@ -2,14 +2,16 @@ import { requireAuthOrRedirect } from './auth.js';
 import {
   getTournamentBundle,
   getRoundMatches,
-  submitMatchResult,
   finalizeCurrentRound,
   getLiveStandings,
   formatPct,
   finishTournament,
   setPlayerDropped,
   standingsToCsvRows,
-  generateNextRound
+  generateNextRound,
+  correctMatchResult,
+  resetRoundsAfter,
+  reopenTournament
 } from './tournament.js';
 
 function $(id){ return document.getElementById(id); }
@@ -19,8 +21,10 @@ const RESULTS = ['pending','2:0','2:1','1:2','0:2','1:1','1:0','0:1','0:0','ID']
 
 let currentTournamentId = null;
 let playerNameById = {};
+let correctionRoundNo = null;
 
 function setMsg(text){ $('roundMsg').textContent = text || ''; }
+function setCorrectionMsg(text){ $('correctionMsg').textContent = text || ''; }
 function recordOf(s){ return `${s.wins}-${s.losses}-${s.draws}`; }
 
 function nextRoundContext(tournament){
@@ -183,12 +187,101 @@ async function renderMatches(roundNo){
     sel.addEventListener('change', async () => {
       const id = sel.id.replace('res-','');
       try{
-        await submitMatchResult(id, sel.value);
-        setMsg('Ergebnis automatisch gespeichert.');
+        // correctMatchResult statt submitMatchResult: schreibt zusaetzlich die
+        // Snapshots nach, falls die Runde schon finalisiert war.
+        const res = await correctMatchResult(id, sel.value);
+        setMsg(res.refreshedRounds.length
+          ? `Ergebnis gespeichert. Snapshots neu gerechnet: Runde ${res.refreshedRounds.join(', ')}.`
+          : 'Ergebnis automatisch gespeichert.');
         await refreshAll();
       }catch(err){ setMsg(err.message); }
     });
   });
+}
+
+// ---------- Ergebnis-Korrektur ----------
+
+function updateCorrectionRoundOptions(tournament){
+  const sel = $('correctionRound');
+  if(!sel) return;
+
+  const total = Number(tournament.current_round) || 0;
+  const previous = correctionRoundNo ?? (Number(sel.value) || null);
+  sel.innerHTML = '';
+
+  for(let r = 1; r <= total; r++){
+    const opt = document.createElement('option');
+    opt.value = String(r);
+    opt.textContent = `Runde ${r}`;
+    sel.appendChild(opt);
+  }
+
+  sel.disabled = total === 0;
+  if(total === 0){
+    $('correctionState').textContent = 'Noch keine Runde gespielt.';
+    return;
+  }
+  if(previous && previous <= total) sel.value = String(previous);
+}
+
+async function renderCorrectionRound(roundNo){
+  const body = $('correctionBody');
+  const bundle = await getTournamentBundle(currentTournamentId);
+  const matches = await getRoundMatches(currentTournamentId, roundNo);
+
+  correctionRoundNo = roundNo;
+  body.innerHTML = '';
+
+  for(const m of matches){
+    const tr = document.createElement('tr');
+    const playerA = playerNameById[m.player_a_id] || '-';
+    const playerB = m.is_bye ? 'BYE' : (playerNameById[m.player_b_id] || '-');
+
+    const opts = m.is_bye
+      ? '<option value="BYE" selected>BYE</option>'
+      : RESULTS.map(r => `<option value="${r}" ${m.result===r?'selected':''}>${r}</option>`).join('');
+
+    tr.innerHTML = `
+      <td>${m.table_no ?? ''}</td>
+      <td>${escapeHtml(playerA)}</td>
+      <td>${escapeHtml(playerB)}</td>
+      <td><select id="fix-${m.id}" ${m.is_bye ? 'disabled' : ''}>${opts}</select></td>
+    `;
+    body.appendChild(tr);
+  }
+
+  body.querySelectorAll('select[id^="fix-"]').forEach(sel => {
+    sel.addEventListener('change', async () => {
+      const id = sel.id.replace('fix-', '');
+      sel.disabled = true;
+      try{
+        const res = await correctMatchResult(id, sel.value);
+        const note = res.refreshedRounds.length
+          ? ` Snapshots neu gerechnet: Runde ${res.refreshedRounds.join(', ')}.`
+          : ' (keine finalisierte Runde betroffen)';
+        setCorrectionMsg(`Runde ${res.roundNo}: ${res.previous} → ${res.result}.${note}`);
+        await refreshAll();
+        await renderCorrectionRound(roundNo);
+      }catch(err){
+        setCorrectionMsg(err.message);
+      }finally{
+        sel.disabled = false;
+      }
+    });
+  });
+
+  const round = bundle.rounds.find(r => r.round_no === roundNo);
+  const total = Number(bundle.tournament.current_round) || 0;
+  const laterRounds = total - roundNo;
+  const state = [];
+  state.push(round?.finalized_at ? `Runde ${roundNo} ist finalisiert` : `Runde ${roundNo} ist offen`);
+  if(bundle.tournament.status === 'finished') state.push('Turnier abgeschlossen');
+  if(laterRounds > 0) state.push(`${laterRounds} spätere Runde(n) vorhanden`);
+  $('correctionState').textContent = state.join(' · ');
+
+  $('repairBox').classList.toggle('hidden', laterRounds <= 0);
+  const repairBtn = $('repairRoundsBtn');
+  if(repairBtn) repairBtn.textContent = `Runden nach Runde ${roundNo} löschen & neu auslosen`;
 }
 
 async function refreshAll(){
@@ -234,6 +327,19 @@ async function refreshAll(){
   }
 
   updateFinalRoundModeUi(t);
+
+  updateCorrectionRoundOptions(t);
+  const reopenBtn = $('reopenTournamentBtn');
+  reopenBtn.disabled = !isFinished;
+  reopenBtn.title = isFinished
+    ? 'Turnier wieder auf aktiv setzen, um zu korrigieren oder neu auszulosen.'
+    : 'Turnier läuft bereits.';
+  $('loadCorrectionBtn').disabled = ctx.currentRound === 0;
+  if(ctx.currentRound === 0){
+    $('correctionBody').innerHTML = '<tr><td colspan="4" class="muted">Noch keine Runde gespielt.</td></tr>';
+    $('repairBox').classList.add('hidden');
+  }
+
   await renderStandings();
 }
 
@@ -310,6 +416,69 @@ async function init(){
       setMsg('Turnier abgeschlossen.');
       await refreshAll();
     }catch(err){ setMsg(err.message); }
+    finally{ setBusy(btn, false); }
+  });
+
+  $('loadCorrectionBtn').addEventListener('click', async () => {
+    const btn = $('loadCorrectionBtn');
+    const roundNo = Number($('correctionRound').value);
+    if(!roundNo) return;
+    setBusy(btn, true, 'Lade...');
+    try{
+      setCorrectionMsg('');
+      await renderCorrectionRound(roundNo);
+    }catch(err){ setCorrectionMsg(err.message); }
+    finally{ setBusy(btn, false); }
+  });
+
+  $('correctionRound').addEventListener('change', async () => {
+    const roundNo = Number($('correctionRound').value);
+    if(!roundNo) return;
+    try{
+      setCorrectionMsg('');
+      await renderCorrectionRound(roundNo);
+    }catch(err){ setCorrectionMsg(err.message); }
+  });
+
+  $('reopenTournamentBtn').addEventListener('click', async () => {
+    const ok = confirm('Turnier wieder öffnen? Es wird auf "aktiv" gesetzt, damit Ergebnisse korrigiert oder Runden neu ausgelost werden können.');
+    if(!ok) return;
+    const btn = $('reopenTournamentBtn');
+    setBusy(btn, true, 'Öffne...');
+    try{
+      await reopenTournament(currentTournamentId);
+      setCorrectionMsg('Turnier ist wieder offen.');
+      setMsg('');
+      await refreshAll();
+    }catch(err){ setCorrectionMsg(err.message); }
+    finally{ setBusy(btn, false); }
+  });
+
+  $('repairRoundsBtn').addEventListener('click', async () => {
+    const roundNo = correctionRoundNo || Number($('correctionRound').value);
+    if(!roundNo) return;
+
+    const bundle = await getTournamentBundle(currentTournamentId);
+    const current = Number(bundle.tournament.current_round) || 0;
+    const affected = current - roundNo;
+    if(affected <= 0){ setCorrectionMsg('Es gibt keine späteren Runden.'); return; }
+
+    const ok = confirm(
+      `Runde ${roundNo + 1} bis ${current} werden gelöscht – inklusive aller dort eingetragenen Ergebnisse.\n\n` +
+      `Danach stehst du wieder nach Runde ${roundNo} und kannst mit den korrigierten Ergebnissen neu auslosen.\n\n` +
+      `Das lässt sich nicht rückgängig machen. Fortfahren?`
+    );
+    if(!ok) return;
+
+    const btn = $('repairRoundsBtn');
+    setBusy(btn, true, 'Setze zurück...');
+    try{
+      const res = await resetRoundsAfter(currentTournamentId, roundNo);
+      setCorrectionMsg(`${res.removedRounds} Runde(n) gelöscht. Turnier steht wieder nach Runde ${res.keptThrough} – jetzt "Nächste Runde generieren" drücken.`);
+      setMsg('');
+      correctionRoundNo = null;
+      await refreshAll();
+    }catch(err){ setCorrectionMsg(err.message); }
     finally{ setBusy(btn, false); }
   });
 
