@@ -139,21 +139,15 @@ async function init(){
   const tournamentId = qParam('tournament');
   if(!tournamentId){ $('sMeta').textContent = 'Kein Turnier gewählt.'; return; }
 
-  // Die Lesepolicies verlangen eine angemeldete Session. Ohne Login liefert
-  // Supabase stillschweigend leere Listen - das sah bisher wie eine kaputte
-  // Seite aus. Deshalb hier explizit melden statt leer zu bleiben.
-  const { data: authData } = await supabase.auth.getUser();
-  if(!authData?.user){
-    $('sMeta').innerHTML = 'Nicht angemeldet &ndash; die Spectator-Ansicht braucht derzeit einen Login. '
-      + '<a href="./login.html">Zum Login</a>';
-    $('sRounds').innerHTML = '';
-    return;
-  }
-
+  // Lesen ist oeffentlich (Migration 2026-09-22_public_spectator_read.sql) -
+  // hier also kein Login noetig. Falls die Policies doch wieder greifen,
+  // liefert Supabase leere Listen bzw. einen Fehler; beides wird unten
+  // sichtbar gemacht statt die Seite leer zu lassen.
   try{
     await render(tournamentId);
   }catch(err){
-    $('sMeta').textContent = `Konnte das Turnier nicht laden: ${err.message}`;
+    $('sMeta').innerHTML = `Konnte das Turnier nicht laden: ${err.message} `
+      + '(falls das an den Leserechten liegt: <a href="./login.html">einloggen</a>)';
     return;
   }
 
