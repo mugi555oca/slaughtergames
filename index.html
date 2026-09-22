@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Blood+Runner&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="styles.css?v=1.7">
+    <link rel="stylesheet" href="styles.css?v=1.8">
 </head>
 <body>
 <!-- Trigger Netlify Build -->
@@ -662,6 +662,82 @@
             </div>
         </section>
 
+        <section class="merch-gallery">
+            <h2 class="ranking-title">MERCH &amp; MATERIAL</h2>
+            <p class="merch-intro">Shirts, Playmats und was sonst noch die Schlachtb&auml;nke ziert. Klick f&uuml;r gro&szlig;.</p>
+            <h3 class="merch-group">Shirts</h3>
+            <div class="merch-grid">
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_sg6_front.jpg" data-label="SG6 Shirt – vorne">
+                    <img src="assets/merch/shirt_sg6_front_t.jpg" loading="lazy" alt="SG6 Shirt – vorne">
+                    <span class="merch-label">SG6 Shirt – vorne</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_sg6_back.jpg" data-label="SG6 Shirt – hinten">
+                    <img src="assets/merch/shirt_sg6_back_t.jpg" loading="lazy" alt="SG6 Shirt – hinten">
+                    <span class="merch-label">SG6 Shirt – hinten</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_sg5_back.jpg" data-label="SG5 Shirt – hinten">
+                    <img src="assets/merch/shirt_sg5_back_t.jpg" loading="lazy" alt="SG5 Shirt – hinten">
+                    <span class="merch-label">SG5 Shirt – hinten</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_sg4_front.jpg" data-label="SG4 Shirt – vorne">
+                    <img src="assets/merch/shirt_sg4_front_t.jpg" loading="lazy" alt="SG4 Shirt – vorne">
+                    <span class="merch-label">SG4 Shirt – vorne</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_sg4_back.jpg" data-label="SG4 Shirt – hinten">
+                    <img src="assets/merch/shirt_sg4_back_t.jpg" loading="lazy" alt="SG4 Shirt – hinten">
+                    <span class="merch-label">SG4 Shirt – hinten</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_toth_front.jpg" data-label="Top of the Hill – vorne">
+                    <img src="assets/merch/shirt_toth_front_t.jpg" loading="lazy" alt="Top of the Hill – vorne">
+                    <span class="merch-label">Top of the Hill – vorne</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/shirt_toth_back.jpg" data-label="Top of the Hill – hinten">
+                    <img src="assets/merch/shirt_toth_back_t.jpg" loading="lazy" alt="Top of the Hill – hinten">
+                    <span class="merch-label">Top of the Hill – hinten</span>
+                </button>
+            </div>
+            <h3 class="merch-group">Playmats</h3>
+            <div class="merch-grid">
+                <button class="merch-item" type="button" data-full="assets/merch/playmat_2021.jpg" data-label="Playmat 2021">
+                    <img src="assets/merch/playmat_2021_t.jpg" loading="lazy" alt="Playmat 2021">
+                    <span class="merch-label">Playmat 2021</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/playmat_2022.jpg" data-label="Playmat 2022">
+                    <img src="assets/merch/playmat_2022_t.jpg" loading="lazy" alt="Playmat 2022">
+                    <span class="merch-label">Playmat 2022</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/playmat_2023.jpg" data-label="Playmat 2023">
+                    <img src="assets/merch/playmat_2023_t.jpg" loading="lazy" alt="Playmat 2023">
+                    <span class="merch-label">Playmat 2023</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/playmat_2024.jpg" data-label="Playmat 2024">
+                    <img src="assets/merch/playmat_2024_t.jpg" loading="lazy" alt="Playmat 2024">
+                    <span class="merch-label">Playmat 2024</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/playmat_2025.jpg" data-label="Playmat 2025">
+                    <img src="assets/merch/playmat_2025_t.jpg" loading="lazy" alt="Playmat 2025">
+                    <span class="merch-label">Playmat 2025</span>
+                </button>
+                <button class="merch-item" type="button" data-full="assets/merch/playmat_2026.jpg" data-label="Playmat 2026">
+                    <img src="assets/merch/playmat_2026_t.jpg" loading="lazy" alt="Playmat 2026">
+                    <span class="merch-label">Playmat 2026</span>
+                </button>
+            </div>
+            <h3 class="merch-group">Extras</h3>
+            <div class="merch-grid">
+                <button class="merch-item" type="button" data-full="assets/merch/xmas.jpg" data-label="Weihnachtsmotiv">
+                    <img src="assets/merch/xmas_t.jpg" loading="lazy" alt="Weihnachtsmotiv">
+                    <span class="merch-label">Weihnachtsmotiv</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="lightbox" id="merchLightbox" hidden>
+            <button class="lightbox-close" type="button" aria-label="Schlie&szlig;en">&times;</button>
+            <img class="lightbox-img" src="" alt="">
+            <p class="lightbox-caption"></p>
+        </div>
+
         <footer>
             <div class="group-banner">
                 <img src="gruppenbild.png" alt="Slaughter Games Team" class="group-image">
@@ -669,5 +745,39 @@
             <p>&copy; 2026 Slaughter Games. Alle Rechte vorbehalten.</p>
         </footer>
     </div>
+<script>
+(function () {
+  var box = document.getElementById('merchLightbox');
+  if (!box) return;
+  var img = box.querySelector('.lightbox-img');
+  var cap = box.querySelector('.lightbox-caption');
+  var last = null;
+
+  function open(btn) {
+    last = btn;
+    img.src = btn.dataset.full;
+    img.alt = btn.dataset.label;
+    cap.textContent = btn.dataset.label;
+    box.hidden = false;
+    document.body.style.overflow = 'hidden';
+    box.querySelector('.lightbox-close').focus();
+  }
+  function close() {
+    box.hidden = true;
+    img.src = '';
+    document.body.style.overflow = '';
+    if (last) last.focus();
+  }
+
+  document.querySelectorAll('.merch-item').forEach(function (b) {
+    b.addEventListener('click', function () { open(b); });
+  });
+  box.querySelector('.lightbox-close').addEventListener('click', close);
+  box.addEventListener('click', function (e) { if (e.target === box) close(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !box.hidden) close();
+  });
+})();
+</script>
 </body>
 </html>

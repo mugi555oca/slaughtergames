@@ -700,3 +700,117 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
     .champion-name { font-size: 1.25rem; }
     .podium-rank { font-size: 1.6rem; min-width: 26px; }
 }
+
+/* ---------- Merch-Galerie ---------- */
+.merch-gallery {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 40px;
+    background: rgba(255, 0, 0, 0.1);
+    border-radius: 15px;
+    border: 2px solid #ff0000;
+}
+.merch-intro {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 18px;
+}
+.merch-group {
+    font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
+    color: #ffb14d;
+    letter-spacing: 0.06em;
+    margin: 18px 0 12px;
+    text-align: left;
+}
+.merch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+}
+.merch-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255, 0, 0, 0.35);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    color: #ffffff;
+    font: inherit;
+    cursor: zoom-in;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.merch-item:hover, .merch-item:focus {
+    transform: translateY(-4px);
+    border-color: #ff0000;
+    box-shadow: 0 0 18px rgba(255, 0, 0, 0.45);
+    outline: none;
+}
+.merch-item img {
+    width: 100%;
+    height: 130px;
+    object-fit: contain;
+    display: block;
+}
+.merch-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.3;
+}
+
+/* ---------- Lightbox ---------- */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 30px 20px;
+    background: rgba(0, 0, 0, 0.97);
+    backdrop-filter: blur(4px);
+}
+.lightbox[hidden] { display: none; }
+.lightbox-img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.35);
+}
+.lightbox-caption {
+    font-family: 'Creepster', cursive;
+    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+}
+.lightbox-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.75);
+    color: #ffffff;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.lightbox-close:hover, .lightbox-close:focus {
+    background: #ff0000;
+    outline: none;
+}
+
+@media (max-width: 600px) {
+    .merch-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+    .merch-item img { height: 100px; }
+    .merch-label { font-size: 0.68rem; }
+}
