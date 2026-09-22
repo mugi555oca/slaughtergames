@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Schriftrolle">
+  <defs>
+    <linearGradient id="parch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e8c6"/>
+      <stop offset="1" stop-color="#d7bc85"/>
+    </linearGradient>
+    <linearGradient id="roll" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9954f"/>
+      <stop offset="0.45" stop-color="#f3e3bb"/>
+      <stop offset="1" stop-color="#a8843f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- parchment sheet -->
+  <rect x="13.5" y="11" width="37" height="42" rx="1.5"
+        fill="url(#parch)" stroke="#6f5227" stroke-width="1.8"/>
+
+  <!-- written lines -->
+  <g stroke="#6f5227" stroke-width="1.8" stroke-linecap="round" opacity="0.6">
+    <line x1="20" y1="22" x2="44" y2="22"/>
+    <line x1="20" y1="28" x2="44" y2="28"/>
+    <line x1="20" y1="34" x2="37" y2="34"/>
+    <line x1="20" y1="40" x2="44" y2="40"/>
+  </g>
+
+  <!-- rolled ends -->
+  <rect x="8" y="5" width="48" height="10" rx="5"
+        fill="url(#roll)" stroke="#6f5227" stroke-width="1.8"/>
+  <rect x="8" y="49" width="48" height="10" rx="5"
+        fill="url(#roll)" stroke="#6f5227" stroke-width="1.8"/>
+  <g stroke="#6f5227" stroke-width="1.4" opacity="0.55" fill="none">
+    <path d="M14 7.5v5"/>
+    <path d="M50 7.5v5"/>
+    <path d="M14 51.5v5"/>
+    <path d="M50 51.5v5"/>
+  </g>
+</svg>

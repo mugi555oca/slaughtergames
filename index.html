@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Blood+Runner&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="styles.css?v=1.5">
+    <link rel="stylesheet" href="styles.css?v=1.6">
 </head>
 <body>
 <!-- Trigger Netlify Build -->
@@ -38,8 +38,44 @@
                 </a>
             </section>
 
+            <section class="grand-slaughterer">
+                <h2 class="ranking-title">GRAND SLAUGHTERER 2026</h2>
+                <div class="gs-body">
+                    <a class="gs-champion" href="player-profile.html?slug=david">
+                        <img src="Profile_pics/David_1.png" alt="David, Ride-Power IX" class="gs-portrait">
+                        <span class="gs-name">David, Ride-Power IX</span>
+                        <span class="gs-sub">Sieger Slaughter Games 6</span>
+                    </a>
+                    <figure class="gs-trophy">
+                        <img src="axt.jpg" alt="Die Axt der Slaughter Games" class="gs-axe">
+                        <figcaption>Die Axt</figcaption>
+                    </figure>
+                </div>
+            </section>
+
             <section class="eternal-ranking">
-                <h2 class="ranking-title">ETERNAL RANKING</h2>
+                <h2 class="ranking-title">ETERNAL RANKING<span class="formula-info" tabindex="0" role="button" aria-label="Formel des Eternal Rankings anzeigen">
+                    <img src="scroll_formula.svg" class="formula-icon" alt="Formel">
+                    <span class="formula-tooltip" role="tooltip">
+                        <span class="ft-head">Wie entsteht das Eternal Ranking?</span>
+                        <span class="ft-step">
+                            <span class="ft-title">1 &middot; Punkte pro Turnier</span>
+                            <span class="ft-line">Platz 1 bekommt so viele Punkte, wie Spieler am Start waren &ndash; jeder Platz danach einen weniger, der Letzte bekommt 1.</span>
+                            <span class="ft-note">SG6 mit 20 Spielern: 1. = 20, 2. = 19, &hellip; 20. = 1</span>
+                        </span>
+                        <span class="ft-step">
+                            <span class="ft-title">2 &middot; Eternal-Punkte</span>
+                            <span class="ft-eq"><span class="ft-var">E</span><span class="ft-op">=</span><span class="ft-frac"><span class="ft-num">Summe aller Punkte</span><span class="ft-den">&radic;( 2 &middot; n &middot; N / (n + N) )</span></span></span>
+                            <span class="ft-legend"><b>n</b> = deine Teilnahmen &nbsp;&nbsp;&nbsp; <b>N</b> = Turniere insgesamt (6)</span>
+                            <span class="ft-line">Geteilt wird durch die Wurzel aus dem <b>harmonischen Mittel</b> von n und N. Wer selten dabei war, wird durch eine kleinere Zahl geteilt &ndash; das Ergebnis liegt zwischen &bdquo;Gesamtpunkte&ldquo; und &bdquo;Schnitt pro Turnier&ldquo;.</span>
+                        </span>
+                        <span class="ft-step">
+                            <span class="ft-title">3 &middot; Beispiel David</span>
+                            <span class="ft-line">14 + 14 + 16 + 20 = <b>64</b> Punkte aus <b>n = 4</b> Turnieren</span>
+                            <span class="ft-line">E = 64 / &radic;(2&middot;4&middot;6/10) = 64 / &radic;4,8 = <b>29,21</b></span>
+                        </span>
+                    </span>
+                </span></h2>
                 <div class="ranking-container">
                     <div class="ranking-list">
                         <div class="ranking-item">
