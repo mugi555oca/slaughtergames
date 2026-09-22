@@ -499,3 +499,204 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
     .formula-info:focus-within .formula-tooltip { transform: none; }
     .formula-tooltip::before { display: none; }
 }
+
+/* ---------- Blog: lead & showdown ---------- */
+.blog-post .lead {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #ffb14d;
+    text-align: center;
+    margin-bottom: 24px;
+}
+.blog-post .showdown {
+    text-align: center;
+    font-size: 1.1rem;
+    padding: 14px;
+    border-top: 1px solid rgba(255, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.4);
+}
+.blog-post a, .blog-post a:visited { color: #ff6b3d; }
+.blog-post a:hover { color: #ffb14d; }
+
+/* ---------- Foto-Karussell ---------- */
+.carousel {
+    margin: 28px 0 34px;
+    outline: none;
+}
+.carousel-viewport {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid #ff0000;
+    background: #0a0000;
+    box-shadow: 0 0 22px rgba(255, 0, 0, 0.3);
+}
+.carousel-track {
+    display: flex;
+    transition: transform 0.35s ease;
+    will-change: transform;
+}
+.carousel-slide {
+    flex: 0 0 100%;
+    margin: 0;
+    height: 62vh;
+    max-height: 600px;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0000;
+}
+.carousel-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+}
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 60px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #ffffff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+.carousel-btn:hover, .carousel-btn:focus {
+    background: rgba(255, 0, 0, 0.75);
+    color: #ffffff;
+    outline: none;
+}
+.carousel-btn.prev { left: 8px; }
+.carousel-btn.next { right: 8px; }
+.carousel-counter {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(0, 0, 0, 0.65);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+.carousel-caption {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.75);
+    min-height: 1.4em;
+}
+.carousel-dots {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 12px;
+}
+.carousel-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.28);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+.carousel-dot:hover { background: rgba(255, 255, 255, 0.6); }
+.carousel-dot.active {
+    background: #ff0000;
+    transform: scale(1.35);
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.9);
+}
+
+/* ---------- Blog: Champion & Podium ---------- */
+.champion-box {
+    text-align: center;
+    padding: 24px 20px;
+    margin: 28px 0;
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid #ff0000;
+    border-radius: 15px;
+}
+.champion-label {
+    font-size: 0.78rem !important;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65) !important;
+    margin-bottom: 14px !important;
+}
+.champion-link {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+.champion-portrait {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #ff0000;
+    box-shadow: 0 0 22px rgba(255, 0, 0, 0.55);
+}
+.champion-link:hover .champion-portrait { box-shadow: 0 0 32px rgba(255, 60, 0, 0.9); }
+.champion-name {
+    font-family: 'Creepster', cursive;
+    font-size: 1.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+}
+.champion-sub {
+    font-size: 0.8rem !important;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65) !important;
+    margin: 6px 0 14px !important;
+}
+.champion-text { margin-bottom: 14px !important; }
+.champion-axe { width: 54px; height: 54px; object-fit: contain; }
+
+.podium { margin: 20px 0 28px; }
+.podium-entry {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+    background: rgba(255, 0, 0, 0.08);
+    border: 1px solid rgba(255, 0, 0, 0.35);
+    border-radius: 10px;
+}
+.podium-rank {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff0000;
+    line-height: 1;
+    min-width: 34px;
+    text-align: center;
+}
+.podium-name {
+    font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+.podium-entry p { margin: 4px 0 0 !important; }
+
+@media (max-width: 600px) {
+    .carousel-slide { height: 50vh; min-height: 220px; }
+    .carousel-btn { width: 38px; height: 52px; font-size: 1.2rem; }
+    .carousel-dot { width: 8px; height: 8px; }
+    .champion-portrait { width: 105px; height: 105px; }
+    .champion-name { font-size: 1.25rem; }
+    .podium-rank { font-size: 1.6rem; min-width: 26px; }
+}
