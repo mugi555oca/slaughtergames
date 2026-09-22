@@ -9,7 +9,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -45,7 +46,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -63,6 +65,10 @@
       {
         "sg": "SG5",
         "rarity": "R"
+      },
+      {
+        "sg": "SG6",
+        "rarity": "C"
       }
     ],
     "badges": [
@@ -80,12 +86,17 @@
     "participations": [
       "SG1",
       "SG2",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
         "sg": "SG2",
         "rarity": "U"
+      },
+      {
+        "sg": "SG6",
+        "rarity": "R"
       }
     ],
     "badges": [
@@ -103,7 +114,8 @@
       "SG1",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -137,7 +149,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -168,7 +181,8 @@
     "participations": [
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -182,6 +196,10 @@
       {
         "sg": "SG5",
         "rarity": "U"
+      },
+      {
+        "sg": "SG6",
+        "rarity": "M"
       }
     ],
     "badges": [
@@ -201,7 +219,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -227,7 +246,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [
@@ -247,7 +267,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [
@@ -266,7 +287,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [
@@ -290,7 +312,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [
@@ -312,7 +335,8 @@
     "participations": [
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [],
@@ -326,7 +350,8 @@
     "login": "Leo",
     "participations": [
       "SG1",
-      "SG2"
+      "SG2",
+      "SG6"
     ],
     "axes": [],
     "badges": [
@@ -344,7 +369,8 @@
     "participations": [
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [
@@ -360,7 +386,8 @@
     "login": "Wenzl",
     "participations": [
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [],
@@ -376,7 +403,8 @@
       "SG2",
       "SG3",
       "SG4",
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [
       {
@@ -394,9 +422,15 @@
     "realName": "Hansi",
     "login": "Hansi",
     "participations": [
-      "SG5"
+      "SG5",
+      "SG6"
     ],
-    "axes": [],
+    "axes": [
+      {
+        "sg": "SG6",
+        "rarity": "U"
+      }
+    ],
     "badges": [],
     "description": "Hansi – Three4One-Mann, Izzet forever.",
     "profileImage": "Profile_pics/Hansi_1.png"
@@ -407,7 +441,8 @@
     "realName": "Fabi",
     "login": "Fabi",
     "participations": [
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [],
@@ -420,7 +455,8 @@
     "realName": "Marc",
     "login": "Marc",
     "participations": [
-      "SG5"
+      "SG5",
+      "SG6"
     ],
     "axes": [],
     "badges": [],
@@ -435,7 +471,8 @@
     "participations": [
       "SG2",
       "SG3",
-      "SG4"
+      "SG4",
+      "SG6"
     ],
     "axes": [],
     "badges": [],
