@@ -754,6 +754,12 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
     object-fit: contain;
     display: block;
 }
+/* product shots are transparent PNG/WebP - give them a plate so dark goods stay visible */
+.merch-item.product img {
+    background: #efece6;
+    border-radius: 6px;
+    padding: 6px;
+}
 .merch-label {
     font-size: 0.75rem;
     letter-spacing: 0.04em;
@@ -777,6 +783,7 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
 }
 .lightbox[hidden] { display: none; }
 .lightbox-img {
+    background: #efece6;
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
