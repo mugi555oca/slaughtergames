@@ -84,8 +84,8 @@
     "realName": "Simon",
     "login": "Simon",
     "participations": [
-      "SG1",
       "SG2",
+      "SG3",
       "SG5",
       "SG6"
     ],
@@ -242,7 +242,6 @@
     "realName": "Niki",
     "login": "Niki",
     "participations": [
-      "SG1",
       "SG2",
       "SG3",
       "SG4",
@@ -351,6 +350,7 @@
     "participations": [
       "SG1",
       "SG2",
+      "SG3",
       "SG6"
     ],
     "axes": [],
@@ -367,7 +367,6 @@
     "realName": "Paul",
     "login": "Paul",
     "participations": [
-      "SG3",
       "SG4",
       "SG5",
       "SG6"
