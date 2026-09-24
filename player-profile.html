@@ -4,15 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Slaughter Games – Spielerprofil</title>
-  <link rel="stylesheet" href="styles.css?v=2.0" />
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="styles.css?v=2.1" />
   <style>
     .pp-wrap{max-width:900px;margin:0 auto;padding:16px}
     .pp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
     .pp-card{background:#171a21;border-radius:12px;padding:16px;color:#fff}
     .pp-name{font-size:30px;margin:0}.pp-real{opacity:.8;margin:4px 0 12px}
-    .pp-grid{display:grid;grid-template-columns:120px 1fr;gap:16px}
-    .pp-img{width:120px;height:120px;object-fit:cover;border-radius:10px;border:2px solid #2b3240}
-    .chip{display:inline-block;background:#2a313f;padding:4px 8px;border-radius:999px;margin:2px;font-size:12px}
+    .pp-grid{display:grid;grid-template-columns:140px 1fr;gap:18px}
+    .pp-img{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid #c8302f;box-shadow:0 0 18px rgba(200,48,47,.45)}
+    .pp-card h3{margin:18px 0 8px;font-size:1rem;letter-spacing:.06em;text-transform:uppercase;color:#ffb14d}
+    .chip{display:inline-flex;align-items:center;background:#2a313f;padding:6px 10px;border-radius:999px;margin:3px;font-size:13px}
+    .chip-badge{gap:8px;cursor:help}
+    .chip-badge b{background:#c8302f;border-radius:999px;padding:1px 7px;font-size:11px;letter-spacing:.04em}
+    .chip-label{opacity:.85}
+    .chip-fav{text-decoration:none;color:#fff;background:#3a2a1f;border:1px solid rgba(255,177,77,.5)}
+    .chip-fav:hover{background:#4a3525;border-color:#ffb14d}
+    /* Teilnahme-Logos deutlich groesser als vorher (war 26px) */
+    .pp-part{height:56px;margin:0 8px 8px 0;cursor:help;transition:transform .15s ease}
+    .pp-part:hover{transform:scale(1.12)}
+    .pp-empty{opacity:.55;font-style:italic;font-size:14px}
+    @media (max-width:600px){
+      .pp-grid{grid-template-columns:1fr;justify-items:center;text-align:center}
+      .pp-part{height:44px}
+    }
   </style>
 </head>
 <body>
@@ -38,6 +53,9 @@
           <h3>Abzeichen</h3>
           <div id="ppBadges"></div>
 
+          <h3>Lieblingskarte</h3>
+          <div id="ppFav"></div>
+
           <h3>Beschreibung</h3>
           <p id="ppDesc"></p>
         </div>
@@ -45,6 +63,7 @@
     </div>
   </div>
 
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <script src="./tournament-app/js/player-profile-page.js" type="module"></script>
 </body>
 </html>

@@ -4,26 +4,51 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Slaughter Games – Profil</title>
-  <link rel="stylesheet" href="./styles.css?v=2" />
+  <link rel="stylesheet" href="./styles.css?v=3" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
-      <h1>Profil</h1>
+      <h1>Mein Profil</h1>
       <div style="display:flex;gap:8px">
+        <a id="publicLink" href="#" target="_blank"><button class="secondary">Öffentliches Profil</button></a>
         <a href="./dashboard.html"><button class="secondary">Dashboard</button></a>
         <button id="logoutBtn" class="secondary">Logout</button>
       </div>
     </div>
 
     <section class="card">
-      <h2>Account</h2>
+      <h2>Profilbild</h2>
+      <div class="avatar-row">
+        <img id="avatarPreview" class="avatar-preview" src="../main_logo.png" alt="Profilbild" />
+        <div class="avatar-actions">
+          <input id="avatarFile" type="file" accept="image/png,image/jpeg,image/webp" />
+          <p class="helper">JPG, PNG oder WebP, max. 5 MB. Wird automatisch quadratisch zugeschnitten.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="avatarUploadBtn" type="button">Bild hochladen</button>
+            <button id="avatarResetBtn" type="button" class="secondary">Auf Standardbild zurücksetzen</button>
+          </div>
+          <p class="muted" id="avatarMsg"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Angaben</h2>
       <p class="muted" id="mailText"></p>
       <form id="profileForm">
         <label for="displayName">Anzeigename</label>
-        <input id="displayName" required />
-        <div style="margin-top:10px">
+        <input id="displayName" maxlength="60" required />
+
+        <label for="description">Beschreibung</label>
+        <textarea id="description" rows="3" maxlength="500" placeholder="Ein Satz über dich."></textarea>
+
+        <label for="favouriteCard">Lieblingskarte</label>
+        <input id="favouriteCard" maxlength="120" placeholder="z. B. Lightning Bolt" />
+        <p class="helper">Wird auf deinem öffentlichen Profil angezeigt und auf Scryfall verlinkt.</p>
+
+        <div style="margin-top:12px">
           <button type="submit">Speichern</button>
         </div>
       </form>
