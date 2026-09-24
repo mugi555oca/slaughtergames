@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Slaughter Games – Admin</title>
-  <link rel="stylesheet" href="./styles.css?v=3" />
+  <link rel="stylesheet" href="./styles.css?v=4" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -28,6 +28,74 @@
         <tbody id="adminTable"></tbody>
       </table>
       <p id="adminMsg" class="muted"></p>
+    </section>
+
+    <section class="card" id="badgeAdmin" hidden>
+      <h2>Abzeichen</h2>
+      <p class="muted">Abzeichen anlegen und Spielern zuordnen &ndash; wahlweise pro Slaughter-Games-Event.</p>
+
+      <h3>Neues Abzeichen</h3>
+      <form id="badgeForm" class="row">
+        <div class="col-3">
+          <label for="bCode">Kürzel</label>
+          <input id="bCode" maxlength="4" required placeholder="z. B. SO" />
+        </div>
+        <div class="col-4">
+          <label for="bName">Name</label>
+          <input id="bName" maxlength="60" required placeholder="z. B. Die Socken" />
+        </div>
+        <div class="col-3">
+          <label for="bIcon">Icon</label>
+          <select id="bIcon"></select>
+        </div>
+        <div class="col-2">
+          <label>&nbsp;</label>
+          <button type="submit">Anlegen</button>
+        </div>
+        <div class="col-12">
+          <label for="bDesc">Beschreibung (Mouseover)</label>
+          <input id="bDesc" maxlength="200" placeholder="Wofür gibt es das?" />
+        </div>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Icon</th><th>Kürzel</th><th>Name</th><th>Beschreibung</th><th>Vergeben</th><th></th></tr></thead>
+          <tbody id="badgeList"></tbody>
+        </table>
+      </div>
+      <p id="badgeMsg" class="muted"></p>
+
+      <h3 style="margin-top:22px">Abzeichen vergeben</h3>
+      <form id="awardForm" class="row">
+        <div class="col-4">
+          <label for="aPlayer">Spieler</label>
+          <select id="aPlayer"></select>
+        </div>
+        <div class="col-4">
+          <label for="aBadge">Abzeichen</label>
+          <select id="aBadge"></select>
+        </div>
+        <div class="col-2">
+          <label for="aEvent">Event</label>
+          <select id="aEvent"></select>
+        </div>
+        <div class="col-2">
+          <label>&nbsp;</label>
+          <button type="submit">Zuordnen</button>
+        </div>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Spieler</th><th>Abzeichen</th><th>Event</th><th></th></tr></thead>
+          <tbody id="awardList"></tbody>
+        </table>
+      </div>
+      <p id="awardMsg" class="muted"></p>
+    </section>
+
+    <section class="card" id="noAdminHint" hidden>
+      <h2>Abzeichen</h2>
+      <p class="muted">Für die Abzeichen-Verwaltung brauchst du Admin-Rechte.</p>
     </section>
   </div>
 

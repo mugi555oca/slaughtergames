@@ -1,0 +1,40 @@
+-- Bestehende Abzeichen aus player_profiles.json uebernehmen.
+-- sg bleibt null: aus der JSON geht nicht hervor, bei welchem Event sie
+-- vergeben wurden - das laesst sich im Admin nachtragen.
+-- Laeuft nur einmal (loescht vorher alles ohne Event, damit re-runs sauber sind).
+delete from public.player_badges where sg is null;
+insert into public.player_badges (slug, badge_code) values
+  ('burni', 'TD'),
+  ('vinc', 'PQ'),
+  ('vinc', 'PQ'),
+  ('simon', 'KC'),
+  ('silvio', 'KC'),
+  ('silvio', 'KC'),
+  ('silvio', 'KC'),
+  ('felix', 'ÜN'),
+  ('felix', 'ÜN'),
+  ('david', 'ÜL'),
+  ('david', 'GM'),
+  ('ivo', 'BK'),
+  ('ivo', 'BK'),
+  ('ivo', 'BK'),
+  ('niki', 'PQ'),
+  ('niki', 'PQ'),
+  ('osti', 'PQ'),
+  ('maugi555-gmail', 'FF'),
+  ('maugi555-gmail', 'TD'),
+  ('maugi555-gmail', 'SM'),
+  ('maugi555-gmail', 'SM'),
+  ('maugi555-gmail', 'SM'),
+  ('maugi555-gmail', 'SM'),
+  ('maugi555-gmail', 'SM'),
+  ('frido', 'ÜN'),
+  ('frido', 'ÜN'),
+  ('frido', 'ME'),
+  ('frido', 'ME'),
+  ('frido', 'ME'),
+  ('frido', 'ME'),
+  ('leo', 'KC'),
+  ('leo', 'GM'),
+  ('paul', 'SP'),
+  ('frido', 'SO');

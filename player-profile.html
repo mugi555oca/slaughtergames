@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Slaughter Games – Spielerprofil</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="stylesheet" href="styles.css?v=2.1" />
+  <link rel="stylesheet" href="styles.css?v=2.2" />
   <style>
     .pp-wrap{max-width:900px;margin:0 auto;padding:16px}
     .pp-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
@@ -24,6 +24,15 @@
     .pp-part{height:56px;margin:0 8px 8px 0;cursor:help;transition:transform .15s ease}
     .pp-part:hover{transform:scale(1.12)}
     .pp-empty{opacity:.55;font-style:italic;font-size:14px}
+    .pp-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .pp-btn{display:inline-block;padding:8px 14px;border-radius:8px;background:#2b3240;color:#fff;
+            text-decoration:none;font-size:14px;border:1px solid transparent;transition:background .15s ease}
+    .pp-btn:hover{background:#3a4354}
+    .pp-btn[hidden]{display:none}
+    .pp-btn-accent{background:#c8302f}.pp-btn-accent:hover{background:#e03b3a}
+    .badge-icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;
+                stroke-linecap:round;stroke-linejoin:round;color:#ffb14d;flex:0 0 auto}
+    .chip-count{font-size:11px;background:#c8302f;border-radius:999px;padding:1px 7px;margin-left:2px}
     @media (max-width:600px){
       .pp-grid{grid-template-columns:1fr;justify-items:center;text-align:center}
       .pp-part{height:44px}
@@ -33,8 +42,12 @@
 <body>
   <div class="pp-wrap">
     <div class="pp-head">
-      <a href="index.html"><img src="main_logo.png" alt="SG" style="height:44px"></a>
-      <a href="javascript:history.back()" class="nav-link-blog">← Zurück</a>
+      <a href="index.html"><img src="main_logo.png" alt="Slaughter Games" style="height:44px"></a>
+      <nav class="pp-nav">
+        <a class="pp-btn" href="index.html">Startseite</a>
+        <a class="pp-btn" href="tournament-app/dashboard.html">Tournament App</a>
+        <a class="pp-btn pp-btn-accent" id="ppEdit" href="tournament-app/profile.html" hidden>Mein Profil bearbeiten</a>
+      </nav>
     </div>
 
     <div class="pp-card">
