@@ -10,6 +10,8 @@ const ICON_KEYS = [
   ['crown','Krone'], ['mic','Mikrofon'], ['quill','Federkiel'], ['chefhat','Kochmütze'],
   ['flame','Flamme'], ['cocktail','Cocktail'], ['quiz','Sprechblase ?'], ['table','Tabelle'],
   ['moon','Mond'], ['brokensword','Zerbrochenes Schwert'], ['hourglass','Sanduhr'], ['sock','Socke'],
+  ['candle','Kerze'], ['lantern','Laterne'], ['sneeze','Stinkwolke'], ['punt','Fuß + Ball'],
+  ['spikeball','Spikeball-Netz'],
 ];
 const EVENTS = ['', 'SG1', 'SG2', 'SG3', 'SG4', 'SG5', 'SG6', 'SG7'];
 

@@ -67,3 +67,8 @@ create policy "player_badges_write_admin" on public.player_badges for all
 using (public.is_app_admin()) with check (public.is_app_admin());
 
 notify pgrst, 'reload schema';
+
+-- Nachtrag: Icons fuer die spaeter angelegten Abzeichen
+update public.badges set icon_key = v.k from (values
+  ('DB','candle'), ('SL','lantern'), ('WN','sneeze'), ('PM','punt'), ('MSB','spikeball')
+) as v(c,k) where public.badges.code = v.c;
