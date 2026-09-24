@@ -821,3 +821,32 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
     .merch-item img { height: 100px; }
     .merch-label { font-size: 0.68rem; }
 }
+
+/* ---------- Kommendes Turnier: Startfeld & Waiting Room ---------- */
+.roster-title {
+    font-family: 'Creepster', cursive;
+    font-size: 1.15rem;
+    color: #ffb14d;
+    letter-spacing: 0.05em;
+    margin: 18px 0 6px;
+}
+.roster-hint {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 10px;
+}
+.tournament.coming-soon .coming-soon-text { padding: 10px 20px 0; }
+.tournament.coming-soon .announcement { font-size: 2rem; }
+.ranking-item.wobbler {
+    border-color: rgba(240, 180, 41, 0.65);
+    background: rgba(240, 180, 41, 0.12);
+}
+.wobbler-tag {
+    margin-left: auto;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #f0b429;
+    white-space: nowrap;
+}
+
