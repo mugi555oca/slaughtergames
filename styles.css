@@ -932,3 +932,37 @@ footer { text-align: center; padding: 20px; color: rgba(255, 255, 255, 0.7); fon
     .player-img { width: 74px; height: 74px; }
 }
 
+/* ---------- Turnier-Unterseite ---------- */
+.tournament-link { display:flex; align-items:center; gap:8px; color:inherit; text-decoration:none; }
+.tournament-link:hover { color:#ffb14d; text-shadow:0 0 12px rgba(255,177,77,.6); }
+.tournament-link::after { content:'A'; margin-left:auto; opacity:.5; font-size:1.4em; line-height:1; }
+.tournament-link:hover::after { opacity:1; }
+
+.card-block {
+    padding: 20px;
+    margin-bottom: 26px;
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid #ff0000;
+    border-radius: 15px;
+}
+.kpi-line { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
+.fact {
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    min-width:120px; padding:10px 16px;
+    background:rgba(0,0,0,.45); border-radius:10px;
+    font-size:.95rem;
+}
+.fact b {
+    font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+    color:rgba(255,255,255,.6); font-weight:normal;
+}
+.fact i { opacity:.6; font-size:.85em; }
+.game-switch { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:16px; }
+.game-chip {
+    padding:7px 14px; border-radius:999px; text-decoration:none;
+    background:rgba(0,0,0,.45); color:#fff; font-size:.85rem;
+    border:1px solid rgba(255,0,0,.4); transition:background .15s ease;
+}
+.game-chip:hover { background:rgba(255,0,0,.35); }
+.game-chip.active { background:#ff0000; border-color:#ff0000; font-weight:bold; }
+

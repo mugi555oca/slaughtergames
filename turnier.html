@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Slaughter Games – Turnierrückblick mit Fotos und Endstand">
+    <title>Turnier – Slaughter Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Blood+Runner&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="styles.css?v=2.5">
+</head>
+<body>
+    <div class="container">
+        <header class="logo-section">
+            <div class="logo-placeholder">
+                <a href="index.html"><img id="tLogo" src="main_logo.png" alt="Slaughter Games"></a>
+            </div>
+            <h1 class="logo-font" id="tTitle">SLAUGHTER GAMES</h1>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link-blog">
+                    <span class="nav-icon">&#127968;</span> STARTSEITE
+                </a>
+                <a href="spieler.html" class="nav-link-blog" style="margin-left:12px;">
+                    <span class="nav-icon">&#128101;</span> SPIELERPROFILE
+                </a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="card-block">
+                <div class="kpi-line" id="tFacts"></div>
+                <nav class="game-switch" id="tSwitch"></nav>
+            </section>
+
+            <section class="card-block" id="tPhotoSection">
+                <h2 class="ranking-title">FOTOS</h2>
+                <div class="carousel" id="tCarousel" tabindex="0" aria-roledescription="Karussell" aria-label="Turnierfotos">
+                    <div class="carousel-viewport">
+                        <div class="carousel-track" id="tTrack"></div>
+                        <button class="carousel-btn prev" type="button" aria-label="Vorheriges Foto">&#10094;</button>
+                        <button class="carousel-btn next" type="button" aria-label="N&auml;chstes Foto">&#10095;</button>
+                        <span class="carousel-counter" aria-hidden="true"></span>
+                    </div>
+                    <div class="carousel-dots" role="tablist" aria-label="Foto ausw&auml;hlen"></div>
+                </div>
+            </section>
+
+            <section class="card-block">
+                <h2 class="ranking-title">ENDSTAND</h2>
+                <div class="ranking-container">
+                    <div class="ranking-list" id="tRanking"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Slaughter Games. Alle Rechte vorbehalten.</p>
+        </footer>
+    </div>
+
+    <script type="module" src="./tournament-app/js/turnier-page.js"></script>
+</body>
+</html>

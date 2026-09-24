@@ -1,0 +1,1040 @@
+[
+ {
+  "sg": 1,
+  "year": 2021,
+  "title": "Slaughter Games 1",
+  "dateFrom": "2021-05-20",
+  "dateTo": "2021-05-24",
+  "dateGuessed": true,
+  "location": "",
+  "players": 8,
+  "ranking": [
+   {
+    "place": 1,
+    "slug": "vinc",
+    "name": "Thiny Skinny Vince, the Escalating One",
+    "axe": "M"
+   },
+   {
+    "place": 2,
+    "slug": "ivo",
+    "name": "Ivo, the Whining One",
+    "axe": "R"
+   },
+   {
+    "place": 3,
+    "slug": "silvio",
+    "name": "Papa of Runes",
+    "axe": "U"
+   },
+   {
+    "place": 4,
+    "slug": "felix",
+    "name": "Felix, the Great Conceder",
+    "axe": "C"
+   },
+   {
+    "place": 5,
+    "slug": "burni",
+    "name": "Burni, the Voracious Weeder",
+    "axe": null
+   },
+   {
+    "place": 6,
+    "slug": "maugi555-gmail",
+    "name": "Ulamugi, the Great Highländer Dumper",
+    "axe": null
+   },
+   {
+    "place": 7,
+    "slug": "osti",
+    "name": "Ostibot, from another Kingdom",
+    "axe": null
+   },
+   {
+    "place": 8,
+    "slug": "leo",
+    "name": "Leogoyf",
+    "axe": null
+   }
+  ],
+  "photos": [
+   "assets/games/sg1/sg1_001.jpg",
+   "assets/games/sg1/sg1_002.jpg",
+   "assets/games/sg1/sg1_003.jpg",
+   "assets/games/sg1/sg1_004.jpg",
+   "assets/games/sg1/sg1_005.jpg",
+   "assets/games/sg1/sg1_006.jpg",
+   "assets/games/sg1/sg1_007.jpg",
+   "assets/games/sg1/sg1_008.jpg",
+   "assets/games/sg1/sg1_009.jpg",
+   "assets/games/sg1/sg1_010.jpg",
+   "assets/games/sg1/sg1_011.jpg",
+   "assets/games/sg1/sg1_012.jpg",
+   "assets/games/sg1/sg1_013.jpg",
+   "assets/games/sg1/sg1_014.jpg",
+   "assets/games/sg1/sg1_015.jpg",
+   "assets/games/sg1/sg1_016.jpg",
+   "assets/games/sg1/sg1_017.jpg",
+   "assets/games/sg1/sg1_018.jpg",
+   "assets/games/sg1/sg1_019.jpg",
+   "assets/games/sg1/sg1_020.jpg",
+   "assets/games/sg1/sg1_021.jpg",
+   "assets/games/sg1/sg1_022.jpg",
+   "assets/games/sg1/sg1_023.jpg",
+   "assets/games/sg1/sg1_024.jpg",
+   "assets/games/sg1/sg1_025.jpg",
+   "assets/games/sg1/sg1_026.jpg",
+   "assets/games/sg1/sg1_027.jpg"
+  ]
+ },
+ {
+  "sg": 2,
+  "year": 2022,
+  "title": "Slaughter Games 2",
+  "dateFrom": "2022-05-12",
+  "dateTo": "2022-05-16",
+  "dateGuessed": false,
+  "location": "",
+  "players": 12,
+  "ranking": [
+   {
+    "place": 1,
+    "slug": "burni",
+    "name": "Burni, the Voracious Weeder",
+    "axe": "M"
+   },
+   {
+    "place": 2,
+    "slug": "heber",
+    "name": "Heber, the Pipe Smoking Beardo",
+    "axe": "R"
+   },
+   {
+    "place": 3,
+    "slug": "simon",
+    "name": "Substitute Simon",
+    "axe": "U"
+   },
+   {
+    "place": 4,
+    "slug": "felix",
+    "name": "Felix, the Great Conceder",
+    "axe": "C"
+   },
+   {
+    "place": 5,
+    "slug": "vinc",
+    "name": "Thiny Skinny Vince, the Escalating One",
+    "axe": null
+   },
+   {
+    "place": 6,
+    "slug": "raul",
+    "name": "Raul Passion",
+    "axe": null
+   },
+   {
+    "place": 7,
+    "slug": "ivo",
+    "name": "Ivo, the Whining One",
+    "axe": null
+   },
+   {
+    "place": 8,
+    "slug": "maugi555-gmail",
+    "name": "Ulamugi, the Great Highländer Dumper",
+    "axe": null
+   },
+   {
+    "place": 9,
+    "slug": "osti",
+    "name": "Ostibot, from another Kingdom",
+    "axe": null
+   },
+   {
+    "place": 10,
+    "slug": "niki",
+    "name": "Niki-Jiki, Mirror Faker",
+    "axe": null
+   },
+   {
+    "place": 11,
+    "slug": "frido",
+    "name": "Fridi, Master of (A)Ether Waves",
+    "axe": null
+   },
+   {
+    "place": 12,
+    "slug": "leo",
+    "name": "Leogoyf",
+    "axe": null
+   }
+  ],
+  "photos": [
+   "assets/games/sg2/sg2_001.jpg",
+   "assets/games/sg2/sg2_002.jpg",
+   "assets/games/sg2/sg2_003.jpg",
+   "assets/games/sg2/sg2_004.jpg",
+   "assets/games/sg2/sg2_005.jpg",
+   "assets/games/sg2/sg2_006.jpg",
+   "assets/games/sg2/sg2_007.jpg",
+   "assets/games/sg2/sg2_008.jpg",
+   "assets/games/sg2/sg2_009.jpg",
+   "assets/games/sg2/sg2_010.jpg",
+   "assets/games/sg2/sg2_011.jpg",
+   "assets/games/sg2/sg2_012.jpg",
+   "assets/games/sg2/sg2_013.jpg",
+   "assets/games/sg2/sg2_014.jpg",
+   "assets/games/sg2/sg2_015.jpg",
+   "assets/games/sg2/sg2_016.jpg",
+   "assets/games/sg2/sg2_017.jpg",
+   "assets/games/sg2/sg2_018.jpg",
+   "assets/games/sg2/sg2_019.jpg",
+   "assets/games/sg2/sg2_020.jpg",
+   "assets/games/sg2/sg2_021.jpg",
+   "assets/games/sg2/sg2_022.jpg",
+   "assets/games/sg2/sg2_023.jpg",
+   "assets/games/sg2/sg2_024.jpg",
+   "assets/games/sg2/sg2_025.jpg",
+   "assets/games/sg2/sg2_026.jpg",
+   "assets/games/sg2/sg2_027.jpg",
+   "assets/games/sg2/sg2_028.jpg",
+   "assets/games/sg2/sg2_029.jpg",
+   "assets/games/sg2/sg2_030.jpg",
+   "assets/games/sg2/sg2_031.jpg",
+   "assets/games/sg2/sg2_032.jpg",
+   "assets/games/sg2/sg2_033.jpg",
+   "assets/games/sg2/sg2_034.jpg",
+   "assets/games/sg2/sg2_035.jpg",
+   "assets/games/sg2/sg2_036.jpg",
+   "assets/games/sg2/sg2_037.jpg",
+   "assets/games/sg2/sg2_038.jpg",
+   "assets/games/sg2/sg2_039.jpg",
+   "assets/games/sg2/sg2_040.jpg",
+   "assets/games/sg2/sg2_041.jpg",
+   "assets/games/sg2/sg2_042.jpg",
+   "assets/games/sg2/sg2_043.jpg",
+   "assets/games/sg2/sg2_044.jpg",
+   "assets/games/sg2/sg2_045.jpg",
+   "assets/games/sg2/sg2_046.jpg",
+   "assets/games/sg2/sg2_047.jpg",
+   "assets/games/sg2/sg2_048.jpg",
+   "assets/games/sg2/sg2_049.jpg",
+   "assets/games/sg2/sg2_050.jpg",
+   "assets/games/sg2/sg2_051.jpg",
+   "assets/games/sg2/sg2_052.jpg",
+   "assets/games/sg2/sg2_053.jpg",
+   "assets/games/sg2/sg2_054.jpg",
+   "assets/games/sg2/sg2_055.jpg",
+   "assets/games/sg2/sg2_056.jpg",
+   "assets/games/sg2/sg2_057.jpg",
+   "assets/games/sg2/sg2_058.jpg",
+   "assets/games/sg2/sg2_059.jpg",
+   "assets/games/sg2/sg2_060.jpg",
+   "assets/games/sg2/sg2_061.jpg",
+   "assets/games/sg2/sg2_062.jpg",
+   "assets/games/sg2/sg2_063.jpg"
+  ]
+ },
+ {
+  "sg": 3,
+  "year": 2023,
+  "title": "Slaughter Games 3",
+  "dateFrom": "2023-05-26",
+  "dateTo": "2023-05-29",
+  "dateGuessed": false,
+  "location": "",
+  "players": 16,
+  "ranking": [
+   {
+    "place": 1,
+    "slug": "burni",
+    "name": "Burni, the Voracious Weeder",
+    "axe": "M"
+   },
+   {
+    "place": 2,
+    "slug": "vinc",
+    "name": "Thiny Skinny Vince, the Escalating One",
+    "axe": "R"
+   },
+   {
+    "place": 3,
+    "slug": "david",
+    "name": "David, Ride-Power IX",
+    "axe": "U"
+   },
+   {
+    "place": 4,
+    "slug": "silvio",
+    "name": "Papa of Runes",
+    "axe": "C"
+   },
+   {
+    "place": 5,
+    "slug": "heber",
+    "name": "Heber, the Pipe Smoking Beardo",
+    "axe": null
+   },
+   {
+    "place": 6,
+    "slug": "simon",
+    "name": "Substitute Simon",
+    "axe": null
+   },
+   {
+    "place": 7,
+    "slug": "raul",
+    "name": "Raul Passion",
+    "axe": null
+   },
+   {
+    "place": 8,
+    "slug": "niki",
+    "name": "Niki-Jiki, Mirror Faker",
+    "axe": null
+   },
+   {
+    "place": 9,
+    "slug": "frido",
+    "name": "Fridi, Master of (A)Ether Waves",
+    "axe": null
+   },
+   {
+    "place": 10,
+    "slug": "felix",
+    "name": "Felix, the Great Conceder",
+    "axe": null
+   },
+   {
+    "place": 11,
+    "slug": "osti",
+    "name": "Ostibot, from another Kingdom",
+    "axe": null
+   },
+   {
+    "place": 12,
+    "slug": "ivo",
+    "name": "Ivo, the Whining One",
+    "axe": null
+   },
+   {
+    "place": 13,
+    "slug": "luki",
+    "name": "Mutscho Gusto",
+    "axe": null
+   },
+   {
+    "place": 14,
+    "slug": "maugi555-gmail",
+    "name": "Ulamugi, the Great Highländer Dumper",
+    "axe": null
+   },
+   {
+    "place": 15,
+    "slug": "sasha",
+    "name": "Sash a Cubic Check",
+    "axe": null
+   },
+   {
+    "place": 16,
+    "slug": "leo",
+    "name": "Leogoyf",
+    "axe": null
+   }
+  ],
+  "photos": [
+   "assets/games/sg3/sg3_001.jpg",
+   "assets/games/sg3/sg3_002.jpg",
+   "assets/games/sg3/sg3_003.jpg",
+   "assets/games/sg3/sg3_004.jpg",
+   "assets/games/sg3/sg3_005.jpg",
+   "assets/games/sg3/sg3_006.jpg",
+   "assets/games/sg3/sg3_007.jpg",
+   "assets/games/sg3/sg3_008.jpg",
+   "assets/games/sg3/sg3_009.jpg",
+   "assets/games/sg3/sg3_010.jpg",
+   "assets/games/sg3/sg3_011.jpg",
+   "assets/games/sg3/sg3_012.jpg",
+   "assets/games/sg3/sg3_013.jpg",
+   "assets/games/sg3/sg3_014.jpg",
+   "assets/games/sg3/sg3_015.jpg",
+   "assets/games/sg3/sg3_016.jpg",
+   "assets/games/sg3/sg3_017.jpg",
+   "assets/games/sg3/sg3_018.jpg",
+   "assets/games/sg3/sg3_019.jpg",
+   "assets/games/sg3/sg3_020.jpg",
+   "assets/games/sg3/sg3_021.jpg",
+   "assets/games/sg3/sg3_022.jpg",
+   "assets/games/sg3/sg3_023.jpg",
+   "assets/games/sg3/sg3_024.jpg",
+   "assets/games/sg3/sg3_025.jpg",
+   "assets/games/sg3/sg3_026.jpg",
+   "assets/games/sg3/sg3_027.jpg",
+   "assets/games/sg3/sg3_028.jpg",
+   "assets/games/sg3/sg3_029.jpg",
+   "assets/games/sg3/sg3_030.jpg",
+   "assets/games/sg3/sg3_031.jpg",
+   "assets/games/sg3/sg3_032.jpg",
+   "assets/games/sg3/sg3_033.jpg",
+   "assets/games/sg3/sg3_034.jpg",
+   "assets/games/sg3/sg3_035.jpg",
+   "assets/games/sg3/sg3_036.jpg",
+   "assets/games/sg3/sg3_037.jpg",
+   "assets/games/sg3/sg3_038.jpg",
+   "assets/games/sg3/sg3_039.jpg",
+   "assets/games/sg3/sg3_040.jpg",
+   "assets/games/sg3/sg3_041.jpg",
+   "assets/games/sg3/sg3_042.jpg",
+   "assets/games/sg3/sg3_043.jpg",
+   "assets/games/sg3/sg3_044.jpg",
+   "assets/games/sg3/sg3_045.jpg",
+   "assets/games/sg3/sg3_046.jpg",
+   "assets/games/sg3/sg3_047.jpg",
+   "assets/games/sg3/sg3_048.jpg",
+   "assets/games/sg3/sg3_049.jpg",
+   "assets/games/sg3/sg3_050.jpg",
+   "assets/games/sg3/sg3_051.jpg",
+   "assets/games/sg3/sg3_052.jpg",
+   "assets/games/sg3/sg3_053.jpg",
+   "assets/games/sg3/sg3_054.jpg",
+   "assets/games/sg3/sg3_055.jpg",
+   "assets/games/sg3/sg3_056.jpg",
+   "assets/games/sg3/sg3_057.jpg",
+   "assets/games/sg3/sg3_058.jpg",
+   "assets/games/sg3/sg3_059.jpg",
+   "assets/games/sg3/sg3_060.jpg",
+   "assets/games/sg3/sg3_061.jpg",
+   "assets/games/sg3/sg3_062.jpg",
+   "assets/games/sg3/sg3_063.jpg",
+   "assets/games/sg3/sg3_064.jpg",
+   "assets/games/sg3/sg3_065.jpg",
+   "assets/games/sg3/sg3_066.jpg",
+   "assets/games/sg3/sg3_067.jpg",
+   "assets/games/sg3/sg3_068.jpg",
+   "assets/games/sg3/sg3_069.jpg",
+   "assets/games/sg3/sg3_070.jpg",
+   "assets/games/sg3/sg3_071.jpg"
+  ]
+ },
+ {
+  "sg": 4,
+  "year": 2024,
+  "title": "Slaughter Games 4",
+  "dateFrom": "2024-05-16",
+  "dateTo": "2024-05-20",
+  "dateGuessed": false,
+  "location": "",
+  "players": 16,
+  "ranking": [
+   {
+    "place": 1,
+    "slug": "vinc",
+    "name": "Thiny Skinny Vince, the Escalating One",
+    "axe": "M"
+   },
+   {
+    "place": 2,
+    "slug": "silvio",
+    "name": "Papa of Runes",
+    "axe": "R"
+   },
+   {
+    "place": 3,
+    "slug": "david",
+    "name": "David, Ride-Power IX",
+    "axe": "U"
+   },
+   {
+    "place": 4,
+    "slug": "burni",
+    "name": "Burni, the Voracious Weeder",
+    "axe": "C"
+   },
+   {
+    "place": 5,
+    "slug": "frido",
+    "name": "Fridi, Master of (A)Ether Waves",
+    "axe": null
+   },
+   {
+    "place": 6,
+    "slug": "osti",
+    "name": "Ostibot, from another Kingdom",
+    "axe": null
+   },
+   {
+    "place": 7,
+    "slug": "heber",
+    "name": "Heber, the Pipe Smoking Beardo",
+    "axe": null
+   },
+   {
+    "place": 8,
+    "slug": "wenzl",
+    "name": "Bouncer",
+    "axe": null
+   },
+   {
+    "place": 9,
+    "slug": "raul",
+    "name": "Raul Passion",
+    "axe": null
+   },
+   {
+    "place": 10,
+    "slug": "felix",
+    "name": "Felix, the Great Conceder",
+    "axe": null
+   },
+   {
+    "place": 11,
+    "slug": "niki",
+    "name": "Niki-Jiki, Mirror Faker",
+    "axe": null
+   },
+   {
+    "place": 12,
+    "slug": "luki",
+    "name": "Mutscho Gusto",
+    "axe": null
+   },
+   {
+    "place": 13,
+    "slug": "maugi555-gmail",
+    "name": "Ulamugi, the Great Highländer Dumper",
+    "axe": null
+   },
+   {
+    "place": 14,
+    "slug": "paul",
+    "name": "Saint Slow Paul III",
+    "axe": null
+   },
+   {
+    "place": 15,
+    "slug": "ivo",
+    "name": "Ivo, the Whining One",
+    "axe": null
+   },
+   {
+    "place": 16,
+    "slug": "sasha",
+    "name": "Sash a Cubic Check",
+    "axe": null
+   }
+  ],
+  "photos": [
+   "assets/games/sg4/sg4_001.jpg",
+   "assets/games/sg4/sg4_002.jpg",
+   "assets/games/sg4/sg4_003.jpg",
+   "assets/games/sg4/sg4_004.jpg",
+   "assets/games/sg4/sg4_005.jpg",
+   "assets/games/sg4/sg4_006.jpg",
+   "assets/games/sg4/sg4_007.jpg",
+   "assets/games/sg4/sg4_008.jpg",
+   "assets/games/sg4/sg4_009.jpg",
+   "assets/games/sg4/sg4_010.jpg",
+   "assets/games/sg4/sg4_011.jpg",
+   "assets/games/sg4/sg4_012.jpg",
+   "assets/games/sg4/sg4_013.jpg",
+   "assets/games/sg4/sg4_014.jpg",
+   "assets/games/sg4/sg4_015.jpg",
+   "assets/games/sg4/sg4_016.jpg",
+   "assets/games/sg4/sg4_017.jpg",
+   "assets/games/sg4/sg4_018.jpg",
+   "assets/games/sg4/sg4_019.jpg",
+   "assets/games/sg4/sg4_020.jpg",
+   "assets/games/sg4/sg4_021.jpg",
+   "assets/games/sg4/sg4_022.jpg",
+   "assets/games/sg4/sg4_023.jpg",
+   "assets/games/sg4/sg4_024.jpg",
+   "assets/games/sg4/sg4_025.jpg",
+   "assets/games/sg4/sg4_026.jpg",
+   "assets/games/sg4/sg4_027.jpg",
+   "assets/games/sg4/sg4_028.jpg",
+   "assets/games/sg4/sg4_029.jpg",
+   "assets/games/sg4/sg4_030.jpg",
+   "assets/games/sg4/sg4_031.jpg",
+   "assets/games/sg4/sg4_032.jpg",
+   "assets/games/sg4/sg4_033.jpg",
+   "assets/games/sg4/sg4_034.jpg",
+   "assets/games/sg4/sg4_035.jpg",
+   "assets/games/sg4/sg4_036.jpg",
+   "assets/games/sg4/sg4_037.jpg",
+   "assets/games/sg4/sg4_038.jpg",
+   "assets/games/sg4/sg4_039.jpg",
+   "assets/games/sg4/sg4_040.jpg",
+   "assets/games/sg4/sg4_041.jpg",
+   "assets/games/sg4/sg4_042.jpg",
+   "assets/games/sg4/sg4_043.jpg",
+   "assets/games/sg4/sg4_044.jpg",
+   "assets/games/sg4/sg4_045.jpg",
+   "assets/games/sg4/sg4_046.jpg",
+   "assets/games/sg4/sg4_047.jpg",
+   "assets/games/sg4/sg4_048.jpg",
+   "assets/games/sg4/sg4_049.jpg",
+   "assets/games/sg4/sg4_050.jpg",
+   "assets/games/sg4/sg4_051.jpg",
+   "assets/games/sg4/sg4_052.jpg",
+   "assets/games/sg4/sg4_053.jpg",
+   "assets/games/sg4/sg4_054.jpg",
+   "assets/games/sg4/sg4_055.jpg",
+   "assets/games/sg4/sg4_056.jpg",
+   "assets/games/sg4/sg4_057.jpg",
+   "assets/games/sg4/sg4_058.jpg",
+   "assets/games/sg4/sg4_059.jpg",
+   "assets/games/sg4/sg4_060.jpg",
+   "assets/games/sg4/sg4_061.jpg",
+   "assets/games/sg4/sg4_062.jpg",
+   "assets/games/sg4/sg4_063.jpg",
+   "assets/games/sg4/sg4_064.jpg",
+   "assets/games/sg4/sg4_065.jpg",
+   "assets/games/sg4/sg4_066.jpg",
+   "assets/games/sg4/sg4_067.jpg",
+   "assets/games/sg4/sg4_068.jpg",
+   "assets/games/sg4/sg4_069.jpg",
+   "assets/games/sg4/sg4_070.jpg",
+   "assets/games/sg4/sg4_071.jpg",
+   "assets/games/sg4/sg4_072.jpg",
+   "assets/games/sg4/sg4_073.jpg",
+   "assets/games/sg4/sg4_074.jpg",
+   "assets/games/sg4/sg4_075.jpg",
+   "assets/games/sg4/sg4_076.jpg",
+   "assets/games/sg4/sg4_077.jpg",
+   "assets/games/sg4/sg4_078.jpg",
+   "assets/games/sg4/sg4_079.jpg",
+   "assets/games/sg4/sg4_080.jpg",
+   "assets/games/sg4/sg4_081.jpg",
+   "assets/games/sg4/sg4_082.jpg",
+   "assets/games/sg4/sg4_083.jpg",
+   "assets/games/sg4/sg4_084.jpg",
+   "assets/games/sg4/sg4_085.jpg",
+   "assets/games/sg4/sg4_086.jpg",
+   "assets/games/sg4/sg4_087.jpg",
+   "assets/games/sg4/sg4_088.jpg",
+   "assets/games/sg4/sg4_089.jpg",
+   "assets/games/sg4/sg4_090.jpg",
+   "assets/games/sg4/sg4_091.jpg",
+   "assets/games/sg4/sg4_092.jpg",
+   "assets/games/sg4/sg4_093.jpg",
+   "assets/games/sg4/sg4_094.jpg",
+   "assets/games/sg4/sg4_095.jpg",
+   "assets/games/sg4/sg4_096.jpg",
+   "assets/games/sg4/sg4_097.jpg",
+   "assets/games/sg4/sg4_098.jpg",
+   "assets/games/sg4/sg4_099.jpg",
+   "assets/games/sg4/sg4_100.jpg",
+   "assets/games/sg4/sg4_101.jpg",
+   "assets/games/sg4/sg4_102.jpg",
+   "assets/games/sg4/sg4_103.jpg",
+   "assets/games/sg4/sg4_104.jpg",
+   "assets/games/sg4/sg4_105.jpg",
+   "assets/games/sg4/sg4_106.jpg",
+   "assets/games/sg4/sg4_107.jpg",
+   "assets/games/sg4/sg4_108.jpg",
+   "assets/games/sg4/sg4_109.jpg",
+   "assets/games/sg4/sg4_110.jpg",
+   "assets/games/sg4/sg4_111.jpg",
+   "assets/games/sg4/sg4_112.jpg",
+   "assets/games/sg4/sg4_113.jpg",
+   "assets/games/sg4/sg4_114.jpg",
+   "assets/games/sg4/sg4_115.jpg",
+   "assets/games/sg4/sg4_116.jpg",
+   "assets/games/sg4/sg4_117.jpg",
+   "assets/games/sg4/sg4_118.jpg",
+   "assets/games/sg4/sg4_119.jpg",
+   "assets/games/sg4/sg4_120.jpg",
+   "assets/games/sg4/sg4_121.jpg",
+   "assets/games/sg4/sg4_122.jpg",
+   "assets/games/sg4/sg4_123.jpg",
+   "assets/games/sg4/sg4_124.jpg",
+   "assets/games/sg4/sg4_125.jpg",
+   "assets/games/sg4/sg4_126.jpg",
+   "assets/games/sg4/sg4_127.jpg",
+   "assets/games/sg4/sg4_128.jpg",
+   "assets/games/sg4/sg4_129.jpg",
+   "assets/games/sg4/sg4_130.jpg",
+   "assets/games/sg4/sg4_131.jpg",
+   "assets/games/sg4/sg4_132.jpg",
+   "assets/games/sg4/sg4_133.jpg",
+   "assets/games/sg4/sg4_134.jpg",
+   "assets/games/sg4/sg4_135.jpg",
+   "assets/games/sg4/sg4_136.jpg",
+   "assets/games/sg4/sg4_137.jpg",
+   "assets/games/sg4/sg4_138.jpg",
+   "assets/games/sg4/sg4_139.jpg",
+   "assets/games/sg4/sg4_140.jpg",
+   "assets/games/sg4/sg4_141.jpg",
+   "assets/games/sg4/sg4_142.jpg",
+   "assets/games/sg4/sg4_143.jpg",
+   "assets/games/sg4/sg4_144.jpg",
+   "assets/games/sg4/sg4_145.jpg",
+   "assets/games/sg4/sg4_146.jpg",
+   "assets/games/sg4/sg4_147.jpg",
+   "assets/games/sg4/sg4_148.jpg",
+   "assets/games/sg4/sg4_149.jpg",
+   "assets/games/sg4/sg4_150.jpg",
+   "assets/games/sg4/sg4_151.jpg",
+   "assets/games/sg4/sg4_152.jpg",
+   "assets/games/sg4/sg4_153.jpg",
+   "assets/games/sg4/sg4_154.jpg",
+   "assets/games/sg4/sg4_155.jpg",
+   "assets/games/sg4/sg4_156.jpg",
+   "assets/games/sg4/sg4_157.jpg",
+   "assets/games/sg4/sg4_158.jpg",
+   "assets/games/sg4/sg4_159.jpg",
+   "assets/games/sg4/sg4_160.jpg",
+   "assets/games/sg4/sg4_161.jpg",
+   "assets/games/sg4/sg4_162.jpg",
+   "assets/games/sg4/sg4_163.jpg",
+   "assets/games/sg4/sg4_164.jpg",
+   "assets/games/sg4/sg4_165.jpg",
+   "assets/games/sg4/sg4_166.jpg",
+   "assets/games/sg4/sg4_167.jpg",
+   "assets/games/sg4/sg4_168.jpg",
+   "assets/games/sg4/sg4_169.jpg",
+   "assets/games/sg4/sg4_170.jpg",
+   "assets/games/sg4/sg4_171.jpg",
+   "assets/games/sg4/sg4_172.jpg",
+   "assets/games/sg4/sg4_173.jpg",
+   "assets/games/sg4/sg4_174.jpg",
+   "assets/games/sg4/sg4_175.jpg",
+   "assets/games/sg4/sg4_176.jpg",
+   "assets/games/sg4/sg4_177.jpg",
+   "assets/games/sg4/sg4_178.jpg",
+   "assets/games/sg4/sg4_179.jpg",
+   "assets/games/sg4/sg4_180.jpg",
+   "assets/games/sg4/sg4_181.jpg",
+   "assets/games/sg4/sg4_182.jpg",
+   "assets/games/sg4/sg4_183.jpg",
+   "assets/games/sg4/sg4_184.jpg",
+   "assets/games/sg4/sg4_185.jpg",
+   "assets/games/sg4/sg4_186.jpg",
+   "assets/games/sg4/sg4_187.jpg",
+   "assets/games/sg4/sg4_188.jpg",
+   "assets/games/sg4/sg4_189.jpg",
+   "assets/games/sg4/sg4_190.jpg",
+   "assets/games/sg4/sg4_191.jpg"
+  ]
+ },
+ {
+  "sg": 5,
+  "year": 2025,
+  "title": "Slaughter Games 5",
+  "dateFrom": "2025-06-05",
+  "dateTo": "2025-06-09",
+  "dateGuessed": false,
+  "location": "",
+  "players": 18,
+  "ranking": [
+   {
+    "place": 1,
+    "slug": "felix",
+    "name": "Felix, the Great Conceder",
+    "axe": "M"
+   },
+   {
+    "place": 2,
+    "slug": "vinc",
+    "name": "Thiny Skinny Vince, the Escalating One",
+    "axe": "R"
+   },
+   {
+    "place": 3,
+    "slug": "david",
+    "name": "David, Ride-Power IX",
+    "axe": "U"
+   },
+   {
+    "place": 4,
+    "slug": "burni",
+    "name": "Burni, the Voracious Weeder",
+    "axe": "C"
+   },
+   {
+    "place": 5,
+    "slug": "simon",
+    "name": "Substitute Simon",
+    "axe": null
+   },
+   {
+    "place": 6,
+    "slug": "fabi",
+    "name": "Evil Twin",
+    "axe": null
+   },
+   {
+    "place": 7,
+    "slug": "osti",
+    "name": "Ostibot, from another Kingdom",
+    "axe": null
+   },
+   {
+    "place": 8,
+    "slug": "silvio",
+    "name": "Papa of Runes",
+    "axe": null
+   },
+   {
+    "place": 9,
+    "slug": "wenzl",
+    "name": "Bouncer",
+    "axe": null
+   },
+   {
+    "place": 10,
+    "slug": "niki",
+    "name": "Niki-Jiki, Mirror Faker",
+    "axe": null
+   },
+   {
+    "place": 11,
+    "slug": "marc",
+    "name": "Aetherwuzl Marvelking",
+    "axe": null
+   },
+   {
+    "place": 12,
+    "slug": "paul",
+    "name": "Saint Slow Paul III",
+    "axe": null
+   },
+   {
+    "place": 13,
+    "slug": "hansi",
+    "name": "Johann, Aprentice Sorcerer",
+    "axe": null
+   },
+   {
+    "place": 14,
+    "slug": "frido",
+    "name": "Fridi, Master of (A)Ether Waves",
+    "axe": null
+   },
+   {
+    "place": 15,
+    "slug": "luki",
+    "name": "Mutscho Gusto",
+    "axe": null
+   },
+   {
+    "place": 16,
+    "slug": "maugi555-gmail",
+    "name": "Ulamugi, the Great Highländer Dumper",
+    "axe": null
+   },
+   {
+    "place": 17,
+    "slug": "heber",
+    "name": "Heber, the Pipe Smoking Beardo",
+    "axe": null
+   },
+   {
+    "place": 18,
+    "slug": "ivo",
+    "name": "Ivo, the Whining One",
+    "axe": null
+   }
+  ],
+  "photos": [
+   "assets/games/sg5/sg5_001.jpg",
+   "assets/games/sg5/sg5_002.jpg",
+   "assets/games/sg5/sg5_003.jpg",
+   "assets/games/sg5/sg5_004.jpg",
+   "assets/games/sg5/sg5_005.jpg",
+   "assets/games/sg5/sg5_006.jpg",
+   "assets/games/sg5/sg5_007.jpg",
+   "assets/games/sg5/sg5_008.jpg",
+   "assets/games/sg5/sg5_009.jpg",
+   "assets/games/sg5/sg5_010.jpg",
+   "assets/games/sg5/sg5_011.jpg",
+   "assets/games/sg5/sg5_012.jpg",
+   "assets/games/sg5/sg5_013.jpg",
+   "assets/games/sg5/sg5_014.jpg",
+   "assets/games/sg5/sg5_015.jpg",
+   "assets/games/sg5/sg5_016.jpg",
+   "assets/games/sg5/sg5_017.jpg",
+   "assets/games/sg5/sg5_018.jpg",
+   "assets/games/sg5/sg5_019.jpg",
+   "assets/games/sg5/sg5_020.jpg",
+   "assets/games/sg5/sg5_021.jpg",
+   "assets/games/sg5/sg5_022.jpg",
+   "assets/games/sg5/sg5_023.jpg",
+   "assets/games/sg5/sg5_024.jpg",
+   "assets/games/sg5/sg5_025.jpg",
+   "assets/games/sg5/sg5_026.jpg",
+   "assets/games/sg5/sg5_027.jpg",
+   "assets/games/sg5/sg5_028.jpg",
+   "assets/games/sg5/sg5_029.jpg",
+   "assets/games/sg5/sg5_030.jpg",
+   "assets/games/sg5/sg5_031.jpg",
+   "assets/games/sg5/sg5_032.jpg",
+   "assets/games/sg5/sg5_033.jpg",
+   "assets/games/sg5/sg5_034.jpg",
+   "assets/games/sg5/sg5_035.jpg",
+   "assets/games/sg5/sg5_036.jpg",
+   "assets/games/sg5/sg5_037.jpg",
+   "assets/games/sg5/sg5_038.jpg",
+   "assets/games/sg5/sg5_039.jpg",
+   "assets/games/sg5/sg5_040.jpg"
+  ]
+ },
+ {
+  "sg": 6,
+  "year": 2026,
+  "title": "Slaughter Games 6",
+  "dateFrom": "2026-05-21",
+  "dateTo": "2026-05-25",
+  "dateGuessed": false,
+  "location": "",
+  "players": 20,
+  "ranking": [
+   {
+    "place": 1,
+    "slug": "david",
+    "name": "David, Ride-Power IX",
+    "axe": "M"
+   },
+   {
+    "place": 2,
+    "slug": "simon",
+    "name": "Substitute Simon",
+    "axe": "R"
+   },
+   {
+    "place": 3,
+    "slug": "hansi",
+    "name": "Johann, Aprentice Sorcerer",
+    "axe": "U"
+   },
+   {
+    "place": 4,
+    "slug": "vinc",
+    "name": "Thiny Skinny Vince, the Escalating One",
+    "axe": "C"
+   },
+   {
+    "place": 5,
+    "slug": "heber",
+    "name": "Heber, the Pipe Smoking Beardo",
+    "axe": null
+   },
+   {
+    "place": 6,
+    "slug": "fabi",
+    "name": "Evil Twin",
+    "axe": null
+   },
+   {
+    "place": 7,
+    "slug": "osti",
+    "name": "Ostibot, from another Kingdom",
+    "axe": null
+   },
+   {
+    "place": 8,
+    "slug": "felix",
+    "name": "Felix, the Great Conceder",
+    "axe": null
+   },
+   {
+    "place": 9,
+    "slug": "marc",
+    "name": "Aetherwuzl Marvelking",
+    "axe": null
+   },
+   {
+    "place": 10,
+    "slug": "burni",
+    "name": "Burni, the Voracious Weeder",
+    "axe": null
+   },
+   {
+    "place": 11,
+    "slug": "frido",
+    "name": "Fridi, Master of (A)Ether Waves",
+    "axe": null
+   },
+   {
+    "place": 12,
+    "slug": "silvio",
+    "name": "Papa of Runes",
+    "axe": null
+   },
+   {
+    "place": 13,
+    "slug": "ivo",
+    "name": "Ivo, the Whining One",
+    "axe": null
+   },
+   {
+    "place": 14,
+    "slug": "maugi555-gmail",
+    "name": "Ulamugi, the Great Highländer Dumper",
+    "axe": null
+   },
+   {
+    "place": 15,
+    "slug": "leo",
+    "name": "Leogoyf",
+    "axe": null
+   },
+   {
+    "place": 16,
+    "slug": "niki",
+    "name": "Niki-Jiki, Mirror Faker",
+    "axe": null
+   },
+   {
+    "place": 17,
+    "slug": "wenzl",
+    "name": "Bouncer",
+    "axe": null
+   },
+   {
+    "place": 18,
+    "slug": "raul",
+    "name": "Raul Passion",
+    "axe": null
+   },
+   {
+    "place": 19,
+    "slug": "luki",
+    "name": "Mutscho Gusto",
+    "axe": null
+   },
+   {
+    "place": 20,
+    "slug": "paul",
+    "name": "Saint Slow Paul III",
+    "axe": null
+   }
+  ],
+  "photos": [
+   "assets/games/sg6/sg6_001.jpg",
+   "assets/games/sg6/sg6_002.jpg",
+   "assets/games/sg6/sg6_003.jpg",
+   "assets/games/sg6/sg6_004.jpg",
+   "assets/games/sg6/sg6_005.jpg",
+   "assets/games/sg6/sg6_006.jpg",
+   "assets/games/sg6/sg6_007.jpg",
+   "assets/games/sg6/sg6_008.jpg",
+   "assets/games/sg6/sg6_009.jpg",
+   "assets/games/sg6/sg6_010.jpg",
+   "assets/games/sg6/sg6_011.jpg",
+   "assets/games/sg6/sg6_012.jpg",
+   "assets/games/sg6/sg6_013.jpg",
+   "assets/games/sg6/sg6_014.jpg",
+   "assets/games/sg6/sg6_015.jpg",
+   "assets/games/sg6/sg6_016.jpg",
+   "assets/games/sg6/sg6_017.jpg",
+   "assets/games/sg6/sg6_018.jpg",
+   "assets/games/sg6/sg6_019.jpg",
+   "assets/games/sg6/sg6_020.jpg",
+   "assets/games/sg6/sg6_021.jpg",
+   "assets/games/sg6/sg6_022.jpg"
+  ]
+ }
+]
