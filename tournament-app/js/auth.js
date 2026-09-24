@@ -9,8 +9,21 @@ export async function getSessionUser(){
 
 export async function requireAuthOrRedirect(){
   const user = await getSessionUser();
-  if(!user){ window.location.href = './login.html'; return null; }
+  if(!user){
+    // Ziel merken, damit man nach dem Login nicht im Dashboard landet.
+    const next = location.pathname.split('/').pop() + location.search;
+    window.location.href = `./login.html?next=${encodeURIComponent(next)}`;
+    return null;
+  }
   return user;
+}
+
+// Nur seiteninterne Ziele zulassen - kein offener Redirect.
+export function safeNext(fallback = './dashboard.html'){
+  const raw = new URLSearchParams(location.search).get('next');
+  if(!raw) return fallback;
+  if(/^[a-z][a-z0-9+.-]*:/i.test(raw) || raw.startsWith('//') || raw.startsWith('/')) return fallback;
+  return './' + raw.replace(/^\.\//, '');
 }
 
 export async function register(email, password, displayName){
@@ -45,7 +58,7 @@ export function bindAuthUI(){
       e.preventDefault();
       try{
         await login($('loginEmail').value.trim(), $('loginPassword').value);
-        window.location.href = './dashboard.html';
+        window.location.href = safeNext();
       }catch(err){ msg.textContent = err.message; }
     });
   }

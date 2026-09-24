@@ -37,7 +37,7 @@ function icon(key){
 async function injectSprite(){
   if(document.getElementById('badgeSprite')) return;
   try{
-    const res = await fetch('../badges.svg', { cache:'force-cache' });
+    const res = await fetch('../badges.svg?v=17', { cache:'no-cache' });
     const host = document.createElement('div');
     host.id = 'badgeSprite';
     host.style.display = 'none';

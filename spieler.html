@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Alle Spielerprofile der Slaughter Games">
+    <title>Spielerprofile – Slaughter Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Blood+Runner&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="stylesheet" href="styles.css?v=2.4">
+</head>
+<body>
+    <div class="container">
+        <header class="logo-section">
+            <div class="logo-placeholder">
+                <a href="index.html"><img src="main_logo.png" alt="Slaughter Games"></a>
+            </div>
+            <h1 class="logo-font">SPIELERPROFILE</h1>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link-blog">
+                    <span class="nav-icon">&#127968;</span> STARTSEITE
+                </a>
+                <a href="tournament-app/profile.html" class="nav-link-blog" style="margin-left:12px;">
+                    <span class="nav-icon">&#9999;&#65039;</span> EIGENES PROFIL BEARBEITEN
+                </a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="players-section">
+                <p class="players-intro">
+                    Alle Spieler der Slaughter Games. Klick auf einen Namen f&uuml;r Teilnahmen,
+                    &Auml;xte, Abzeichen und Lieblingskarte.
+                </p>
+                <p class="players-hint">
+                    Zum Bearbeiten des eigenen Profils oben auf <b>Eigenes Profil bearbeiten</b>
+                    &ndash; du wirst zum Login geleitet und landest danach direkt im Profil.
+                </p>
+                <div class="players-grid" id="playersGrid">
+                    <p class="muted">Lade Profile&hellip;</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Slaughter Games. Alle Rechte vorbehalten.</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script type="module" src="./tournament-app/js/players-page.js"></script>
+</body>
+</html>
