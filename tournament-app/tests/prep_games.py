@@ -49,6 +49,12 @@ GROUP_PHOTO = {
 }
 DEDUP_THRESHOLD = 8      # Hamming-Distanz der dHashes
 
+# Auf Wunsch aussortiert (Quelldateinamen), damit ein erneuter Lauf sie nicht
+# wieder einsammelt.
+EXCLUDE = {
+    5: {'20250608_094005.jpg', '20250608_094006.jpg'},
+}
+
 
 def dhash(im, size=8):
     g = im.convert('L').resize((size + 1, size), Image.LANCZOS)
@@ -107,9 +113,12 @@ for year in sorted(WINDOW):
     # Signal-Exporte, deren Name das Versand- und nicht das Aufnahmedatum traegt
     # (im 2021er-Ordner stehen Namen aus 2022/2023). Nur echte EXIF-Aufnahmedaten
     # ausserhalb des Turnierfensters fliegen raus.
-    cands, ausgefiltert = [], 0
+    cands, ausgefiltert, aussortiert = [], 0, 0
     for f in sorted(os.listdir(src)):
         if not f.lower().endswith(EXT):
+            continue
+        if f in EXCLUDE.get(sg, ()):
+            aussortiert += 1
             continue
         p = os.path.join(src, f)
         d = exif_date(p)
@@ -178,8 +187,8 @@ for year in sorted(WINDOW):
         'ranking': ranking,
         'photos': photos,
     })
-    print('SG%d (%d): %3d Fotos  (%d Dubletten, %d ausserhalb verworfen)  %.0f -> %.0f MB'
-          % (sg, year, len(photos), doppelt, ausgefiltert, tin/1e6, tout/1e6))
+    print('SG%d (%d): %3d Fotos  (%d Dubletten, %d ausserhalb, %d manuell raus)  %.0f -> %.0f MB'
+          % (sg, year, len(photos), doppelt, ausgefiltert, aussortiert, tin/1e6, tout/1e6))
 
 io.open(os.path.join(REPO, 'tournaments.json'), 'w', encoding='utf-8').write(
     json.dumps(games, ensure_ascii=False, indent=1) + '\n')
