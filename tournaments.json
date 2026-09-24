@@ -6,7 +6,8 @@
   "dateFrom": "2021-05-20",
   "dateTo": "2021-05-24",
   "dateGuessed": true,
-  "location": "",
+  "groupPhotoPosed": false,
+  "location": "Villa in Tschechien",
   "players": 8,
   "ranking": [
    {
@@ -84,8 +85,7 @@
    "assets/games/sg1/sg1_023.jpg",
    "assets/games/sg1/sg1_024.jpg",
    "assets/games/sg1/sg1_025.jpg",
-   "assets/games/sg1/sg1_026.jpg",
-   "assets/games/sg1/sg1_027.jpg"
+   "assets/games/sg1/sg1_026.jpg"
   ]
  },
  {
@@ -95,7 +95,8 @@
   "dateFrom": "2022-05-12",
   "dateTo": "2022-05-16",
   "dateGuessed": false,
-  "location": "",
+  "groupPhotoPosed": true,
+  "location": "Naturvilla mit Stinki-Teich, Ungarn",
   "players": 12,
   "ranking": [
    {
@@ -232,9 +233,7 @@
    "assets/games/sg2/sg2_058.jpg",
    "assets/games/sg2/sg2_059.jpg",
    "assets/games/sg2/sg2_060.jpg",
-   "assets/games/sg2/sg2_061.jpg",
-   "assets/games/sg2/sg2_062.jpg",
-   "assets/games/sg2/sg2_063.jpg"
+   "assets/games/sg2/sg2_061.jpg"
   ]
  },
  {
@@ -244,7 +243,8 @@
   "dateFrom": "2023-05-26",
   "dateTo": "2023-05-29",
   "dateGuessed": false,
-  "location": "",
+  "groupPhotoPosed": true,
+  "location": "Vierkanthof in Tschechien",
   "players": 16,
   "ranking": [
    {
@@ -398,24 +398,7 @@
    "assets/games/sg3/sg3_051.jpg",
    "assets/games/sg3/sg3_052.jpg",
    "assets/games/sg3/sg3_053.jpg",
-   "assets/games/sg3/sg3_054.jpg",
-   "assets/games/sg3/sg3_055.jpg",
-   "assets/games/sg3/sg3_056.jpg",
-   "assets/games/sg3/sg3_057.jpg",
-   "assets/games/sg3/sg3_058.jpg",
-   "assets/games/sg3/sg3_059.jpg",
-   "assets/games/sg3/sg3_060.jpg",
-   "assets/games/sg3/sg3_061.jpg",
-   "assets/games/sg3/sg3_062.jpg",
-   "assets/games/sg3/sg3_063.jpg",
-   "assets/games/sg3/sg3_064.jpg",
-   "assets/games/sg3/sg3_065.jpg",
-   "assets/games/sg3/sg3_066.jpg",
-   "assets/games/sg3/sg3_067.jpg",
-   "assets/games/sg3/sg3_068.jpg",
-   "assets/games/sg3/sg3_069.jpg",
-   "assets/games/sg3/sg3_070.jpg",
-   "assets/games/sg3/sg3_071.jpg"
+   "assets/games/sg3/sg3_054.jpg"
   ]
  },
  {
@@ -425,7 +408,8 @@
   "dateFrom": "2024-05-16",
   "dateTo": "2024-05-20",
   "dateGuessed": false,
-  "location": "",
+  "groupPhotoPosed": true,
+  "location": "Villa in den Weinbergen, Ungarn",
   "players": 16,
   "ranking": [
    {
@@ -655,68 +639,7 @@
    "assets/games/sg4/sg4_127.jpg",
    "assets/games/sg4/sg4_128.jpg",
    "assets/games/sg4/sg4_129.jpg",
-   "assets/games/sg4/sg4_130.jpg",
-   "assets/games/sg4/sg4_131.jpg",
-   "assets/games/sg4/sg4_132.jpg",
-   "assets/games/sg4/sg4_133.jpg",
-   "assets/games/sg4/sg4_134.jpg",
-   "assets/games/sg4/sg4_135.jpg",
-   "assets/games/sg4/sg4_136.jpg",
-   "assets/games/sg4/sg4_137.jpg",
-   "assets/games/sg4/sg4_138.jpg",
-   "assets/games/sg4/sg4_139.jpg",
-   "assets/games/sg4/sg4_140.jpg",
-   "assets/games/sg4/sg4_141.jpg",
-   "assets/games/sg4/sg4_142.jpg",
-   "assets/games/sg4/sg4_143.jpg",
-   "assets/games/sg4/sg4_144.jpg",
-   "assets/games/sg4/sg4_145.jpg",
-   "assets/games/sg4/sg4_146.jpg",
-   "assets/games/sg4/sg4_147.jpg",
-   "assets/games/sg4/sg4_148.jpg",
-   "assets/games/sg4/sg4_149.jpg",
-   "assets/games/sg4/sg4_150.jpg",
-   "assets/games/sg4/sg4_151.jpg",
-   "assets/games/sg4/sg4_152.jpg",
-   "assets/games/sg4/sg4_153.jpg",
-   "assets/games/sg4/sg4_154.jpg",
-   "assets/games/sg4/sg4_155.jpg",
-   "assets/games/sg4/sg4_156.jpg",
-   "assets/games/sg4/sg4_157.jpg",
-   "assets/games/sg4/sg4_158.jpg",
-   "assets/games/sg4/sg4_159.jpg",
-   "assets/games/sg4/sg4_160.jpg",
-   "assets/games/sg4/sg4_161.jpg",
-   "assets/games/sg4/sg4_162.jpg",
-   "assets/games/sg4/sg4_163.jpg",
-   "assets/games/sg4/sg4_164.jpg",
-   "assets/games/sg4/sg4_165.jpg",
-   "assets/games/sg4/sg4_166.jpg",
-   "assets/games/sg4/sg4_167.jpg",
-   "assets/games/sg4/sg4_168.jpg",
-   "assets/games/sg4/sg4_169.jpg",
-   "assets/games/sg4/sg4_170.jpg",
-   "assets/games/sg4/sg4_171.jpg",
-   "assets/games/sg4/sg4_172.jpg",
-   "assets/games/sg4/sg4_173.jpg",
-   "assets/games/sg4/sg4_174.jpg",
-   "assets/games/sg4/sg4_175.jpg",
-   "assets/games/sg4/sg4_176.jpg",
-   "assets/games/sg4/sg4_177.jpg",
-   "assets/games/sg4/sg4_178.jpg",
-   "assets/games/sg4/sg4_179.jpg",
-   "assets/games/sg4/sg4_180.jpg",
-   "assets/games/sg4/sg4_181.jpg",
-   "assets/games/sg4/sg4_182.jpg",
-   "assets/games/sg4/sg4_183.jpg",
-   "assets/games/sg4/sg4_184.jpg",
-   "assets/games/sg4/sg4_185.jpg",
-   "assets/games/sg4/sg4_186.jpg",
-   "assets/games/sg4/sg4_187.jpg",
-   "assets/games/sg4/sg4_188.jpg",
-   "assets/games/sg4/sg4_189.jpg",
-   "assets/games/sg4/sg4_190.jpg",
-   "assets/games/sg4/sg4_191.jpg"
+   "assets/games/sg4/sg4_130.jpg"
   ]
  },
  {
@@ -726,7 +649,8 @@
   "dateFrom": "2025-06-05",
   "dateTo": "2025-06-09",
   "dateGuessed": false,
-  "location": "",
+  "groupPhotoPosed": false,
+  "location": "Boros Castle, Ungarn",
   "players": 18,
   "ranking": [
    {
@@ -877,8 +801,7 @@
    "assets/games/sg5/sg5_036.jpg",
    "assets/games/sg5/sg5_037.jpg",
    "assets/games/sg5/sg5_038.jpg",
-   "assets/games/sg5/sg5_039.jpg",
-   "assets/games/sg5/sg5_040.jpg"
+   "assets/games/sg5/sg5_039.jpg"
   ]
  },
  {
@@ -888,7 +811,8 @@
   "dateFrom": "2026-05-21",
   "dateTo": "2026-05-25",
   "dateGuessed": false,
-  "location": "",
+  "groupPhotoPosed": true,
+  "location": "Josefhof, Steiermark",
   "players": 20,
   "ranking": [
    {

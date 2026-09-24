@@ -28,6 +28,37 @@ SHORT2SLUG = {
 }
 RARITY = ['M', 'R', 'U', 'C']
 
+# Nur Bilddateien - Videos liegen zwar in den Ordnern, gehoeren aber nicht ins Karussell.
+LOCATION = {
+    1: 'Villa in Tschechien',
+    2: 'Naturvilla mit Stinki-Teich, Ungarn',
+    3: 'Vierkanthof in Tschechien',
+    4: 'Villa in den Weinbergen, Ungarn',
+    5: 'Boros Castle, Ungarn',
+    6: 'Josefhof, Steiermark',
+}
+# Gruppenfoto je Turnier - kommt im Karussell zuerst.
+# SG1 und SG5 haben kein gestelltes Gruppenfoto; dort die groesste Runde.
+GROUP_PHOTO = {
+    1: 'signal-2024-01-24-100059_004.jpeg',
+    2: 'signal-2024-01-24-095958_010.jpeg',
+    3: 'signal-2023-05-26-200914_038.jpeg',
+    4: 'signal-2024-05-19-201832_075.jpeg',
+    5: '20250606_112634.jpg',
+    6: 'E0566521-AFD1-4570-82B8-CD7552B4D304.jpg',
+}
+DEDUP_THRESHOLD = 8      # Hamming-Distanz der dHashes
+
+
+def dhash(im, size=8):
+    g = im.convert('L').resize((size + 1, size), Image.LANCZOS)
+    px = list(g.getdata())
+    bits = 0
+    for r in range(size):
+        for c in range(size):
+            bits = (bits << 1) | (1 if px[r * (size + 1) + c] > px[r * (size + 1) + c + 1] else 0)
+    return bits
+
 
 def exif_date(path):
     """Nur echtes EXIF-Aufnahmedatum - Dateinamen sind hier nicht verlaesslich."""
@@ -76,16 +107,49 @@ for year in sorted(WINDOW):
     # Signal-Exporte, deren Name das Versand- und nicht das Aufnahmedatum traegt
     # (im 2021er-Ordner stehen Namen aus 2022/2023). Nur echte EXIF-Aufnahmedaten
     # ausserhalb des Turnierfensters fliegen raus.
-    keep, ausgefiltert = [], 0
+    cands, ausgefiltert = [], 0
     for f in sorted(os.listdir(src)):
         if not f.lower().endswith(EXT):
             continue
-        d = exif_date(os.path.join(src, f))
+        p = os.path.join(src, f)
+        d = exif_date(p)
         if d is not None and not ((lo - pad) <= d <= (hi + pad)):
             ausgefiltert += 1
             continue
-        keep.append((f, d))
+        try:
+            im = ImageOps.exif_transpose(Image.open(p))
+        except Exception:
+            continue
+        cands.append({'f': f, 'd': d, 'h': dhash(im),
+                      'px': im.width * im.height, 'b': os.path.getsize(p)})
+
+    # Dubletten/Beinahe-Dubletten zusammenfassen, bestes Exemplar behalten.
+    groups, used, doppelt = [], set(), 0
+    for i, e in enumerate(cands):
+        if i in used:
+            continue
+        g = [i]; used.add(i)
+        for j in range(i + 1, len(cands)):
+            if j not in used and bin(e['h'] ^ cands[j]['h']).count('1') <= DEDUP_THRESHOLD:
+                g.append(j); used.add(j)
+        groups.append(g)
+
+    keep = []
+    for g in groups:
+        # Gruppenfoto schlaegt alles, sonst hoechste Aufloesung.
+        grp = [k for k in g if cands[k]['f'] == GROUP_PHOTO.get(sg)]
+        best = grp[0] if grp else max(g, key=lambda k: (cands[k]['px'], cands[k]['b']))
+        keep.append((cands[best]['f'], cands[best]['d']))
+        doppelt += len(g) - 1
+
     keep.sort(key=lambda t: (t[1] or datetime.date(year, 1, 1), t[0]))
+    # Gruppenfoto nach vorne holen.
+    gp = GROUP_PHOTO.get(sg)
+    hit = next((t for t in keep if t[0] == gp), None)
+    if hit:
+        keep.remove(hit); keep.insert(0, hit)
+    else:
+        print('  ! Gruppenfoto fuer SG%d nicht gefunden: %s' % (sg, gp))
 
     photos, tin, tout = [], 0, 0
     for i, (f, d) in enumerate(keep, 1):
@@ -108,13 +172,14 @@ for year in sorted(WINDOW):
         'title': 'Slaughter Games %d' % sg,
         'dateFrom': lo.isoformat(), 'dateTo': hi.isoformat(),
         'dateGuessed': year == 2021,          # 2021 hat keine EXIF-Daten
-        'location': '',                        # trägt der Betreiber nach
+        'groupPhotoPosed': sg not in (1, 5),  # SG1/SG5 haben kein gestelltes Gruppenfoto
+        'location': LOCATION.get(sg, ''),
         'players': n,
         'ranking': ranking,
         'photos': photos,
     })
-    print('SG%d (%d): %3d Fotos (%d wegen EXIF ausserhalb des Turniers verworfen), %.0f -> %.0f MB'
-          % (sg, year, len(photos), ausgefiltert, tin/1e6, tout/1e6))
+    print('SG%d (%d): %3d Fotos  (%d Dubletten, %d ausserhalb verworfen)  %.0f -> %.0f MB'
+          % (sg, year, len(photos), doppelt, ausgefiltert, tin/1e6, tout/1e6))
 
 io.open(os.path.join(REPO, 'tournaments.json'), 'w', encoding='utf-8').write(
     json.dumps(games, ensure_ascii=False, indent=1) + '\n')
