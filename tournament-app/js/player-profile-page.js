@@ -66,8 +66,20 @@ async function init(){
 
   const res = await fetch('./tournament-app/player_profiles.json', { cache:'no-store' });
   const profiles = await res.json();
-  const p = profiles.find(x => x.slug === slug);
-  if(!p) return;
+  let p = profiles.find(x => x.slug === slug);
+
+  // Neu angelegte Spieler stehen nur im Stamm (roster) - sie haben noch keine
+  // Turnierhistorie, bekommen aber trotzdem ein Profil.
+  if(!p){
+    try{
+      const { data: r } = await supabase.from('roster').select('slug,name,real_name').eq('slug', slug).maybeSingle();
+      if(r) p = { slug: r.slug, name: r.name, realName: r.real_name || '', participations: [], axes: [], description: '' };
+    }catch{}
+  }
+  if(!p){
+    document.getElementById('ppName').textContent = 'Spieler nicht gefunden';
+    return;
+  }
 
   // Turnierfakten aus der JSON, selbst gepflegte Felder + Abzeichen aus der DB.
   let editable = null;

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Slaughter Games – Admin</title>
-  <link rel="stylesheet" href="./styles.css?v=4" />
+  <link rel="stylesheet" href="./styles.css?v=5" />
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -28,6 +28,37 @@
         <tbody id="adminTable"></tbody>
       </table>
       <p id="adminMsg" class="muted"></p>
+    </section>
+
+    <section class="card" id="rosterAdmin" hidden>
+      <h2>Spielerprofile</h2>
+      <p class="muted">
+        Neue Spieler für die Slaughter Games anlegen. Sie stehen danach sofort in der
+        Spielerauswahl beim Turnier-Anlegen und haben ein eigenes Profil.
+        <span class="badge" id="rosterCount"></span>
+      </p>
+      <form id="rosterForm" class="row">
+        <div class="col-6">
+          <label for="rName">SG-Name</label>
+          <input id="rName" maxlength="80" required placeholder="z. B. Klaus, the Waiting One" />
+        </div>
+        <div class="col-4">
+          <label for="rReal">Rufname</label>
+          <input id="rReal" maxlength="40" placeholder="z. B. Klaus" />
+        </div>
+        <div class="col-2">
+          <label>&nbsp;</label>
+          <button type="submit">Anlegen</button>
+        </div>
+        <div class="col-12"><p class="helper" id="rSlugPreview"></p></div>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SG-Name</th><th>Rufname</th><th>Slug</th><th></th></tr></thead>
+          <tbody id="rosterList"></tbody>
+        </table>
+      </div>
+      <p id="rosterMsg" class="muted"></p>
     </section>
 
     <section class="card" id="badgeAdmin" hidden>

@@ -19,6 +19,22 @@ async function init(){
     return;
   }
 
+  // Neu angelegte Spieler aus dem Stamm ergaenzen (ohne Turnierhistorie);
+  // ausgeblendete Spieler verschwinden aus der Uebersicht.
+  try{
+    const { data: roster } = await supabase.from('roster').select('slug,name,real_name,active');
+    if(roster?.length){
+      const inactive = new Set(roster.filter(r => !r.active).map(r => r.slug));
+      profiles = profiles.filter(p => !inactive.has(p.slug));
+      const known = new Set(profiles.map(p => p.slug));
+      for(const r of roster){
+        if(r.active && !known.has(r.slug)){
+          profiles.push({ slug: r.slug, name: r.name, realName: r.real_name || '', participations: [], axes: [] });
+        }
+      }
+    }
+  }catch{}
+
   // Selbst gepflegte Felder dazuladen - schlaegt das fehl, bleibt die JSON.
   let editable = {};
   try{
@@ -43,7 +59,7 @@ async function init(){
         <span class="player-name">${esc(p.name)}</span>
         <span class="player-real">${esc(e.display_name || p.realName || '')}</span>
         <span class="player-meta">
-          <span title="Teilnahmen">${parts.length}&times; dabei</span>
+          <span title="Teilnahmen">${parts.length ? parts.length + '&times; dabei' : 'neu'}</span>
           ${axes ? `<span title="gewonnene Äxte">&#129683; ${axes}</span>` : ''}
         </span>
       </a>`;

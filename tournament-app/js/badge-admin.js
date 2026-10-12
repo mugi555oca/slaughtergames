@@ -47,6 +47,15 @@ async function injectSprite(){
 }
 
 async function loadPlayers(){
+  // SG-Stamm aus der DB, damit auch neu angelegte Spieler Abzeichen bekommen koennen.
+  try{
+    const { data, error } = await supabase.from('roster').select('slug,name').order('name');
+    if(error) throw error;
+    if(data?.length){
+      players = data.map(r => ({ slug: r.slug, name: r.name })).sort((a,b)=>a.name.localeCompare(b.name,'de'));
+      return;
+    }
+  }catch{}
   try{
     const res = await fetch('./player_profiles.json', { cache:'no-store' });
     const arr = await res.json();
@@ -111,7 +120,7 @@ export async function initBadgeAdmin(user){
     .from('app_admins').select('email').ilike('email', user.email || '');
   const isAdmin = Array.isArray(adminRows) && adminRows.length > 0;
 
-  if(!isAdmin){ $('noAdminHint').hidden = false; return; }
+  if(!isAdmin){ $('noAdminHint').hidden = false; return false; }
   $('badgeAdmin').hidden = false;
 
   await injectSprite();
@@ -186,4 +195,5 @@ export async function initBadgeAdmin(user){
       }catch(err){ msg('awardMsg', err.message, true); }
     }
   });
+  return true;
 }

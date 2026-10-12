@@ -1,5 +1,6 @@
 import { bindAuthUI, requireAuthOrRedirect } from './auth.js';
 import { createTournament, generateNextRound, listTournaments, getGlobalRanking } from './tournament.js';
+import { supabase } from './supabase-client.js';
 
 function $(id){ return document.getElementById(id); }
 function msg(text){ $('createMsg').textContent = text || ''; }
@@ -64,9 +65,23 @@ function formatLabel(key){
   return map[key] || key;
 }
 
+// Spielerauswahl kommt aus dem SG-Stamm (Tabelle roster), damit neu angelegte
+// Spieler ohne Deployment auftauchen. Faellt die DB aus, bleibt die statische
+// Liste als Rueckfall.
 async function loadPlayerProfiles(){
+  try{
+    const { data, error } = await supabase
+      .from('roster')
+      .select('name')
+      .eq('active', true)
+      .order('name');
+    if(error) throw error;
+    if(data?.length) return data.map(r => ({ full_name: r.name }));
+  }catch(err){
+    console.warn('roster nicht lesbar, nutze user_profiles.json:', err.message);
+  }
   const res = await fetch('./user_profiles.json', { cache: 'no-store' });
-  if(!res.ok) throw new Error('user_profiles.json konnte nicht geladen werden.');
+  if(!res.ok) throw new Error('Spielerliste konnte nicht geladen werden.');
   return await res.json();
 }
 

@@ -2,6 +2,7 @@ import { requireAuthOrRedirect } from './auth.js';
 import { listTournaments, getTournamentBundle } from './tournament.js';
 import { supabase } from './supabase-client.js';
 import { initBadgeAdmin } from './badge-admin.js';
+import { initRosterAdmin } from './roster-admin.js';
 
 function $(id){ return document.getElementById(id); }
 
@@ -65,7 +66,8 @@ async function init(){
   if(!user) return;
 
   await renderOverview();
-  await initBadgeAdmin(user);
+  const isAdmin = await initBadgeAdmin(user);
+  await initRosterAdmin(isAdmin);
 }
 
 init();

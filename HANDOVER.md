@@ -88,7 +88,12 @@ ES-Module direkt im Browser. Supabase wird als UMD-Script von unpkg geladen.
 
 Tabellen in `public`: `tournaments`, `players`, `rounds`, `matches`,
 `player_round_stats`, `player_opponents`, `profiles`, `badges`,
-`player_badges`, `app_admins`, `user_login_map`.
+`player_badges`, `roster`, `app_admins`, `user_login_map`.
+
+`roster` ist der SG-weite Spielerstamm. Daraus kommt die Spielerauswahl beim
+Turnier-Anlegen; neue Spieler legt der Admin im Admin-Cockpit an. Die Namen
+müssen exakt denen aus früheren Turnieren entsprechen, weil das globale Ranking
+nach `players.name` summiert.
 
 **RLS ist überall aktiv.** Grobe Regel:
 
@@ -132,6 +137,7 @@ Produktivdaten. Zum Ausprobieren eine Transaktion mit `rollback` nutzen.
 
 ```bash
 node tournament-app/tests/correction.test.mjs   # 15 Fälle, Ergebnis-Korrektur
+node tournament-app/tests/pairing.test.mjs      # 9 Fälle, Swiss-Paarung ohne Rematches
 python tournament-app/tests/audit_data.py       # Daten gegen die Excel prüfen
 ```
 
