@@ -114,33 +114,90 @@ function pairGroupWithFloater(group, playedSet, avoidRematches=true){
   return best;
 }
 
+// Swiss-Paarung als globale Suche ueber das ganze Feld.
+//
+// Frueher wurde Punktegruppe fuer Punktegruppe gepaart. Das erzwang Rematches,
+// obwohl eine rematch-freie Runde existierte - in zwei Varianten:
+//  - ungerade Gruppe: der Absteiger wurde nur nach der eigenen Gruppe gewaehlt
+//    (Thunderdraft FRA, 08.10.2026: Heber stieg ab und traf erneut auf Burni)
+//  - gerade Gruppe aus zwei Spielern, die schon gespielt haben: niemand steigt
+//    ab, das Rematch ist innerhalb der Gruppe unvermeidbar
+//
+// Jetzt: jede moegliche Paarung kostet REMATCH_COST pro Rematch plus die
+// Differenz der Matchpunkte. Rematches dominieren also alles, danach bleibt man
+// so nah wie moeglich an den Punktegruppen. Branch & Bound mit
+// Kandidaten-Sortierung "naechster Tabellenplatz zuerst" findet die optimale
+// Loesung bei SG-typischen Feldgroessen schnell.
+const REMATCH_COST = 1000;
+const SWISS_NODE_LIMIT = 400000;
+
 function swissPairings(players, playedSet, avoidRematches=true){
-  const groups = new Map();
-  for(const p of players){
-    if(!groups.has(p.matchPoints)) groups.set(p.matchPoints, []);
-    groups.get(p.matchPoints).push(p);
+  if(players.length % 2 === 1){
+    // Ungerades Feld kommt nur aus dem Bracket-Modus (Restpool); der Aufrufer
+    // faellt dann auf Standard-Swiss zurueck. Semantik wie bisher: leftover.
+    return { pairs: [], leftover: players[players.length - 1], rematches: 999, explored: 0 };
   }
 
-  const pointsDesc = [...groups.keys()].sort((a,b)=>b-a);
-  const outPairs = [];
-  let floater = null;
-  let totalRematches = 0;
-  let exploredNodes = 0;
+  const n = players.length;
+  const pts = players.map(p => p.matchPoints || 0);
+  const played = (i, j) => didPlay(players[i].id, players[j].id, playedSet);
 
-  for(const pts of pointsDesc){
-    const group = [...groups.get(pts)];
-    if(floater){ group.unshift(floater); floater = null; }
-
-    const paired = pairGroupWithFloater(group, playedSet, avoidRematches);
-    if(!paired) return { pairs: [], leftover: group[0] || null, rematches: 999 };
-
-    outPairs.push(...paired.pairs);
-    floater = paired.floater;
-    totalRematches += paired.rematches;
-    exploredNodes += (paired?.explored || 0);
+  // Kostenmatrix einmal vorab
+  const cost = Array.from({ length: n }, () => new Array(n).fill(0));
+  for(let i = 0; i < n; i++){
+    for(let j = i + 1; j < n; j++){
+      const c = (avoidRematches && played(i, j) ? REMATCH_COST : 0) + Math.abs(pts[i] - pts[j]);
+      cost[i][j] = cost[j][i] = c;
+    }
   }
 
-  return { pairs: outPairs, leftover: floater, rematches: totalRematches, explored: exploredNodes };
+  const used = new Array(n).fill(false);
+  const cur = [];
+  let best = null, bestCost = Infinity, explored = 0;
+
+  // Untere Schranke fuer den Rest: Punkte der offenen Spieler sortieren und
+  // Nachbarn paaren. Auf einer Zahlenlinie ist das die billigste moegliche
+  // Paarung - und anders als "jeder nimmt seinen billigsten Partner" erkennt
+  // sie, dass eine ungerade Punktegruppe zwingend jemanden abgeben muss.
+  // Rematches koennen nur teurer machen, die Schranke bleibt also zulaessig.
+  function lowerBound(){
+    const rest = [];
+    for(let i = 0; i < n; i++) if(!used[i]) rest.push(pts[i]);
+    rest.sort((x, y) => x - y);
+    let lb = 0;
+    for(let k = 0; k + 1 < rest.length; k += 2) lb += rest[k + 1] - rest[k];
+    return lb;
+  }
+
+  function rec(acc){
+    if(++explored > SWISS_NODE_LIMIT) return;
+    if(acc + lowerBound() >= bestCost) return;
+
+    let a = -1;
+    for(let i = 0; i < n; i++){ if(!used[i]){ a = i; break; } }
+    if(a === -1){ bestCost = acc; best = [...cur]; return; }
+
+    used[a] = true;
+    const cands = [];
+    for(let b = a + 1; b < n; b++) if(!used[b]) cands.push(b);
+    // billigste zuerst, bei Gleichstand naechster Tabellenplatz
+    cands.sort((x, y) => cost[a][x] - cost[a][y] || x - y);
+
+    for(const b of cands){
+      used[b] = true; cur.push([a, b]);
+      rec(acc + cost[a][b]);
+      cur.pop(); used[b] = false;
+      if(explored > SWISS_NODE_LIMIT) break;
+    }
+    used[a] = false;
+  }
+
+  rec(0);
+  if(!best) return { pairs: [], leftover: players[0] || null, rematches: 999, explored };
+
+  const pairs = best.map(([i, j]) => [players[i], players[j]]);
+  const rematches = best.filter(([i, j]) => played(i, j)).length;
+  return { pairs, leftover: null, rematches, explored };
 }
 
 function pairGroupWithFallback(group, playedSet, avoidRematches=true){
