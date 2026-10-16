@@ -83,7 +83,7 @@ async function mitglieder(){
   }).sort((a, b) => (a.r.real_name || a.r.name).localeCompare(b.r.real_name || b.r.name, 'de'));
 
   main.innerHTML = `<h1>Mitglieder &amp; Profile</h1>
-    <p class="lead">Tippen zum Bearbeiten. Login = Rufname, Passwort für alle Mitglieder: <b>timewalt</b>.</p>
+    <p class="lead">Tippen zum Bearbeiten. Login = Rufname, Passwort für alle Mitglieder: <b>timewalk</b>.</p>
     <div class="split mobile-sheet">
       <div>
         <div class="toolbar"><input class="input" id="q" type="search" placeholder="Suchen…">
@@ -135,7 +135,7 @@ async function mitglieder(){
           <span class="hint" id="cHint"></span></div>
         <button class="btn block" type="submit">Anlegen</button>
       </form>`);
-    const hint = () => { $('#cHint').innerHTML = `Login: <b>${esc($('#cReal').value.trim() || '…')}</b> · Passwort: <b>timewalt</b>`; };
+    const hint = () => { $('#cHint').innerHTML = `Login: <b>${esc($('#cReal').value.trim() || '…')}</b> · Passwort: <b>timewalk</b>`; };
     hint(); $('#cReal').addEventListener('input', hint);
     $('#cForm').addEventListener('submit', async e => {
       e.preventDefault();
@@ -145,9 +145,9 @@ async function mitglieder(){
         const res = await fn({ action: 'create', sgName: $('#cSg').value.trim(), realName: $('#cReal').value.trim(), slug: prefill?.slug });
         await navigator.clipboard?.writeText(`Slaughter Games App: https://slaughtergames.at
 Name: ${res.login}
-Passwort: timewalt`).catch(() => {});
+Passwort: timewalk`).catch(() => {});
         closePanel();
-        toast(`${res.login} angelegt – Login ${res.login} / timewalt (kopiert).`, 'ok');
+        toast(`${res.login} angelegt – Login ${res.login} / timewalk (kopiert).`, 'ok');
         route();
       }catch(err){ toast(err.message, 'err'); busy(e.submitter, false); }
     });
@@ -178,7 +178,7 @@ Passwort: timewalt`).catch(() => {});
         <div class="field"><label>Beschreibung</label><textarea id="eDesc" maxlength="500">${esc(pr.description || '')}</textarea></div>
         <div class="field"><label>Lieblingskarte</label><input id="eFav" value="${esc(pr.favourite_card || '')}"></div>
         <label class="switch" style="padding:4px 0 14px;border:0"><span>In Spielerauswahl aktiv</span><input type="checkbox" id="eActive" ${r.active ? 'checked' : ''}></label>
-        <div class="btn-row"><button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" id="ePw">PW → timewalt</button></div>
+        <div class="btn-row"><button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" id="ePw">PW → timewalk</button></div>
         ${pr.avatar_url ? '<button class="btn link small mt" type="button" id="eAvReset">Profilbild auf Standard zurücksetzen</button>' : ''}
       </form>`);
 
@@ -198,8 +198,8 @@ Passwort: timewalt`).catch(() => {});
       paint($('#q').value);
     });
     $('#ePw').addEventListener('click', async () => {
-      if(!await confirmSheet('Passwort zurücksetzen?', `${r.real_name || r.name} bekommt wieder das Passwort „timewalt“.`, 'Zurücksetzen')) return;
-      try{ await fn({ action: 'password', userId: pr.id }); toast('Passwort ist wieder timewalt.', 'ok'); }
+      if(!await confirmSheet('Passwort zurücksetzen?', `${r.real_name || r.name} bekommt wieder das Passwort „timewalk“.`, 'Zurücksetzen')) return;
+      try{ await fn({ action: 'password', userId: pr.id }); toast('Passwort ist wieder timewalk.', 'ok'); }
       catch(err){ toast(err.message, 'err'); }
     });
     $('#eFile').addEventListener('change', async e => {

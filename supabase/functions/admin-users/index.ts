@@ -14,7 +14,7 @@ const cors = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
-const DEFAULT_PW = 'timewalt';
+const DEFAULT_PW = 'timewalk';
 const json = (body: unknown, status = 200) => Response.json(body, { status, headers: cors });
 
 function slugify(s: string){
