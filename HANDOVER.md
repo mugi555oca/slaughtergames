@@ -212,3 +212,53 @@ Daten löscht: vorher mit dem Betreiber abstimmen.
 
 Betreiber: Stephan „Mugi" Mauracher — GitHub `mugi555oca`, Supabase-Org und
 Netlify-Team „Mugi Cooporation". Supabase-Projekt-Ref: `shzyksgqawknysbvhlwn`.
+
+---
+
+## 10. Die App (seit Oktober 2026)
+
+Die ganze Seite ist eine **PWA**: `manifest.webmanifest` + `sw.js` im Root.
+Installierbar über „Zum Startbildschirm“, aktualisiert sich bei jedem Deploy
+selbst (HTML/CSS/JS kommen immer zuerst aus dem Netz, der Cache ist nur
+Offline-Rückfall). **Kein Cache-Buster mehr nötig.** `VERSION` in `sw.js` nur
+ändern, wenn sich der Service Worker selbst ändert.
+
+```
+app.css               Design-System für alle Seiten
+js/app.js             Shell (obere Leiste, Tab-Leiste, Glocke), me(), loadPeople(), Helfer
+js/supabase.js        der eine Supabase-Client (ESM von jsdelivr)
+js/data.js            statische Inhalte: SG7, Sieger, Blog, Merch, Cubes, Eternal-Formel
+js/gallery.js         private Galerie (signierte URLs, Upload, Lightbox)
+js/push.js            Web-Push an/abmelden
+js/page-*.js          ein Modul pro Seite
+tournament-app/       round.html (Runde/Tabelle/Verlauf), dashboard.html, new.html
+admin/                Admin-Backend (Desktop): Mitglieder, Abzeichen, Turniere, Galerie, Chat
+supabase/functions/   Edge Functions: push, admin-users
+```
+
+### Rechte (Migration `2026-10-16_app.sql`)
+
+- **Mitglied** = eingeloggt **und** Profil mit `slug` (`public.is_member()`).
+  Accounts legt der Admin im Backend an (Edge Function `admin-users`).
+- **Turniere**: Mitglieder dürfen alles, solange `status = 'active'`.
+  Abgeschlossene Turniere ändert nur der Admin (`can_edit_tournament()`).
+- **Galerie**: Bucket `gallery` ist privat. Lesen/Hochladen Mitglieder,
+  Löschen nur Admin. Die alten Fotos aus `assets/games/` liegen jetzt dort
+  (`tournament-app/tests/upload_gallery.py`).
+- **Chat**: 7 Räume in `chat_rooms`, Mitglieder schreiben überall, löschen
+  eigene; Admin löscht alles.
+
+### Turnierspieler ↔ Profil
+
+`players.slug` wird per Trigger aus `roster.name` gesetzt. Darüber findet die
+App „Deine Partie“ und die Benachrichtigungen den richtigen Account.
+
+### Push
+
+Trigger auf `matches`/`tournaments` schreiben in `notifications` (In-App-Glocke);
+jede neue Zeile ruft `dispatch_push()` → `pg_net` → Edge Function `push`.
+Chat-Nachrichten pushen direkt (ohne `notifications`-Zeile). URL und Secret
+des Hooks liegen im **Vault** (`push_hook_url`, `push_hook_secret`), VAPID-Keys
+in den Function-Secrets. Fehlt etwas davon, wird still nichts geschickt.
+
+iPhone: Push nur in der installierten App (iOS 16.4+).

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slaughter Games">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <title>Ranking – Slaughter Games</title>
+</head>
+<body>
+  <main class="app-main">
+    <h1 class="page-title">Ranking</h1>
+    <div class="seg" role="tablist">
+      <button class="on" data-view="eternal">Eternal</button>
+      <button data-view="events">Turniere</button>
+    </div>
+
+    <section id="viewEternal">
+      <div class="section-head mt-l"><h2>Eternal Ranking</h2><button class="btn link small" id="formulaBtn">Wie wird gerechnet?</button></div>
+      <div id="podium"></div>
+      <div class="rank-list mt" id="eternal"><div class="skel" style="height:500px"></div></div>
+    </section>
+
+    <section id="viewEvents" hidden>
+      <div class="event-grid mt-l" id="events"></div>
+    </section>
+  </main>
+  <script type="module" src="/js/page-ranking.js"></script>
+</body>
+</html>

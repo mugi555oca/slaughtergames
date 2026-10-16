@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slaughter Games">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <title>Neues Turnier – Slaughter Games</title>
+</head>
+<body>
+  <main class="app-main">
+    <h1 class="page-title">Neues Turnier</h1>
+    <form id="newForm" class="stack">
+      <div class="card">
+        <div class="field"><label for="tName">Name</label><input id="tName" required maxlength="80"></div>
+        <div class="row" style="gap:12px;align-items:flex-start">
+          <div class="field grow"><label for="tFormat">Format</label><select id="tFormat"></select></div>
+          <div class="field" style="width:110px"><label for="tRounds">Runden</label><input id="tRounds" type="number" min="1" max="15" value="3" inputmode="numeric"></div>
+        </div>
+        <div class="field" id="ediField" hidden><label for="tEdi">Edition (Kürzel, 2–5 Buchstaben)</label><input id="tEdi" maxlength="5" placeholder="z. B. DFT" autocapitalize="characters"></div>
+      </div>
+
+      <div class="card">
+        <div class="row between mb"><b>Spieler</b><span class="chip" id="pickCount">0 gewählt</span></div>
+        <div class="pick-grid" id="picker"></div>
+        <p class="hint mt">4–16 Spieler. Gäste zählen mit.</p>
+      </div>
+
+      <div class="card">
+        <b>Paarung Runde 1</b>
+        <div class="seg mt" id="modeSeg">
+          <button type="button" class="on" data-mode="random">Zufällig</button>
+          <button type="button" data-mode="cross">Cross (Sitzordnung)</button>
+        </div>
+        <div id="seatBox" class="mt" hidden>
+          <div class="row between"><span class="small muted">Sitzordnung – 1. Hälfte gegen 2. Hälfte</span><button type="button" class="btn xs ghost" id="shuffleBtn">Mischen</button></div>
+          <ol id="seating" class="small" style="margin:8px 0 0;padding-left:22px;columns:2"></ol>
+        </div>
+      </div>
+
+      <div class="list">
+        <label class="switch"><span>Rematches vermeiden</span><input type="checkbox" id="tAvoid" checked></label>
+        <label class="switch"><span>Bye bei ungerader Anzahl</span><input type="checkbox" id="tBye" checked></label>
+      </div>
+
+      <button class="btn block" type="submit" id="createBtn">Turnier starten</button>
+      <p class="msg err" id="newMsg"></p>
+    </form>
+  </main>
+  <script type="module" src="/tournament-app/js/t-new.js"></script>
+</body>
+</html>

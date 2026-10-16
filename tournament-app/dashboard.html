@@ -1,133 +1,39 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Slaughter Games – Dashboard</title>
-  <link rel="stylesheet" href="./styles.css?v=5" />
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slaughter Games">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <title>Turniere – Slaughter Games</title>
 </head>
 <body>
-  <div class="container">
-    <div class="topbar">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <a href="../index.html"><img src="../main_logo.png" alt="SG" style="height:42px;width:auto;border-radius:6px" /></a>
-        <h1 style="margin:0;">Turnier Dashboard</h1>
-      </div>
-      <div style="display:flex;gap:8px">
-        <a href="./admin.html"><button class="secondary">Admin</button></a>
-        <a href="./profile.html"><button class="secondary">Profil</button></a>
-        <button id="logoutBtn" class="secondary">Logout</button>
-      </div>
-    </div>
-
-    <section class="card">
-      <h2>Neues Turnier erstellen</h2>
-      <form id="createTournamentForm" onsubmit="return false;">
-        <div class="row">
-          <div class="col-6">
-            <label for="tName">Turniername</label>
-            <input id="tName" required placeholder="Friday Night Draft" />
-          </div>
-          <div class="col-3">
-            <label for="tRounds">Runden</label>
-            <input id="tRounds" type="number" min="1" max="15" value="3" required />
-          </div>
-          <div class="col-3">
-            <label for="tFormat">Format</label>
-            <select id="tFormat">
-              <option value="aktuelle-edi">Aktuelle Edi</option>
-              <option value="vintage-cube">Vintage Cube</option>
-              <option value="legacy-cube">Legacy Cube</option>
-              <option value="pauper-cube">Pauper Cube</option>
-              <option value="uncommon-cube">Uncommon Cube</option>
-              <option value="oldboarder-cube">Oldboarder Cube</option>
-              <option value="blube">Blube</option>
-              <option value="multicolor-cube">Multicolor Cube</option>
-              <option value="other-cube">Other Cube</option>
-            </select>
-          </div>
+  <main class="app-main">
+    <div class="row between"><h1 class="page-title">Turniere</h1><a class="btn sm" id="newBtn" href="/tournament-app/new.html" hidden>+ Neu</a></div>
+    <div id="mine"></div>
+    <section class="section" id="liveSec" hidden><div class="section-head"><h2>Läuft gerade</h2></div><div class="list" id="live"></div></section>
+    <section class="section"><div class="section-head"><h2>Abgeschlossen</h2></div><div class="list" id="done"><div class="skel" style="height:300px"></div></div></section>
+    <section class="section">
+      <details class="details" id="globalBox">
+        <summary>Draft-Ranking (alle App-Turniere)</summary>
+        <div class="body">
+          <select class="input" id="fmtFilter"></select>
+          <div class="rank-list mt" id="global"></div>
         </div>
-
-        <div class="row">
-          <div class="col-3">
-            <label for="tEdiCode">Edi Kürzel (2-5 Buchstaben)</label>
-            <input id="tEdiCode" maxlength="5" placeholder="z.B. DFT" />
-          </div>
-          <div class="col-9">
-            <label>Auswahl Spieler</label>
-            <span class="helper">Wähle 4-16 Spieler aus (inkl. Gast 1-5)</span>
-          </div>
-        </div>
-
-        <div class="row" id="playerSelects"></div>
-
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0">
-          <label><input id="tAvoidRematches" type="checkbox" checked /> Rematches vermeiden</label>
-          <label><input id="tAllowBye" type="checkbox" checked /> Bye erlauben</label>
-        </div>
-
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button type="button" id="buildSeatingBtn">Seatings randomisieren</button>
-          <button type="button" id="createRandomBtn">Erstellen + Random Pairings</button>
-          <button type="button" id="createCrossBtn" class="warn">Erstellen + Cross Pairings</button>
-          <button type="button" id="fillTestData" class="secondary">8 Testspieler laden</button>
-        </div>
-        <p class="helper">Cross Pairings (Runde 1): erste Hälfte gegen zweite Hälfte (bei 8 Spielern: 1vs5, 2vs6, 3vs7, 4vs8).</p>
-        <div class="card" style="margin-top:10px">
-          <h3>Seatings Preview</h3>
-          <ol id="seatingPreview"></ol>
-        </div>
-      </form>
-      <p id="createMsg" class="muted"></p>
+      </details>
     </section>
-
-    <section class="card">
-      <h2>Alle Turnier-Events</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Name / Format</th><th>Status</th><th>Runde</th><th>Aktion</th></tr></thead>
-          <tbody id="tournamentsTable"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Globales Ranking (Tool-intern)</h2>
-      <div class="row">
-        <div class="col-4">
-          <label for="globalFormatFilter">Format-Filter</label>
-          <select id="globalFormatFilter">
-            <option value="all">Alle Formate</option>
-            <option value="aktuelle-edi">Aktuelle Edi</option>
-            <option value="vintage-cube">Vintage Cube</option>
-            <option value="legacy-cube">Legacy Cube</option>
-            <option value="pauper-cube">Pauper Cube</option>
-            <option value="uncommon-cube">Uncommon Cube</option>
-            <option value="oldboarder-cube">Oldboarder Cube</option>
-            <option value="blube">Blube</option>
-            <option value="shube">Shube</option>
-            <option value="multicolor-cube">Multicolor Cube</option>
-            <option value="other-cube">Other Cube</option>
-          </select>
-        </div>
-        <div class="col-4">
-          <label for="globalEdiFilter">Edi Kürzel-Filter (optional)</label>
-          <input id="globalEdiFilter" maxlength="5" placeholder="z.B. DFT" />
-        </div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Rank</th><th>Name</th><th>Total Match Points</th><th>Turniere</th></tr></thead>
-          <tbody id="globalRankBody"></tbody>
-        </table>
-      </div>
-      <canvas id="rankingChart" height="120"></canvas>
-    </section>
-  </div>
-
-  <script type="module" src="./js/dashboard-page.js"></script>
+  </main>
+  <script type="module" src="/tournament-app/js/t-dashboard.js"></script>
 </body>
 </html>
->

@@ -1,57 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slaughter Games - Blog</title>
-    <link rel="stylesheet" href="styles.css?v=2.5">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slaughter Games">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <title>Blog – Slaughter Games</title>
 </head>
 <body>
-    <div class="container">
-        <header class="logo-section">
-            <div class="logo-placeholder">
-                <a href="index.html"><img src="main_logo.png" alt="Slaughter Games Home"></a>
-            </div>
-            <!-- H1 hidden on subpages for cleaner look, but kept for structure -->
-            <h1 class="logo-font" style="display: none;">SLAUGHTER GAMES</h1>
-            <nav class="main-nav">
-                <a href="blog.html" class="nav-link-blog active">
-                    <span class="nav-icon">🪓</span> BLOG
-                </a>
-            </nav>
-        </header>
-        <section class="blog-list">
-            <article>
-                <h2><a href="blog_posts/post_3.html">Slaughter Games VI &ndash; Ein fulminantes Pfingstturnier in der Steiermark</a></h2>
-                <p class="post-meta">Ver&ouml;ffentlicht am 22. September 2026</p>
-                <a href="blog_posts/post_3.html">
-                    <img src="assets/sg6_fotos/sg6_01.jpg" alt="Das Teilnehmerfeld der Slaughter Games VI" style="max-width: 100%; height: auto;">
-                </a>
-                <p>20 Mann. F&uuml;nf Autos. Neun Runden. F&uuml;nf Tage Magic. Und am Ende ein neuer Name auf der Axt! Ein Titelkampf bis zur allerletzten Runde, ein Vollfetzen-Rausch am ersten Tag und die schwarze Laterne... <a href="blog_posts/post_3.html">Weiterlesen</a></p>
-            </article>
-
-            <article>
-                <h2><a href="blog_posts/post_2.html">Pick-Craziness total</a></h2>
-                <p class="post-meta">Veröffentlicht am 17. März 2026</p>
-                <a href="blog_posts/post_2.html">
-                    <img src="assets/sg6_pick_craziness.jpg" alt="SG6 Pick Craziness" style="max-width: 100%; height: auto;">
-                </a>
-                <p>Der SG6-Draft zum Seat-Picking für die ersten zwei Tage ist im vollen Gange – und die Ereignisse überschlagen sich. Der große Schocker: Die Top 4 sitzen alle im selben Pod... <a href="blog_posts/post_2.html">Weiterlesen</a></p>
-            </article>
-
-            <article>
-                <h2><a href="blog_posts/post_1.html">Axt-ion pur: Der erste Seat-Draft für Slaughter Games 6 startet!</a></h2>
-                <p class="post-meta">Veröffentlicht am 12. März 2026</p>
-                <a href="blog_posts/post_1.html">
-                    <img src="assets/sg6_draft_announcement.jpg" alt="Slaughter Games 6 Draft Announcement" style="max-width: 100%; height: auto;">
-                </a>
-                <p>Macht euch bereit, eure Äxte zu wetzen, denn die Slaughter Games 6 bringen eine Neuerung, die alles verändert! Zum allerersten Mal in der Geschichte der Spiele starten wir mit einem Seat-Draft... <a href="blog_posts/post_1.html">Weiterlesen</a></p>
-            </article>
-        </section>
-
-        <footer>
-            <p>&copy; 2026 Slaughter Games</p>
-        </footer>
-    </div>
+  <main class="app-main">
+    <h1 class="page-title">Axe-Files</h1>
+    <div class="stack" id="posts"></div>
+  </main>
+  <script type="module" src="/js/page-blog.js"></script>
 </body>
 </html>
