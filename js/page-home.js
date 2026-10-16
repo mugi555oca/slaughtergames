@@ -1,5 +1,6 @@
 import { initShell, $, esc, icon, loadPeople, supabase, canInstall, promptInstall, isStandalone } from './app.js';
-import { NEXT_EVENT, GRAND_SLAUGHTERER, POSTS, CUBES, loadTournaments, eternalRanking, axesHtml } from './data.js';
+import { NEXT_EVENT, GRAND_SLAUGHTERER, CUBES, loadTournaments, eternalRanking, axesHtml } from './data.js';
+import { loadAllPosts } from './blog.js';
 
 await initShell({ tab: 'home' });
 
@@ -63,9 +64,9 @@ $('#topRank').innerHTML = ranking.map((r, i) => {
   </a>`;
 }).join('');
 
-const post = POSTS[0];
-$('#latestPost').innerHTML = `<a class="post-card" href="${post.href}">
-  <img src="${post.img}" alt="" loading="lazy">
+const post = (await loadAllPosts())[0];
+$('#latestPost').innerHTML = `<a class="post-card" href="${esc(post.href)}">
+  <img src="${esc(post.img || '/assets/logo-640.webp')}" alt="" loading="lazy">
   <div class="pc-body"><div class="kicker">${new Date(post.date).toLocaleDateString('de-AT', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
   <h3>${esc(post.title)}</h3><p class="small muted">${esc(post.teaser)}</p></div></a>`;
 

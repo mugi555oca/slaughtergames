@@ -280,3 +280,9 @@ iPhone: Push nur in der installierten App (iOS 16.4+).
   `split_add_expense()` (verteilt Cent-genau). Abrechnung im Client:
   größter Schuldner zahlt an größten Gläubiger.
 
+
+- **Blog:** neue Artikel in `blog_posts` (öffentlich lesbar, schreiben jedes
+  Mitglied, ändern Autor/Admin). Bilder im öffentlichen Bucket `blog`.
+  Text ist ein kleines, sicheres Markdown (`js/markdown.js`). Die drei alten
+  Artikel bleiben als Dateien in `blog_posts/`; Fotostrecken gehören in die
+  Galerie, nicht in den Blog.

@@ -490,3 +490,29 @@ button.list-item:first-child{border-top:0}
 .curve-tip span{display:block;color:var(--muted)}
 .chat-img{display:block;max-width:min(260px,62vw);max-height:320px;min-height:80px;min-width:120px;border-radius:12px;margin:2px 0 4px;object-fit:cover;background:rgba(0,0,0,.25);cursor:zoom-in}
 .composer .send svg{pointer-events:none}
+.prose img.cover{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:16px;margin:4px 0 20px}
+.prose figure{margin:14px 0 20px}
+.prose figure img{width:100%;margin:0}
+.prose figcaption{font-size:13px;color:var(--muted);text-align:center;margin-top:6px;font-style:italic}
+.prose .champion-box{text-align:center;padding:22px 18px;margin:24px 0;border-radius:18px;
+  background:radial-gradient(100% 100% at 50% 0%,rgba(242,185,75,.18),transparent 70%),var(--surface);border:1px solid rgba(242,185,75,.35)}
+.prose .champion-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px}
+.prose .champion-link{display:inline-flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:var(--text)}
+.prose .champion-portrait{width:120px;height:120px;object-fit:cover;border-radius:50%;border:3px solid var(--gold);margin:0;box-shadow:0 0 24px rgba(242,185,75,.35)}
+.prose .champion-name{font-family:var(--display);font-size:24px;letter-spacing:.04em}
+.prose .champion-sub{color:var(--muted);font-size:13px;margin:4px 0 10px}
+.prose .champion-axe{width:56px;height:56px;object-fit:contain;margin:10px auto 0}
+.prose .podium{display:block;margin:10px 0 20px}
+.prose .podium-entry{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);margin-bottom:8px}
+.prose .podium-entry p{margin:4px 0 0;font-size:15px}
+.prose .podium-rank{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--surface-3);flex:0 0 auto}
+.prose .podium-name{font-weight:700;color:var(--text);text-decoration:none}
+
+/* ---------- Blog-Editor ---------- */
+.cover-pick{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;border:2px dashed var(--line-2);background:var(--surface);color:var(--muted);font-weight:700;cursor:pointer;overflow:hidden;padding:0}
+.cover-pick img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.md-bar{display:flex;gap:6px;flex-wrap:wrap}
+.md-bar button{height:34px;min-width:38px;padding:0 10px;border-radius:9px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);cursor:pointer;font-size:14px}
+.md-bar .img-btn{background:var(--blood);border-color:var(--blood);color:#fff;font-weight:700}
+.post-author{display:flex;align-items:center;gap:10px;margin:2px 0 16px}
+.post-author .avatar{width:34px;height:34px}
