@@ -467,3 +467,26 @@ button.list-item:first-child{border-top:0}
 .carousel-dot.active{background:var(--blood-2);transform:scale(1.3)}
 @media (hover:none){.carousel-btn{display:none}}
 @media (min-width:800px){.carousel{margin-left:0;margin-right:0}.carousel-viewport{border-radius:16px}}
+
+/* ---------- Performance-Kurve ---------- */
+.curve{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 10px 6px}
+.curve-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:0 4px 6px}
+.curve-legend span{display:flex;align-items:center;gap:6px}
+.curve-legend i{display:inline-block;width:16px;height:0;border-top:2px solid var(--blood-2)}
+.curve-legend i.lg-trend{border-top:2.5px solid var(--gold)}
+.curve-box{position:relative;touch-action:pan-y}
+.curve-box svg{display:block;overflow:visible}
+.curve .grid{stroke:rgba(255,255,255,.07);stroke-width:1}
+.curve .ylab,.curve .xlab text{fill:var(--faint);font-size:11px;font-family:var(--font)}
+.curve .ln{fill:none;stroke:var(--blood-2);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.curve .tr{fill:none;stroke:var(--gold);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;opacity:.9}
+.curve .dot{fill:var(--blood-2);stroke:var(--surface);stroke-width:2;transition:r .15s}
+.curve .dot.win{fill:var(--gold)}
+.curve .dot.on{r:7}
+.curve .cross{stroke:rgba(255,255,255,.25);stroke-width:1;stroke-dasharray:3 3}
+.curve-tip{position:absolute;top:-6px;transform:translate(-50%,-100%);min-width:170px;max-width:220px;padding:8px 10px;border-radius:12px;
+  background:#26262d;border:1px solid var(--line-2);box-shadow:0 10px 24px rgba(0,0,0,.5);font-size:12px;line-height:1.4;pointer-events:none;z-index:5}
+.curve-tip b{color:var(--text)}
+.curve-tip span{display:block;color:var(--muted)}
+.chat-img{display:block;max-width:min(260px,62vw);max-height:320px;min-height:80px;min-width:120px;border-radius:12px;margin:2px 0 4px;object-fit:cover;background:rgba(0,0,0,.25);cursor:zoom-in}
+.composer .send svg{pointer-events:none}

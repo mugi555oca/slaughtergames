@@ -70,7 +70,7 @@ async function render(){
       <div class="section-head"><h2>Konto</h2></div>
       <div class="list">
         ${m.isAdmin ? `<a class="list-item" href="/admin/">${icon('shield')}<div class="grow"><div class="title">Admin-Backend</div><div class="sub">Profile, Abzeichen, Turniere, Fotos – am besten am Desktop</div></div>${icon('chev', 'chev')}</a>` : ''}
-        <button class="list-item" id="pwBtn">${icon('lock')}<div class="grow title">Passwort ändern</div>${icon('chev', 'chev')}</button>
+        ${m.isAdmin ? `<button class="list-item" id="pwBtn">${icon('lock')}<div class="grow title">Passwort ändern</div>${icon('chev', 'chev')}</button>` : ''}
         <a class="list-item" href="/spieler.html">${icon('users')}<div class="grow title">Alle Spieler</div>${icon('chev', 'chev')}</a>
         <a class="list-item" href="/merch.html">${icon('shirt')}<div class="grow title">Merch</div>${icon('chev', 'chev')}</a>
         <button class="list-item" id="logoutBtn" style="color:var(--danger)">${icon('logout')}<div class="grow title">Abmelden</div></button>
@@ -177,7 +177,7 @@ async function render(){
   const { data: rooms } = await supabase.from('chat_rooms').select('slug,name').order('sort_order');
   $('#prefs').innerHTML = [
     ['rounds', 'Neue Runde / Paarung', 'Wer dein Gegner ist und an welchem Tisch'],
-    ['results', 'Ergebnisse', 'Wenn dein Gegner ein Ergebnis einträgt, Turnierende'],
+    ['results', 'Ergebnisse', 'Wenn dein Gegner ein Ergebnis einträgt, Weekly beendet'],
     ['chat', 'Chat-Nachrichten', 'Einzelne Gruppen kannst du unten stummschalten'],
   ].map(([k, t, s]) => `<label class="switch"><span><span class="title">${t}</span><br><span class="small muted">${s}</span></span>
       <input type="checkbox" data-pref="${k}" ${prefs[k] ? 'checked' : ''}></label>`).join('')
@@ -200,7 +200,7 @@ async function render(){
   if(location.hash === '#push') $('#push').scrollIntoView();
 
   // ---------- Konto ----------
-  $('#pwBtn').addEventListener('click', () => {
+  $('#pwBtn')?.addEventListener('click', () => {
     const s = openSheet(`<h3>Passwort ändern</h3><form id="pwForm">
       <div class="field"><label for="pw1">Neues Passwort</label><input id="pw1" type="password" minlength="6" autocomplete="new-password" required></div>
       <div class="field"><label for="pw2">Wiederholen</label><input id="pw2" type="password" minlength="6" autocomplete="new-password" required></div>

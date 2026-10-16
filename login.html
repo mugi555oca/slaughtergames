@@ -26,8 +26,8 @@
     </div>
     <form class="card mt" id="loginForm" autocomplete="on">
       <div class="field">
-        <label for="loginName">Login-Name oder E-Mail</label>
-        <input id="loginName" name="username" autocomplete="username" autocapitalize="none" required>
+        <label for="loginName">Dein Rufname</label>
+        <input id="loginName" name="username" autocomplete="username" autocapitalize="words" placeholder="z. B. Burni" required>
       </div>
       <div class="field">
         <label for="loginPw">Passwort</label>
@@ -36,7 +36,7 @@
       <button class="btn block" type="submit">Einloggen</button>
       <p class="msg err mt" id="loginMsg" role="alert"></p>
     </form>
-    <p class="center small faint mt">Accounts legt der Admin an. Passwort vergessen? Schreib Mugi.</p>
+    <p class="center small faint mt">Accounts legt der Admin an. Passwort weißt du – sonst frag Mugi.</p>
   </main>
   <script type="module" src="/js/page-login.js"></script>
 </body>

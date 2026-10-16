@@ -3,7 +3,7 @@ import { initShell, $, $$, esc, supabase, loadPeople, busy, requireLogin } from 
 import { createTournament, generateNextRound } from './tournament.js';
 import { FORMATS } from './t-shared.js';
 
-await initShell({ tab: 'turniere', title: 'Neues Turnier', back: '/tournament-app/dashboard.html' });
+await initShell({ tab: 'turniere', title: 'Neues Weekly', back: '/tournament-app/dashboard.html' });
 const m = await requireLogin();
 if(m && !m.isMember){ document.querySelector('main').innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>'; }
 if(!m?.isMember) throw new Error('kein Mitglied');

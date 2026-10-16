@@ -2,8 +2,9 @@
 // Nur fuer App-Admins (E-Mail in public.app_admins). Braucht die Service-Role,
 // deshalb hier und nicht im Browser.
 //
-// POST { action: 'create', login, password, sgName, realName, slug? }
-// POST { action: 'password', userId, password }
+// Login-Name ist immer der Rufname, Passwort fuer Mitglieder immer DEFAULT_PW.
+// POST { action: 'create', sgName, realName, slug? }
+// POST { action: 'password', userId }      -> zurueck auf DEFAULT_PW
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const url = Deno.env.get('SUPABASE_URL')!;
@@ -13,6 +14,7 @@ const cors = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
+const DEFAULT_PW = 'timewalt';
 const json = (body: unknown, status = 200) => Response.json(body, { status, headers: cors });
 
 function slugify(s: string){
@@ -34,19 +36,18 @@ Deno.serve(async (req) => {
   const body = await req.json().catch(() => ({}));
 
   if (body.action === 'password') {
-    if (!body.userId || String(body.password || '').length < 6) return json({ error: 'Passwort: mindestens 6 Zeichen.' }, 400);
-    const { error } = await db.auth.admin.updateUserById(body.userId, { password: body.password });
+    if (!body.userId) return json({ error: 'userId fehlt.' }, 400);
+    const { error } = await db.auth.admin.updateUserById(body.userId, { password: DEFAULT_PW });
     return error ? json({ error: error.message }, 400) : json({ ok: true });
   }
 
   if (body.action === 'create') {
-    const login = String(body.login || '').trim().toLowerCase();
     const sgName = String(body.sgName || '').trim();
     const realName = String(body.realName || '').trim();
-    if (!/^[a-z0-9._-]{2,30}$/.test(login) && !login.includes('@')) return json({ error: 'Login-Name: 2–30 Zeichen, nur a–z, 0–9, . _ -' }, 400);
+    const login = slugify(realName).replace(/-/g, '');
     if (!sgName) return json({ error: 'SG-Name fehlt.' }, 400);
-    if (String(body.password || '').length < 6) return json({ error: 'Passwort: mindestens 6 Zeichen.' }, 400);
-    const mail = login.includes('@') ? login : `${login}@slaughtergames.local`;
+    if (login.length < 2) return json({ error: 'Rufname fehlt (wird zum Login-Namen).' }, 400);
+    const mail = `${login}@slaughtergames.local`;
 
     // Slug: vorhandenen Stammeintrag verknuepfen oder neuen anlegen
     let slug = body.slug ? String(body.slug) : '';
@@ -65,7 +66,7 @@ Deno.serve(async (req) => {
     if (linked) return json({ error: 'Dieser Spieler hat schon einen Account.' }, 400);
 
     const { data: created, error: cErr } = await db.auth.admin.createUser({
-      email: mail, password: body.password, email_confirm: true, user_metadata: { display_name: realName || sgName },
+      email: mail, password: DEFAULT_PW, email_confirm: true, user_metadata: { display_name: realName || sgName },
     });
     if (cErr) return json({ error: cErr.message }, 400);
     const uid = created.user!.id;
@@ -74,7 +75,7 @@ Deno.serve(async (req) => {
     if (rErr) return json({ error: rErr.message }, 400);
     const { error: pErr } = await db.from('profiles').upsert({ id: uid, slug, display_name: realName || sgName }, { onConflict: 'id' });
     if (pErr) return json({ error: pErr.message }, 400);
-    return json({ ok: true, userId: uid, slug, email: mail });
+    return json({ ok: true, userId: uid, slug, login: realName, email: mail });
   }
 
   if (body.action === 'list') {

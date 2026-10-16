@@ -1,11 +1,11 @@
 // Event-Seite einer Slaughter Games Ausgabe (turnier.html?sg=N).
 // Ergebnisse sind oeffentlich, Fotos nur fuer eingeloggte Mitglieder.
 import { initShell, $, esc, loadPeople, lockHtml, icon } from './app.js';
-import { loadTournaments, sgLogo, AXES, NEXT_EVENT } from './data.js';
+import { loadTournaments, sgLogo, AXES, NEXT_EVENT, MAPS } from './data.js';
 import { listPhotos, signUrls, gridHtml, openLightbox } from './gallery.js';
 
 const sgParam = Number(new URLSearchParams(location.search).get('sg'));
-const m = await initShell({ tab: 'ranking', title: 'Slaughter Games', back: '/ranking.html#turniere' });
+const m = await initShell({ tab: 'ranking', title: 'Slaughter Games', back: '/ranking.html#games' });
 
 const [tournaments, people] = await Promise.all([loadTournaments(), loadPeople()]);
 const person = slug => people.bySlug.get(slug);
@@ -49,7 +49,7 @@ if(isNext){
 } else if(g){
   document.title = `${g.title} (${g.year}) – Slaughter Games`;
   $('#tTitle').textContent = g.title;
-  $('#tSub').textContent = `${fmtRange(g.dateFrom, g.dateTo)}${g.location ? ' · ' + g.location : ''}`;
+  $('#tSub').textContent = fmtRange(g.dateFrom, g.dateTo);
   const w = person(g.ranking[0]?.slug);
   $('#tFacts').innerHTML = `
     <div class="stat"><b>${g.players}</b><span>Spieler</span></div>
@@ -57,6 +57,13 @@ if(isNext){
     <a class="stat" href="/player-profile.html?slug=${encodeURIComponent(g.ranking[0]?.slug || '')}">
       <img class="avatar xs" src="${esc(w?.avatar)}" alt="" style="margin:0 auto 4px;width:28px;height:28px">
       <span>Sieger</span></a>`;
+  if(g.location || MAPS[g.sg]){
+    $('#tFacts').insertAdjacentHTML('afterend', `<a class="card row mt" ${MAPS[g.sg] ? `href="${MAPS[g.sg]}" target="_blank" rel="noopener"` : ''} style="gap:12px">
+      <span style="width:42px;height:42px;border-radius:12px;background:rgba(214,42,42,.15);display:grid;place-items:center;flex:0 0 auto;color:var(--blood-2)">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+      <span class="grow"><span class="small muted" style="display:block">Location</span><b>${esc(g.location || 'Location')}</b></span>
+      ${MAPS[g.sg] ? '<span class="small" style="color:var(--blood-2);font-weight:700">Karte ↗</span>' : ''}</a>`);
+  }
   $('#tRanking').innerHTML = g.ranking.map(r => {
     const p = person(r.slug);
     const axe = r.axe ? `<img src="${AXES[r.axe].img}" alt="${AXES[r.axe].label}" title="${AXES[r.axe].label}" style="width:24px;height:24px;object-fit:contain">` : '';

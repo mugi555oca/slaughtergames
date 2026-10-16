@@ -9,6 +9,16 @@ export const AXES = {
 };
 export const AXE_ORDER = { M: 0, R: 1, U: 2, C: 3 };
 
+// Google-Maps-Links der Locations
+export const MAPS = {
+  1: 'https://maps.app.goo.gl/q2KjhP4nKePcKMnt7',
+  2: 'https://goo.gl/maps/9eCYPWgP9jypE7Kw8',
+  3: 'https://maps.app.goo.gl/YrFPSZKgCu1SJN3X8',
+  4: 'https://maps.app.goo.gl/Rqda1vexar1EGyxT6',
+  5: 'https://maps.app.goo.gl/CGzFQeUWkotP4PoN7',
+  6: 'https://maps.app.goo.gl/ngzS96D7Uz8aJMJVA',
+};
+
 export const sgLogo = sg => sg <= 6 ? `/Logos_x/SG_Logo_${sg}.png` : '/icons/logo-160.webp';
 
 export const NEXT_EVENT = {

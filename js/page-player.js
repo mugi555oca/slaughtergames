@@ -1,5 +1,6 @@
 import { initShell, $, esc, loadPeople, supabase, me } from './app.js';
 import { loadTournaments, eternalRanking, AXES, AXE_ORDER, sgLogo } from './data.js';
+import { loadWeekly, renderPerformance } from './weekly.js';
 
 const slug = new URLSearchParams(location.search).get('slug');
 await initShell({ tab: 'ranking', title: 'Spielerprofil', back: '/spieler.html' });
@@ -31,9 +32,12 @@ if(!p){
     <div class="stat"><b>${best ? best + '.' : '–'}</b><span>Bester Platz</span></div>`;
 
   $('#ppParts').innerHTML = results.length
-    ? results.map(x => `<a href="/turnier.html?sg=${x.t.sg}" title="SG${x.t.sg}: Platz ${x.r.place} von ${x.t.players}" style="text-align:center">
-        <img src="${sgLogo(x.t.sg)}" alt="SG${x.t.sg}"><span class="tiny muted">${x.r.place}.</span></a>`).join('')
-    : '<span class="muted">Noch keine Teilnahme.</span>';
+    ? [...results].reverse().map(x => `<a class="rank-row" href="/turnier.html?sg=${x.t.sg}">
+        <img src="${sgLogo(x.t.sg)}" alt="" style="width:40px;height:40px;object-fit:contain">
+        <span class="who"><span class="title">${esc(x.t.title)}</span><span class="sub">${x.t.year}${x.t.location ? ' · ' + esc(x.t.location) : ''}</span></span>
+        ${x.r.axe ? `<img src="${AXES[x.r.axe].img}" alt="${AXES[x.r.axe].label}" title="${AXES[x.r.axe].label}" style="width:22px;height:22px;object-fit:contain">` : ''}
+        <span class="pts">${x.r.place}.<small>von ${x.t.players}</small></span></a>`).join('')
+    : '<div class="rank-row muted">Noch keine Teilnahme.</div>';
 
   $('#ppAxes').innerHTML = axes.length
     ? `<div class="row wrap" style="gap:8px">${axes.map(a => `<span class="chip"><img src="${AXES[a.rarity].img}" alt="" style="width:16px;height:16px;object-fit:contain">${AXES[a.rarity].label} · SG${a.sg}</span>`).join('')}</div>`
@@ -82,4 +86,15 @@ if(!p){
       }
     }catch{}
   }
+}
+
+// ---------- Weekly Performance ----------
+if(p){
+  try{
+    const weekly = await loadWeekly();
+    const played = weekly.events.some(e => e.rows.some(r => r.key === slug));
+    if(played) renderPerformance($('#ppWeekly'), weekly, slug);
+    else $('#ppWeekly').innerHTML = '<div class="card muted">Noch kein Weekly gespielt.</div>';
+    if(location.hash === '#weekly') $('#weekly').scrollIntoView();
+  }catch(err){ $('#ppWeekly').innerHTML = `<div class="card muted">${esc(err.message)}</div>`; }
 }

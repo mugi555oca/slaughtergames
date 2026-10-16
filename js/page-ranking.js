@@ -12,10 +12,10 @@ function show(view){
   $$('.seg button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $('#viewEternal').hidden = view !== 'eternal';
   $('#viewEvents').hidden = view !== 'events';
-  history.replaceState(null, '', view === 'events' ? '#turniere' : location.pathname);
+  history.replaceState(null, '', view === 'events' ? '#games' : location.pathname);
 }
 $$('.seg button').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
-if(location.hash === '#turniere') show('events');
+if(location.hash === '#games' || location.hash === '#turniere') show('events');
 
 // ---------- Podium + Liste ----------
 const top = ranking.slice(0, 3);

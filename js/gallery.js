@@ -16,19 +16,20 @@ function writeCache(c){
 
 // Signierte URLs holen, aber gleiche URL wiederverwenden solange gueltig -
 // sonst laedt der Browser jedes Bild bei jedem Besuch neu.
-export async function signUrls(paths){
+export async function signUrls(paths, bucket = BUCKET){
   const cache = readCache();
   const now = Date.now();
-  const missing = paths.filter(p => p && !(cache[p] && cache[p].exp > now + 60_000));
+  const k = p => bucket === BUCKET ? p : `${bucket}:${p}`;
+  const missing = paths.filter(p => p && !(cache[k(p)] && cache[k(p)].exp > now + 60_000));
   for(let i = 0; i < missing.length; i += 100){
     const chunk = missing.slice(i, i + 100);
-    const { data, error } = await supabase.storage.from(BUCKET).createSignedUrls(chunk, TTL);
+    const { data, error } = await supabase.storage.from(bucket).createSignedUrls(chunk, TTL);
     if(error) throw error;
-    for(const d of data || []) if(d.signedUrl) cache[d.path] = { url: d.signedUrl, exp: now + (TTL - 3600) * 1000 };
+    for(const d of data || []) if(d.signedUrl) cache[k(d.path)] = { url: d.signedUrl, exp: now + (TTL - 3600) * 1000 };
   }
-  for(const k of Object.keys(cache)) if(cache[k].exp < now) delete cache[k];
+  for(const key of Object.keys(cache)) if(cache[key].exp < now) delete cache[key];
   writeCache(cache);
-  return Object.fromEntries(paths.map(p => [p, cache[p]?.url || null]));
+  return Object.fromEntries(paths.map(p => [p, cache[k(p)]?.url || null]));
 }
 
 export async function listPhotos(album, limit = null){

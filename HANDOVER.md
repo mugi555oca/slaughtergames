@@ -262,3 +262,21 @@ des Hooks liegen im **Vault** (`push_hook_url`, `push_hook_secret`), VAPID-Keys
 in den Function-Secrets. Fehlt etwas davon, wird still nichts geschickt.
 
 iPhone: Push nur in der installierten App (iOS 16.4+).
+
+### Nachtrag 17.10.2026
+
+- **Begriffe:** „Slaughter Games“ = das Jahres-Event (tournaments.json),
+  „Weekly“ = die Turniere unter der Woche (Tabelle `tournaments`).
+- **Logins:** Login-Name = Rufname (aus `roster.real_name`, klein, ohne
+  Umlaute → `<name>@slaughtergames.local`), Passwort aller Mitglieder
+  `timewalt`. Admin-Accounts sind ausgenommen. Neue Accounts nur über
+  `/admin/` → Mitglieder (Edge Function `admin-users`).
+- **Weekly-Ranking** (`js/weekly.js`): Punkte, Ø/Runde und „Wertung“ nach
+  der Eternal-Formel (n = eigene Weeklys, N = alle Weeklys). Rechnet direkt
+  aus `matches` über `buildStandings()`.
+- **Chat-Bilder:** privater Bucket `chat`, Pfad `<user-id>/<uuid>.jpg`.
+- **Ausgaben-Splitter:** `split_events/members/expenses/shares/payments`.
+  Nur Teilnehmer (vom Admin gepflegt) sehen und buchen; Ausgaben nur über
+  `split_add_expense()` (verteilt Cent-genau). Abrechnung im Client:
+  größter Schuldner zahlt an größten Gläubiger.
+

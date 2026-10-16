@@ -266,7 +266,7 @@ export function resizeImage(file, maxSide, quality = 0.85, square = false){
 const TABS = [
   { key: 'home',     href: '/',                              label: 'Home',     icon: 'home' },
   { key: 'ranking',  href: '/ranking.html',                  label: 'Ranking',  icon: 'trophy' },
-  { key: 'turniere', href: '/tournament-app/dashboard.html', label: 'Turniere', icon: 'swords' },
+  { key: 'turniere', href: '/tournament-app/dashboard.html', label: 'Weekly', icon: 'swords' },
   { key: 'chat',     href: '/chat.html',                     label: 'Chat',     icon: 'chat' },
   { key: 'profil',   href: '/profil.html',                   label: 'Profil',   icon: 'user' },
 ];

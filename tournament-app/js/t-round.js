@@ -10,7 +10,7 @@ import {
 import { formatLabel, flip, outcome, myPlayerIds } from './t-shared.js';
 
 const tid = new URLSearchParams(location.search).get('tournament');
-const m = await initShell({ tab: 'turniere', title: 'Turnier', back: '/tournament-app/dashboard.html' });
+const m = await initShell({ tab: 'turniere', title: 'Weekly', back: '/tournament-app/dashboard.html' });
 const people = await loadPeople();
 
 let B = null;            // Bundle
@@ -43,7 +43,7 @@ function render(){
   const t = B.tournament;
   const cur = Number(t.current_round) || 0;
   const live = t.status === 'active';
-  document.title = `${t.name} – Turnier`;
+  document.title = `${t.name} – Weekly`;
   document.querySelector('.app-bar .title').textContent = t.name;
 
   $('#tHead').innerHTML = `

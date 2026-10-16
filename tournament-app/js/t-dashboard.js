@@ -1,9 +1,9 @@
 // Turniere-Tab: laufende und abgeschlossene Drafts, "Deine Partie", Ranking.
-import { initShell, $, esc, icon, supabase, loadPeople, personForName } from '/js/app.js';
-import { getGlobalRanking } from './tournament.js';
-import { FORMATS, formatLabel, flip } from './t-shared.js';
+import { initShell, $, $$, esc, icon, supabase, loadPeople, personForName, openSheet } from '/js/app.js';
+import { formatLabel, flip } from './t-shared.js';
+import { loadWeekly, weeklyRanking, formatsOf, renderPerformance, fmtNum } from '/js/weekly.js';
 
-const m = await initShell({ tab: 'turniere', title: 'Turniere' });
+const m = await initShell({ tab: 'turniere', title: 'Weekly Turniere' });
 if(m.isMember) $('#newBtn').hidden = false;
 
 const people = await loadPeople();
@@ -22,7 +22,7 @@ const item = t => `<a class="list-item" href="/tournament-app/round.html?tournam
 </a>`;
 
 if(live.length){ $('#liveSec').hidden = false; $('#live').innerHTML = live.map(item).join(''); }
-$('#done').innerHTML = done.map(item).join('') || `<div class="empty">${icon('swords')}<h3>Noch keine Turniere</h3></div>`;
+$('#done').innerHTML = done.map(item).join('') || `<div class="empty">${icon('swords')}<h3>Noch keine Weeklys</h3></div>`;
 
 // Sieger der abgeschlossenen Turniere (Snapshot der letzten Runde)
 if(done.length){
@@ -67,19 +67,43 @@ if(m.profile?.slug && live.length){
   if(cards.length) $('#mine').innerHTML = `<div class="section-head mt"><h2>Deine Partie</h2></div>${cards.join('')}`;
 }
 
-// ---------- Ranking ueber alle App-Turniere ----------
-$('#fmtFilter').innerHTML = `<option value="">Alle Formate</option>` + FORMATS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('');
-async function paintGlobal(){
-  $('#global').innerHTML = '<div class="spinner"></div>';
-  const rows = await getGlobalRanking({ formatKey: $('#fmtFilter').value || null });
-  $('#global').innerHTML = rows.map((r, i) => {
-    const p = personForName(people, r.name);
-    return `<a class="rank-row" ${p ? `href="/player-profile.html?slug=${encodeURIComponent(p.slug)}"` : ''}>
-      <span class="rank-no">${i + 1}</span><img class="avatar sm" src="${esc(p?.avatar || '/icons/icon-192.png')}" alt="">
-      <span class="who"><span class="title">${esc(p?.real || r.name)}</span><span class="sub">${r.totalTournaments} Turniere</span></span>
-      <span class="pts">${r.totalMatchPoints}<small>Punkte</small></span></a>`;
-  }).join('') || '<div class="empty">Keine Daten.</div>';
+// ---------- Weekly Ranking ----------
+const weekly = await loadWeekly();
+let mode = 'score', fmt = null;
+const fmts = formatsOf(weekly);
+$('#rankFmt').hidden = fmts.length < 2;
+$('#rankFmt').innerHTML = ['', ...fmts].map(f => `<button data-f="${f}" class="${f ? '' : 'on'}">${f ? esc(formatLabel(f)) : 'Alle Formate'}</button>`).join('');
+
+function paintRank(){
+  const rows = weeklyRanking(weekly, fmt)
+    .sort((a, b) => (b[mode] - a[mode]) || (b.points - a.points));
+  const val = r => mode === 'points' ? `${r.points}<small>Punkte</small>`
+    : mode === 'avg' ? `${fmtNum(r.avg)}<small>Ø / Runde</small>` : `${fmtNum(r.score)}<small>Wertung</small>`;
+  $('#weeklyRank').innerHTML = rows.map((r, i) => `
+    <a class="rank-row" ${r.person?.slug ? `href="/player-profile.html?slug=${encodeURIComponent(r.person.slug)}#weekly"` : ''}>
+      <span class="rank-no">${i + 1}</span>
+      <img class="avatar sm" src="${esc(r.person?.avatar || '/icons/icon-192.png')}" alt="">
+      <span class="who"><span class="title">${esc(r.person?.real || r.name)}</span>
+        <span class="sub">${r.n} Weekly${r.n === 1 ? '' : 's'} · ${r.rounds} Runden${r.wins ? ` · 🏆 ${r.wins}` : ''}</span></span>
+      <span class="pts">${val(r)}</span>
+    </a>`).join('') || '<div class="empty">Noch keine abgeschlossenen Weeklys.</div>';
 }
-let painted = false;
-$('#globalBox').addEventListener('toggle', () => { if($('#globalBox').open && !painted){ painted = true; paintGlobal(); } });
-$('#fmtFilter').addEventListener('change', paintGlobal);
+paintRank();
+$$('#rankMode button').forEach(b => b.addEventListener('click', () => {
+  mode = b.dataset.m; $$('#rankMode button').forEach(x => x.classList.toggle('on', x === b)); paintRank();
+}));
+$('#rankFmt').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]'); if(!b) return;
+  fmt = b.dataset.f || null; $$('#rankFmt button').forEach(x => x.classList.toggle('on', x === b)); paintRank();
+});
+$('#rankInfo').addEventListener('click', () => openSheet(`<h3>Drei Wertungen</h3><div class="stack">
+  <div class="card"><b>Punkte</b><p class="small muted mt">Alle Match-Punkte zusammen (Sieg 3, Remis 1). Wer oft kommt, sammelt viel.</p></div>
+  <div class="card"><b>Ø / Runde</b><p class="small muted mt">Punkte geteilt durch gespielte Runden – reine Spielstärke, egal wie oft du dabei warst. Maximum 3,00.</p></div>
+  <div class="card"><b>Wertung</b><p class="small muted mt">Wie das Eternal Ranking: Punkte ÷ √(2·n·N / (n+N)), n = deine Weeklys, N = alle Weeklys. Liegt zwischen „Gesamtpunkte“ und „Schnitt“ – Teilnahme zählt, aber Leistung auch.</p></div>
+</div><button class="btn block ghost mt" data-close>Schließen</button>`));
+
+if(m.profile?.slug && weekly.events.some(e => e.rows.some(r => r.key === m.profile.slug))){
+  $('#perfSec').hidden = false;
+  $('#perfLink').href = `/player-profile.html?slug=${encodeURIComponent(m.profile.slug)}#weekly`;
+  renderPerformance($('#perf'), weekly, m.profile.slug);
+}

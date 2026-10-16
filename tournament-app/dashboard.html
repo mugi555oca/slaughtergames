@@ -16,22 +16,27 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/app.css">
-  <title>Turniere – Slaughter Games</title>
+  <title>Weekly – Slaughter Games</title>
 </head>
 <body>
   <main class="app-main">
-    <div class="row between"><h1 class="page-title">Turniere</h1><a class="btn sm" id="newBtn" href="/tournament-app/new.html" hidden>+ Neu</a></div>
+    <div class="row between"><h1 class="page-title">Weekly</h1><a class="btn sm" id="newBtn" href="/tournament-app/new.html" hidden>+ Neu</a></div>
     <div id="mine"></div>
     <section class="section" id="liveSec" hidden><div class="section-head"><h2>Läuft gerade</h2></div><div class="list" id="live"></div></section>
     <section class="section"><div class="section-head"><h2>Abgeschlossen</h2></div><div class="list" id="done"><div class="skel" style="height:300px"></div></div></section>
-    <section class="section">
-      <details class="details" id="globalBox">
-        <summary>Draft-Ranking (alle App-Turniere)</summary>
-        <div class="body">
-          <select class="input" id="fmtFilter"></select>
-          <div class="rank-list mt" id="global"></div>
-        </div>
-      </details>
+    <section class="section" id="rankSec">
+      <div class="section-head"><h2>Weekly Ranking</h2><button class="btn link small" id="rankInfo">Wertungen?</button></div>
+      <div class="seg" id="rankMode">
+        <button class="on" data-m="score">Wertung</button>
+        <button data-m="points">Punkte</button>
+        <button data-m="avg">Ø / Runde</button>
+      </div>
+      <div class="seg mt" id="rankFmt"></div>
+      <div class="rank-list mt" id="weeklyRank"><div class="skel" style="height:300px"></div></div>
+    </section>
+    <section class="section" id="perfSec" hidden>
+      <div class="section-head"><h2>Deine Performance</h2><a id="perfLink" href="#">Profil</a></div>
+      <div id="perf"></div>
     </section>
   </main>
   <script type="module" src="/tournament-app/js/t-dashboard.js"></script>

@@ -1,6 +1,7 @@
 // Chat: Raumliste (chat.html) und Unterhaltung (chat.html?room=slug).
 // Live ueber Supabase Realtime; Push kommt per DB-Trigger -> Edge Function.
-import { initShell, $, esc, icon, supabase, loadPeople, lockHtml, openSheet, toast, timeAgo, fmtTime, fmtDay, confirmSheet } from './app.js';
+import { initShell, $, esc, icon, supabase, loadPeople, lockHtml, openSheet, toast, timeAgo, fmtTime, fmtDay, confirmSheet, resizeImage } from './app.js';
+import { signUrls } from './gallery.js';
 
 const roomSlug = new URLSearchParams(location.search).get('room');
 const main = $('#chatMain');
@@ -23,7 +24,12 @@ if(roomSlug){
 // ---------------------------------------------------------------
 async function rooms(m){
   const people = await loadPeople();
-  main.innerHTML = `<h1 class="page-title">Chat</h1><div class="list" id="rooms"><div class="skel" style="height:460px"></div></div>`;
+  main.innerHTML = `<h1 class="page-title">Chat</h1>
+    <a class="install mb" href="/ausgaben.html" id="splitCard" style="margin-bottom:14px">
+      <span style="width:40px;height:40px;border-radius:12px;background:var(--gold);color:#1a1205;display:grid;place-items:center;font-weight:800;font-size:20px;flex:0 0 auto">€</span>
+      <span class="grow"><b>Ausgaben-Splitter</b><span class="small muted" style="display:block" id="splitSub">Wer hat was bezahlt – und wer schuldet wem?</span></span>
+      ${icon('chev', 'chev')}</a>
+    <div class="list" id="rooms"><div class="skel" style="height:460px"></div></div>`;
 
   async function paint(){
     const { data, error } = await supabase.rpc('chat_overview');
@@ -68,7 +74,12 @@ async function room(m){
   composer.className = 'composer';
   composer.innerHTML = `<div class="reply-bar" id="replyBar" hidden><span class="grow ellipsis" id="replyText"></span>
       <button class="icon-btn" id="replyX" style="width:28px;height:28px" aria-label="Antwort abbrechen">${icon('x')}</button></div>
+    <div class="reply-bar" id="imgBar" hidden><img id="imgPrev" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:8px">
+      <span class="grow small">Foto wird mitgeschickt</span>
+      <button class="icon-btn" id="imgX" style="width:28px;height:28px" aria-label="Foto entfernen">${icon('x')}</button></div>
     <form class="composer-inner" id="sendForm">
+      <button type="button" class="send" id="attachBtn" aria-label="Foto anhängen" style="background:var(--surface-2)">${icon('image')}</button>
+      <input type="file" id="imgFile" accept="image/*" hidden>
       <textarea id="msgInput" rows="1" placeholder="Nachricht an ${esc(r.name)}" maxlength="4000" aria-label="Nachricht"></textarea>
       <button class="send" type="submit" aria-label="Senden">${icon('send')}</button>
     </form>`;
@@ -78,6 +89,8 @@ async function room(m){
   const byId = new Map();
   let msgs = [];
   let replyTo = null;
+  let pendingImg = null;
+  const imgUrls = {};
   const PAGE = 60;
 
   const person = uid => people.byId.get(uid) || { real: 'Mitglied', display: 'Mitglied', avatar: '/icons/icon-192.png' };
@@ -91,7 +104,8 @@ async function room(m){
     return `<div class="msg-row ${mine ? 'me' : ''} ${cont ? 'cont' : ''}" data-id="${msg.id}">
       ${mine ? '' : `<a href="${p.slug ? '/player-profile.html?slug=' + encodeURIComponent(p.slug) : '#'}"><img class="avatar" src="${esc(p.avatar)}" alt="${esc(p.real)}" loading="lazy"></a>`}
       <div class="bubble">${!mine && !cont ? `<span class="from">${esc(p.display)}</span>` : ''}${q
-        ? `<span class="quote"><b>${esc(person(q.user_id).display)}</b>: ${esc(q.body.slice(0, 120))}</span>` : ''}${linkify(msg.body)}<span class="time">${fmtTime(msg.created_at)}</span></div>
+        ? `<span class="quote"><b>${esc(person(q.user_id).display)}</b>: ${esc(q.body.slice(0, 120) || '📷 Foto')}</span>` : ''}${msg.image_path
+        ? `<img class="chat-img" data-img="${esc(msg.image_path)}" alt="Foto" ${imgUrls[msg.image_path] ? `src="${esc(imgUrls[msg.image_path])}"` : ''}>` : ''}${linkify(msg.body)}<span class="time">${fmtTime(msg.created_at)}</span></div>
     </div>`;
   }
 
@@ -104,6 +118,19 @@ async function room(m){
       prev = msg;
     }
     log.innerHTML = html || `<div class="empty">${icon('chat')}<h3>Noch ruhig hier</h3><p>Schreib die erste Nachricht.</p></div>`;
+    // Bilder liegen im privaten Bucket "chat" -> signierte URLs nachladen
+    const missing = msgs.filter(x => x.image_path && !imgUrls[x.image_path]).map(x => x.image_path);
+    if(missing.length){
+      const stick = nearBottom();
+      signUrls(missing, 'chat').then(u => {
+        Object.assign(imgUrls, u);
+        log.querySelectorAll('img[data-img]:not([src])').forEach(img => {
+          if(!imgUrls[img.dataset.img]) return;
+          img.src = imgUrls[img.dataset.img];
+          if(stick) img.addEventListener('load', () => scrollBottom(), { once: true });
+        });
+      }).catch(() => {});
+    }
   }
 
   const scrollBottom = (smooth = false) => main.scrollTo({ top: main.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
@@ -171,25 +198,67 @@ async function room(m){
   function setReply(msg){
     replyTo = msg;
     $('#replyBar').hidden = !msg;
-    if(msg) $('#replyText').innerHTML = `<b>${esc(person(msg.user_id).display)}</b>: ${esc(msg.body.slice(0, 80))}`;
+    if(msg) $('#replyText').innerHTML = `<b>${esc(person(msg.user_id).display)}</b>: ${esc(msg.body.slice(0, 80) || '📷 Foto')}`;
   }
   $('#replyX').addEventListener('click', () => setReply(null));
 
   $('#sendForm').addEventListener('submit', async e => {
     e.preventDefault();
     const body = input.value.trim();
-    if(!body) return;
+    const file = pendingImg;
+    if(!body && !file) return;
     input.value = ''; grow();
     const reply = replyTo; setReply(null);
+    setImg(null);
+    let image_path = null;
+    if(file){
+      try{
+        toast('Foto wird gesendet…');
+        const gif = file.type === 'image/gif' && file.size < 8 * 1024 * 1024;   // GIFs bleiben animiert
+        const blob = gif ? file : (await resizeImage(file, 1600, 0.85)).blob;
+        image_path = `${m.user.id}/${crypto.randomUUID()}.${gif ? 'gif' : 'jpg'}`;
+        const up = await supabase.storage.from('chat').upload(image_path, blob, { contentType: gif ? 'image/gif' : 'image/jpeg' });
+        if(up.error) throw up.error;
+      }catch(err){ toast(err.message, 'err'); input.value = body; return; }
+    }
     const { data, error } = await supabase.from('chat_messages')
-      .insert({ room_id: r.id, user_id: m.user.id, body, reply_to: reply?.id || null }).select('*').single();
+      .insert({ room_id: r.id, user_id: m.user.id, body, image_path, reply_to: reply?.id || null }).select('*').single();
     if(error){ toast(error.message, 'err'); input.value = body; return; }
     if(!byId.has(data.id)){ byId.set(data.id, data); msgs.push(data); paint(); }
     scrollBottom(true);
   });
 
+  // ---------- Foto anhaengen ----------
+  function setImg(file){
+    pendingImg = file;
+    $('#imgBar').hidden = !file;
+    if(file) $('#imgPrev').src = URL.createObjectURL(file);
+  }
+  $('#attachBtn').addEventListener('click', () => $('#imgFile').click());
+  $('#imgFile').addEventListener('change', e => {
+    const f = e.target.files?.[0]; e.target.value = '';
+    if(!f) return;
+    if(!f.type.startsWith('image/')){ toast('Nur Bilder – keine Videos.', 'err'); return; }
+    setImg(f); input.focus();
+  });
+  $('#imgX').addEventListener('click', () => setImg(null));
+
+  function viewImage(src){
+    const box = document.createElement('div');
+    box.className = 'lightbox';
+    box.innerHTML = `<div class="lb-top"><span class="grow"></span>
+      <a class="icon-btn" href="${esc(src)}" target="_blank" rel="noopener" aria-label="Original öffnen">${icon('download')}</a>
+      <button class="icon-btn" data-x aria-label="Schließen">${icon('x')}</button></div>
+      <div class="lb-stage"><img src="${esc(src)}" alt=""></div><div class="lb-cap"></div>`;
+    document.body.appendChild(box);
+    const close = () => box.remove();
+    box.querySelector('[data-x]').onclick = close;
+    box.querySelector('.lb-stage').onclick = ev => { if(ev.target === ev.currentTarget) close(); };
+  }
+
   // ---------- Aktionen auf Nachrichten ----------
   log.addEventListener('click', e => {
+    if(e.target.matches('img.chat-img[src]')){ viewImage(e.target.src); return; }
     const bubbleEl = e.target.closest('.bubble');
     if(!bubbleEl || e.target.closest('a')) return;
     const msg = byId.get(bubbleEl.closest('.msg-row').dataset.id);
@@ -207,6 +276,7 @@ async function room(m){
       if(!await confirmSheet('Nachricht löschen?', 'Sie verschwindet für alle.', 'Löschen', true)) return;
       const { error } = await supabase.from('chat_messages').delete().eq('id', msg.id);
       if(error){ toast(error.message, 'err'); return; }
+      if(msg.image_path) supabase.storage.from('chat').remove([msg.image_path]).then(() => {});
       byId.delete(msg.id); msgs = msgs.filter(x => x.id !== msg.id); paint();
     });
   });

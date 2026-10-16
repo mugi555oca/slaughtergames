@@ -79,7 +79,7 @@ const { data: live } = await supabase.from('tournaments')
 if(live?.length){
   const slot = $('#liveSlot');
   slot.hidden = false;
-  slot.innerHTML = `<div class="section-head"><h2>Läuft gerade</h2></div><div class="list">${live.map(t => `
+  slot.innerHTML = `<div class="section-head"><h2>Weekly läuft gerade</h2></div><div class="list">${live.map(t => `
     <a class="list-item" href="/tournament-app/round.html?tournament=${t.id}">
       <span class="chip live">LIVE</span>
       <div class="grow"><div class="title ellipsis">${esc(t.name)}</div>
