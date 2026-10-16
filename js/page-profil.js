@@ -70,7 +70,7 @@ async function render(){
       <div class="section-head"><h2>Konto</h2></div>
       <div class="list">
         ${m.isAdmin ? `<a class="list-item" href="/admin/">${icon('shield')}<div class="grow"><div class="title">Admin-Backend</div><div class="sub">Profile, Abzeichen, Turniere, Fotos – am besten am Desktop</div></div>${icon('chev', 'chev')}</a>` : ''}
-        ${m.isAdmin ? `<button class="list-item" id="pwBtn">${icon('lock')}<div class="grow title">Passwort ändern</div>${icon('chev', 'chev')}</button>` : ''}
+        <button class="list-item" id="pwBtn">${icon('lock')}<div class="grow"><div class="title">Passwort ändern</div><div class="sub">Standard ist „timewalk“</div></div>${icon('chev', 'chev')}</button>
         <a class="list-item" href="/spieler.html">${icon('users')}<div class="grow title">Alle Spieler</div>${icon('chev', 'chev')}</a>
         <a class="list-item" href="/merch.html">${icon('shirt')}<div class="grow title">Merch</div>${icon('chev', 'chev')}</a>
         <button class="list-item" id="logoutBtn" style="color:var(--danger)">${icon('logout')}<div class="grow title">Abmelden</div></button>
@@ -209,12 +209,13 @@ async function render(){
       e.preventDefault();
       if(s.el.querySelector('#pw1').value !== s.el.querySelector('#pw2').value){ toast('Passwörter stimmen nicht überein.', 'err'); return; }
       const { error } = await supabase.auth.updateUser({ password: s.el.querySelector('#pw1').value });
+      if(!error) await supabase.from('account_flags').upsert({ user_id: m.user.id, pw_state: 'own', pw_changed_at: new Date().toISOString() });
       if(error){ toast(error.message, 'err'); return; }
       s.close(); toast('Passwort geändert.', 'ok');
     });
   });
   $('#logoutBtn').addEventListener('click', async () => {
-    await disablePush().catch(() => {});
+    await disablePush(false).catch(() => {});
     await supabase.auth.signOut();
     location.href = '/';
   });

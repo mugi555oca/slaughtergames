@@ -36,6 +36,7 @@ export async function pushStatus(){
 
 export async function enablePush(userId){
   if(!pushSupported()) throw new Error('Dieses Gerät/dieser Browser unterstützt keine Push-Nachrichten.');
+  try{ localStorage.removeItem('sg-push-off'); }catch{}
   const perm = await Notification.requestPermission();
   if(perm !== 'granted') throw new Error('Benachrichtigungen wurden nicht erlaubt.');
   const reg = await registration();
@@ -51,7 +52,23 @@ export async function enablePush(userId){
   if(error) throw error;
 }
 
-export async function disablePush(){
+// Push ist standardmaessig AN: ist die Erlaubnis schon da, wird das Geraet
+// still (neu) registriert. Nur wer im Profil bewusst ausschaltet, bleibt aus.
+export const pushOptedOut = () => { try{ return localStorage.getItem('sg-push-off') === '1'; }catch{ return false; } };
+
+export async function ensurePush(userId){
+  if(!pushSupported() || needsInstallForPush() || pushOptedOut()) return 'skip';
+  if(Notification.permission === 'granted'){
+    if(sessionStorage.getItem('sg-push-ok')) return 'on';
+    await enablePush(userId);
+    sessionStorage.setItem('sg-push-ok', '1');
+    return 'on';
+  }
+  return Notification.permission;      // 'default' -> nachfragen, 'denied' -> nichts
+}
+
+export async function disablePush(optOut = true){
+  try{ if(optOut) localStorage.setItem('sg-push-off', '1'); }catch{}
   const reg = await navigator.serviceWorker.getRegistration('/');
   const sub = await reg?.pushManager.getSubscription();
   if(sub){

@@ -6,6 +6,7 @@
 // initShell baut obere Leiste + Tab-Leiste, registriert den Service Worker
 // und haelt die Zaehler (Chat ungelesen, Benachrichtigungen) aktuell.
 import { supabase } from './supabase.js';
+import { ensurePush, enablePush } from './push.js';
 
 export { supabase };
 
@@ -343,6 +344,7 @@ export async function initShell(opts = {}){
     }
     setupBell(m);
     if(tab !== 'chat') refreshChatBadge(m);
+    if(m.isMember) autoPush(m);
   }
   return m;
 }
@@ -404,4 +406,28 @@ export async function refreshChatBadge(m){
   const n = (data || []).reduce((s, r) => s + Number(r.unread || 0), 0);
   el.hidden = n === 0;
   el.textContent = n > 99 ? '99+' : String(n);
+}
+
+// Push automatisch: schon erlaubt -> still anmelden; noch nie gefragt ->
+// einmal freundlich nachfragen (Browser verlangen dafuer einen Tipp).
+async function autoPush(m){
+  let state;
+  try{ state = await ensurePush(m.user.id); }catch{ return; }
+  if(state !== 'default') return;
+  let last = 0;
+  try{ last = Number(localStorage.getItem('sg-push-asked') || 0); }catch{}
+  if(Date.now() - last < 3 * 86400000) return;
+  setTimeout(() => {
+    const s = openSheet(`<div class="center">${icon('bell')}</div>
+      <h3 class="center">Push-Nachrichten einschalten</h3>
+      <p class="muted center mb">Neue Paarung, Ergebnis eingetragen, Chat – direkt aufs Handy. Abschalten jederzeit im Profil.</p>
+      <div class="stack"><button class="btn block" data-on>Einschalten</button><button class="btn block ghost" data-close>Später</button></div>`,
+      { onClose: () => { try{ localStorage.setItem('sg-push-asked', String(Date.now())); }catch{} } });
+    const svg = s.el.querySelector('svg'); svg.style.cssText = 'width:40px;height:40px;color:var(--blood-2);margin:0 auto 8px';
+    s.el.querySelector('[data-on]').addEventListener('click', async () => {
+      try{ await enablePush(m.user.id); toast('Push ist an.', 'ok'); }
+      catch(err){ toast(err.message, 'err'); }
+      s.close();
+    });
+  }, 1200);
 }

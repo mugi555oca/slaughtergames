@@ -88,7 +88,7 @@ async function mitglieder(){
       <div>
         <div class="toolbar"><input class="input" id="q" type="search" placeholder="Suchen…">
           <button class="btn sm" id="newBtn">+ Neues Mitglied</button></div>
-        <table class="atable"><thead><tr><th></th><th>Rufname</th><th>SG-Name</th><th>Account</th><th>Zuletzt da</th></tr></thead>
+        <table class="atable"><thead><tr><th></th><th>Rufname</th><th>SG-Name</th><th>Passwort</th><th>Zuletzt da</th></tr></thead>
         <tbody id="mBody"></tbody></table>
       </div>
       <div class="panel" id="panel"><p class="muted">Wähle links ein Mitglied – oder lege ein neues an.</p></div>
@@ -101,7 +101,9 @@ async function mitglieder(){
         <td style="width:52px"><img class="avatar sm" src="${esc(x.avatar)}" alt=""></td>
         <td><b>${esc(x.r.real_name || '–')}</b></td>
         <td class="muted small full">${esc(x.r.name)}</td>
-        <td>${x.u ? '' : '<span class="chip gold">kein Account</span>'}</td>
+        <td>${!x.u ? '<span class="chip gold">kein Account</span>'
+          : x.u.pw_state === 'own' ? '<span class="chip">eigenes PW</span>'
+          : x.u.pw_state === 'admin' ? '<span class="chip">PW von dir</span>' : '<span class="chip ok">timewalk</span>'}</td>
         <td class="muted small end">${x.u?.last_sign_in_at ? esc(timeAgo(x.u.last_sign_in_at)) : ''}</td>
       </tr>`).join('');
   };
@@ -178,7 +180,13 @@ Passwort: timewalk`).catch(() => {});
         <div class="field"><label>Beschreibung</label><textarea id="eDesc" maxlength="500">${esc(pr.description || '')}</textarea></div>
         <div class="field"><label>Lieblingskarte</label><input id="eFav" value="${esc(pr.favourite_card || '')}"></div>
         <label class="switch" style="padding:4px 0 14px;border:0"><span>In Spielerauswahl aktiv</span><input type="checkbox" id="eActive" ${r.active ? 'checked' : ''}></label>
-        <div class="btn-row"><button class="btn" type="submit">Speichern</button><button class="btn ghost" type="button" id="ePw">PW → timewalk</button></div>
+        <div class="btn-row"><button class="btn" type="submit">Speichern</button></div>
+        <div class="card mt" style="padding:12px">
+          <div class="label mb">Passwort · ${u?.pw_state === 'own' ? 'selbst geändert' : u?.pw_state === 'admin' ? 'von dir gesetzt' : 'Standard (timewalk)'}${u?.pw_changed_at ? ' · ' + esc(timeAgo(u.pw_changed_at)) : ''}</div>
+          <div class="row" style="gap:8px"><input class="input grow" id="ePwNew" placeholder="Neues Passwort" autocomplete="off" style="min-height:42px;padding:9px 12px">
+            <button class="btn sm" type="button" id="ePwSet">Setzen</button></div>
+          <button class="btn link small mt" type="button" id="ePw">Auf timewalk zurücksetzen</button>
+        </div>
         ${pr.avatar_url ? '<button class="btn link small mt" type="button" id="eAvReset">Profilbild auf Standard zurücksetzen</button>' : ''}
       </form>`);
 
@@ -199,7 +207,13 @@ Passwort: timewalk`).catch(() => {});
     });
     $('#ePw').addEventListener('click', async () => {
       if(!await confirmSheet('Passwort zurücksetzen?', `${r.real_name || r.name} bekommt wieder das Passwort „timewalk“.`, 'Zurücksetzen')) return;
-      try{ await fn({ action: 'password', userId: pr.id }); toast('Passwort ist wieder timewalk.', 'ok'); }
+      try{ await fn({ action: 'password', userId: pr.id }); toast('Passwort ist wieder timewalk.', 'ok'); route(); }
+      catch(err){ toast(err.message, 'err'); }
+    });
+    $('#ePwSet').addEventListener('click', async () => {
+      const pw = $('#ePwNew').value.trim();
+      if(pw.length < 6){ toast('Mindestens 6 Zeichen.', 'err'); return; }
+      try{ await fn({ action: 'password', userId: pr.id, password: pw }); toast(`Passwort für ${r.real_name || r.name}: ${pw}`, 'ok'); $('#ePwNew').value = ''; }
       catch(err){ toast(err.message, 'err'); }
     });
     $('#eFile').addEventListener('change', async e => {

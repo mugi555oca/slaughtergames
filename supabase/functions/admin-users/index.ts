@@ -4,7 +4,8 @@
 //
 // Login-Name ist immer der Rufname, Passwort fuer Mitglieder immer DEFAULT_PW.
 // POST { action: 'create', sgName, realName, slug? }
-// POST { action: 'password', userId }      -> zurueck auf DEFAULT_PW
+// POST { action: 'password', userId, password? }  -> setzen, ohne password zurueck auf DEFAULT_PW
+// Passwoerter selbst sind nie lesbar (Supabase speichert nur Hashes).
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const url = Deno.env.get('SUPABASE_URL')!;
@@ -36,9 +37,14 @@ Deno.serve(async (req) => {
   const body = await req.json().catch(() => ({}));
 
   if (body.action === 'password') {
+    // ohne password -> zurueck auf DEFAULT_PW, sonst das vom Admin gewaehlte
     if (!body.userId) return json({ error: 'userId fehlt.' }, 400);
-    const { error } = await db.auth.admin.updateUserById(body.userId, { password: DEFAULT_PW });
-    return error ? json({ error: error.message }, 400) : json({ ok: true });
+    const custom = body.password ? String(body.password) : null;
+    if (custom !== null && custom.length < 6) return json({ error: 'Passwort: mindestens 6 Zeichen.' }, 400);
+    const { error } = await db.auth.admin.updateUserById(body.userId, { password: custom ?? DEFAULT_PW });
+    if (error) return json({ error: error.message }, 400);
+    await db.from('account_flags').upsert({ user_id: body.userId, pw_state: custom ? 'admin' : 'default', pw_changed_at: new Date().toISOString() });
+    return json({ ok: true });
   }
 
   if (body.action === 'create') {
@@ -82,7 +88,11 @@ Deno.serve(async (req) => {
     // E-Mail/Login + letzter Login fuer die Mitgliederliste
     const { data, error } = await db.auth.admin.listUsers({ perPage: 1000 });
     if (error) return json({ error: error.message }, 400);
-    return json({ users: data.users.map(u => ({ id: u.id, email: u.email, last_sign_in_at: u.last_sign_in_at, created_at: u.created_at })) });
+    const { data: flags } = await db.from('account_flags').select('*');
+    const flag = new Map((flags || []).map((f: { user_id: string }) => [f.user_id, f]));
+    return json({ users: data.users.map(u => ({ id: u.id, email: u.email, last_sign_in_at: u.last_sign_in_at, created_at: u.created_at,
+      pw_state: (flag.get(u.id) as { pw_state?: string })?.pw_state || 'default',
+      pw_changed_at: (flag.get(u.id) as { pw_changed_at?: string })?.pw_changed_at || null })) });
   }
 
   return json({ error: 'Unbekannte Aktion.' }, 400);
