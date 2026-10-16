@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="robots" content="noindex">
+  <title>Admin – Slaughter Games</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="manifest" href="/manifest.webmanifest">
+</head>
+<body class="admin">
+  <aside class="side">
+    <a class="side-brand" href="/admin/"><img src="/icons/logo-160.webp" alt=""><span>Admin</span></a>
+    <a class="back-app" href="/" hidden>← App</a>
+    <nav id="sideNav">
+      <a href="#uebersicht" data-sec="uebersicht">Übersicht</a>
+      <a href="#mitglieder" data-sec="mitglieder">Mitglieder</a>
+      <a href="#abzeichen" data-sec="abzeichen">Abzeichen</a>
+      <a href="#turniere" data-sec="turniere">Weekly</a>
+      <a href="#galerie" data-sec="galerie">Galerie</a>
+      <a href="#chat" data-sec="chat">Chat</a>
+      <a href="/ausgaben.html">Ausgaben</a>
+    </nav>
+    <div class="side-foot"><a href="/">← Zur App</a><span id="whoami" class="faint tiny"></span></div>
+  </aside>
+  <main class="admin-main" id="adminMain"><div class="spinner"></div></main>
+  <script type="module" src="/admin/admin.js"></script>
+</body>
+</html>

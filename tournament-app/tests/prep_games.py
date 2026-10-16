@@ -1,3 +1,7 @@
+# HINWEIS (2026-10): Die Turnierfotos sind nicht mehr oeffentlich im Repo,
+# sondern im privaten Supabase-Bucket "gallery" (nur fuer Mitglieder sichtbar).
+# Dieses Skript erzeugt sie weiterhin nach assets/games/ - danach mit
+# upload_gallery.py hochladen und den Ordner NICHT committen.
 # -*- coding: utf-8 -*-
 """Turnierfotos fuer die Unterseiten aufbereiten + tournaments.json bauen."""
 from PIL import Image, ImageOps

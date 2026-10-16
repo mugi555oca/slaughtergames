@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slaughter Games">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <title>Artikel schreiben – Slaughter Games</title>
+</head>
+<body>
+  <main class="app-main">
+    <h1 class="page-title" id="edTitle">Neuer Artikel</h1>
+    <form id="edForm" class="stack">
+      <button type="button" class="cover-pick" id="coverBtn"><span id="coverHint">＋ Titelbild wählen</span><img id="coverImg" alt="" hidden></button>
+      <input type="file" id="coverFile" accept="image/*" hidden>
+      <div class="field"><label for="pTitle">Titel</label><input id="pTitle" maxlength="160" required placeholder="Was ist passiert?"></div>
+      <div class="field">
+        <label for="pBody">Text</label>
+        <div class="md-bar" id="mdBar">
+          <button type="button" data-md="b" title="Fett"><b>B</b></button>
+          <button type="button" data-md="i" title="Kursiv"><i>I</i></button>
+          <button type="button" data-md="h" title="Zwischenüberschrift">H</button>
+          <button type="button" data-md="l" title="Liste">• Liste</button>
+          <button type="button" data-md="a" title="Link">Link</button>
+          <button type="button" data-md="img" title="Bild einfügen" class="img-btn">📷 Bild</button>
+        </div>
+        <textarea id="pBody" rows="14" maxlength="60000" placeholder="Erzähl die Geschichte. Leere Zeile = neuer Absatz.&#10;&#10;Bilder fügst du mit „📷 Bild“ an der Cursor-Stelle ein."></textarea>
+        <input type="file" id="bodyFile" accept="image/*" hidden>
+      </div>
+      <div class="btn-row"><button type="button" class="btn ghost" id="previewBtn">Vorschau</button><button class="btn" type="submit" id="pubBtn">Veröffentlichen</button></div>
+      <button type="button" class="btn danger" id="delBtn" hidden>Artikel löschen</button>
+    </form>
+  </main>
+  <script type="module" src="/js/page-blogedit.js"></script>
+</body>
+</html>

@@ -1,3 +1,6 @@
 // Supabase public client config
 export const SUPABASE_URL = 'https://shzyksgqawknysbvhlwn.supabase.co';
 export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoenlrc2dxYXdrbnlzYnZobHduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0OTE4NjAsImV4cCI6MjA4OTA2Nzg2MH0.ac-0PDad2laud0t-iyEi1rR8gNfqBcgTTyd41J2fX68';
+
+// Web-Push (VAPID) - oeffentlicher Schluessel, darf im Client stehen.
+export const VAPID_PUBLIC_KEY = 'BHKbChN150R8vIAj82TcmdpN-eegLRhJSSkr-DWpdCtIJXZ_Z4LgLfMEZgM0_CdX1M65zAqmHSLADC_1AnJEiag';

@@ -393,7 +393,7 @@ export async function getTournamentBundle(tournamentId){
   return { tournament: t, players, matches, rounds, opps };
 }
 
-function buildStandings(players, matches, roundNo){
+export function buildStandings(players, matches, roundNo){
   const map = {};
   for(const p of players){
     map[p.id] = {

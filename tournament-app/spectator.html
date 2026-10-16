@@ -1,45 +1,9 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Slaughter Games – Spectator View</title>
-  <link rel="stylesheet" href="./styles.css?v=5" />
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <meta charset="utf-8">
+  <title>Turnier – Slaughter Games</title>
+  <script>location.replace('/tournament-app/round.html' + location.search + '');</script>
 </head>
-<body>
-  <div class="container">
-    <div class="topbar">
-      <h1 id="sTitle">Spectator</h1>
-      <div style="display:flex;gap:8px">
-        <a id="toBracket" href="#"><button class="secondary">Pairings (Detailseite)</button></a>
-      </div>
-    </div>
-
-    <div class="kpi-row" style="margin-bottom:12px">
-      <span class="badge" id="sStatus">-</span>
-      <span class="badge" id="sProgress">-</span>
-      <span class="badge" id="sOpen">-</span>
-    </div>
-
-    <section id="sRoundsCard">
-      <h2 id="sRoundsTitle">Runden</h2>
-      <div id="sRounds"></div>
-    </section>
-
-    <section class="card" id="sStandingsCard">
-      <h2 id="sStandingsTitle">Live Standings</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Rank</th><th>Name</th><th>Record</th><th>MP</th><th>OMW%</th><th>GW%</th><th>OGW%</th></tr>
-          </thead>
-          <tbody id="sStandings"></tbody>
-        </table>
-      </div>
-      <p class="helper" id="sMeta"></p>
-    </section>
-  </div>
-  <script type="module" src="./js/spectator-page.js"></script>
-</body>
+<body style="background:#0b0b0d"></body>
 </html>
