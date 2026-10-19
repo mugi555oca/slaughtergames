@@ -170,7 +170,14 @@ async function render(){
     const st = await pushStatus();
     host.innerHTML = `<label class="switch" style="padding:0;border:0">
       <span><b>Push auf diesem Gerät</b><br><span class="small muted">${st === 'denied' ? 'Im Browser blockiert – in den Website-Einstellungen erlauben.' : 'Paarungen, Ergebnisse und Chat aufs Handy.'}</span></span>
-      <input type="checkbox" id="pushToggle" ${st === 'on' ? 'checked' : ''} ${st === 'denied' ? 'disabled' : ''}></label>`;
+      <input type="checkbox" id="pushToggle" ${st === 'on' ? 'checked' : ''} ${st === 'denied' ? 'disabled' : ''}></label>
+      ${st === 'on' ? '<button class="btn sm ghost mt" id="testPush">🪓 Test-Push schicken</button>' : ''}`;
+    $('#testPush')?.addEventListener('click', async e => {
+      busy(e.currentTarget, true, 'Schicke…');
+      const { error } = await supabase.rpc('send_test_push');
+      busy(e.currentTarget, false);
+      toast(error ? error.message : 'Unterwegs – sollte in ein paar Sekunden aufpoppen.', error ? 'err' : 'ok');
+    });
     $('#pushToggle').addEventListener('change', async e => {
       e.target.disabled = true;
       try{
