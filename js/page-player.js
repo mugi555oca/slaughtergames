@@ -1,6 +1,7 @@
 import { initShell, $, esc, loadPeople, supabase, me } from './app.js';
 import { loadTournaments, eternalRanking, AXES, AXE_ORDER, sgLogo } from './data.js';
 import { loadWeekly, renderPerformance } from './weekly.js';
+import { loadLocations, locationsListHtml, bindLocations } from './locations.js';
 
 const slug = new URLSearchParams(location.search).get('slug');
 await initShell({ tab: 'ranking', title: 'Spielerprofil', back: '/spieler.html' });
@@ -98,3 +99,14 @@ if(p){
     if(location.hash === '#weekly') $('#weekly').scrollIntoView();
   }catch(err){ $('#ppWeekly').innerHTML = `<div class="card muted">${esc(err.message)}</div>`; }
 }
+
+// ---------- Spiellocation (nur Mitglieder sehen Adressen) ----------
+if(p && m.isMember){
+  const locs = (await loadLocations()).filter(l => l.owner_slug === slug);
+  if(locs.length){
+    $('#ppLocSec').hidden = false;
+    $('#ppLoc').innerHTML = locationsListHtml(locs);
+    bindLocations($('#ppLoc'), locs, people);
+  }
+}
+

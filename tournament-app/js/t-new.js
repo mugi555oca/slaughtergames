@@ -19,14 +19,26 @@ const weekday = today.toLocaleDateString('de-AT', { weekday: 'long' });
 $('#tName').value = `${weekday[0].toUpperCase() + weekday.slice(1)}sdraft ${today.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' })}`;
 $('#tFormat').innerHTML = FORMATS.map(([k, l]) => `<option value="${k}">${l}</option>`).join('');
 $('#tFormat').addEventListener('change', () => { $('#ediField').hidden = $('#tFormat').value !== 'aktuelle-edi'; });
-$('#tFormat').dispatchEvent(new Event('change'));
 
 const picked = [];          // Reihenfolge = Sitzordnung
 let mode = 'random';
 
 // Ich selbst bin meistens dabei
 const meName = (roster || []).find(r => r.slug === m.profile?.slug)?.name;
-if(meName) picked.push(meName);
+const meetupId = new URLSearchParams(location.search).get('meetup');
+if(meetupId){
+  // Aus dem Terminfinder: alle mit "dabei" vorauswaehlen, Format uebernehmen
+  const [{ data: mt }, { data: vs }] = await Promise.all([
+    supabase.from('meetups').select('*').eq('id', meetupId).maybeSingle(),
+    supabase.from('meetup_votes').select('user_id').eq('meetup_id', meetupId).eq('vote', 'in'),
+  ]);
+  for(const v of vs || []){
+    const slug = people.byId.get(v.user_id)?.slug;
+    const r = (roster || []).find(x => x.slug === slug);
+    if(r && !picked.includes(r.name)) picked.push(r.name);
+  }
+  if(mt?.format_key && mt.format_key !== 'highlander' && FORMATS.some(f => f[0] === mt.format_key)) $('#tFormat').value = mt.format_key;
+} else if(meName) picked.push(meName);
 
 function paint(){
   $('#picker').innerHTML = players.map(p => `<button type="button" class="pick ${picked.includes(p.name) ? 'on' : ''}" data-name="${esc(p.name)}">
@@ -37,6 +49,7 @@ function paint(){
   $('#seating').innerHTML = picked.map(n => `<li>${esc(players.find(p => p.name === n)?.real || n)}</li>`).join('');
 }
 paint();
+$('#tFormat').dispatchEvent(new Event('change'));
 
 $('#picker').addEventListener('click', e => {
   const b = e.target.closest('[data-name]');
@@ -77,6 +90,7 @@ $('#newForm').addEventListener('submit', async e => {
       playerNames: [...picked], seatingOrder: [...picked], formatKey, ediCode: formatKey === 'aktuelle-edi' ? edi : null,
     });
     await generateNextRound(t.id, { firstRoundMode: mode });
+    if(meetupId) await supabase.from('meetups').update({ tournament_id: t.id }).eq('id', meetupId);
     location.replace(`/tournament-app/round.html?tournament=${t.id}`);
   }catch(err){
     msg.textContent = err.message;

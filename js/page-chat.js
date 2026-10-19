@@ -25,6 +25,10 @@ if(roomSlug){
 async function rooms(m){
   const people = await loadPeople();
   main.innerHTML = `<h1 class="page-title">Chat</h1>
+    <a class="install" href="/termine.html" id="meetCard" style="margin-bottom:10px">
+      <span style="width:40px;height:40px;border-radius:12px;background:var(--blood);color:#fff;display:grid;place-items:center;font-size:20px;flex:0 0 auto">📅</span>
+      <span class="grow"><b>Weekly-Termine</b><span class="small muted" style="display:block" id="meetSub">Wer is am Donnerstag dabei?</span></span>
+      ${icon('chev', 'chev')}</a>
     <a class="install mb" href="/ausgaben.html" id="splitCard" style="margin-bottom:14px">
       <span style="width:40px;height:40px;border-radius:12px;background:var(--gold);color:#1a1205;display:grid;place-items:center;font-weight:800;font-size:20px;flex:0 0 auto">€</span>
       <span class="grow"><b>Ausgaben-Splitter</b><span class="small muted" style="display:block" id="splitSub">Wer hat was bezahlt – und wer schuldet wem?</span></span>
@@ -48,6 +52,17 @@ async function rooms(m){
     }).join('');
   }
   await paint();
+  // naechster Termin im Kopf
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const { data: nx } = await supabase.from('meetups').select('id,date,time,location_id').eq('status', 'open').gte('date', today).order('date').limit(1);
+  if(nx?.[0]){
+    const [{ count }, { data: loc }] = await Promise.all([
+      supabase.from('meetup_votes').select('user_id', { count: 'exact', head: true }).eq('meetup_id', nx[0].id).eq('vote', 'in'),
+      supabase.from('play_locations').select('name').eq('id', nx[0].location_id).maybeSingle(),
+    ]);
+    const d = new Date(nx[0].date + 'T12:00:00');
+    $('#meetSub').textContent = `${['So','Mo','Di','Mi','Do','Fr','Sa'][d.getDay()]} ${d.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })} · ${loc?.name || '?'} · ${count || 0}/8 dabei`;
+  }
   supabase.channel('chat-list')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, () => paint())
     .subscribe();

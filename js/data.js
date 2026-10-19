@@ -30,7 +30,7 @@ export const NEXT_EVENT = {
   roster: ['david','simon','hansi','vinc','heber','fabi','osti','felix','marc','burni',
            'frido','silvio','ivo','maugi555-gmail','leo','niki','wenzl','raul','luki','paul'],
   wobblers: ['wenzl'],
-  waiting: ['Klaus Jöns', 'Patrick Tomilitsch'],
+  waiting: ['klaus', 'tomlitisch'],      // Slugs, Reihenfolge = Nachrueck-Reihenfolge
 };
 
 export const GRAND_SLAUGHTERER = { slug: 'david', year: 2026, sub: 'Sieger Slaughter Games 6' };

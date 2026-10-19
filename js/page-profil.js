@@ -60,6 +60,16 @@ async function render(){
       </form>
     </section>
 
+    <section class="section" id="myLocSec" hidden>
+      <div class="section-head"><h2>Deine Spiellocation</h2></div>
+      <form class="card" id="locForm">
+        <div class="field"><label for="locAddr">Adresse</label><input id="locAddr" required></div>
+        <div class="field"><label for="locBell">Anläuten / Tür</label><input id="locBell" placeholder="z. B. Top 36"></div>
+        <button class="btn block" type="submit">Location speichern</button>
+        <p class="hint mt">Nur für eingeloggte Mitglieder sichtbar.</p>
+      </form>
+    </section>
+
     <section class="section" id="push">
       <div class="section-head"><h2>Benachrichtigungen</h2></div>
       <div class="card" id="pushDevice"></div>
@@ -173,16 +183,33 @@ async function render(){
   await paintDevice();
 
   const { data: prefRow } = await supabase.from('notification_prefs').select('*').eq('user_id', m.user.id).maybeSingle();
-  const prefs = prefRow || { results: true, rounds: true, chat: true, muted_rooms: [] };
+  const PREFS = [
+    ['Weekly-Termine', [
+      ['meetups', '📅 Neuer Termin', 'Wenn wer ein Weekly vorschlägt'],
+      ['meetup_updates', '🪑 Der Tisch füllt sich', 'Wer zu- oder absagt und wie viele noch fehlen (bei Terminen, wo du dabei/maybe bist)'],
+      ['reminders', '⏰ Erinnerung am Spieltag', 'Mittags: heute Weekly, wo und wie viele'],
+    ]],
+    ['Weekly-Turniere', [
+      ['rounds', '🃏 Paarungen', 'Turnierstart, deine Gegner und Tische, Byes'],
+      ['results', '💀 Deine Ergebnisse', 'Sieg, Niederlage, Remis, dein Endplatz'],
+      ['results_all', '📣 Alle Ergebnisse im Weekly', 'Wer wen verschiert – nur Push, wird pro Weekly zusammengefasst'],
+    ]],
+    ['Sonstiges', [
+      ['chat', '💬 Chat-Nachrichten', 'Einzelne Gruppen unten stummschalten'],
+      ['expenses', '💸 Ausgaben', 'Neue Ausgaben mit deinem Anteil, erhaltene Überweisungen'],
+      ['gallery', '📸 Neue Fotos', 'Wenn wer Fotos in eine Galerie lädt'],
+      ['blog', '📰 Neue Blogartikel', ''],
+      ['badges', '🏅 Abzeichen', 'Wenn du ein Abzeichen bekommst'],
+    ]],
+  ];
+  const keys = PREFS.flatMap(g => g[1].map(x => x[0]));
+  const prefs = Object.assign(Object.fromEntries(keys.map(k => [k, true])), { muted_rooms: [] }, prefRow || {});
   const { data: rooms } = await supabase.from('chat_rooms').select('slug,name').order('sort_order');
-  $('#prefs').innerHTML = [
-    ['rounds', 'Neue Runde / Paarung', 'Wer dein Gegner ist und an welchem Tisch'],
-    ['results', 'Ergebnisse', 'Wenn dein Gegner ein Ergebnis einträgt, Weekly beendet'],
-    ['chat', 'Chat-Nachrichten', 'Einzelne Gruppen kannst du unten stummschalten'],
-  ].map(([k, t, s]) => `<label class="switch"><span><span class="title">${t}</span><br><span class="small muted">${s}</span></span>
+  $('#prefs').innerHTML = PREFS.map(([group, items]) => `<div class="switch" style="cursor:default;background:var(--bg-2)"><span class="tiny" style="font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">${group}</span></div>`
+    + items.map(([k, t, d]) => `<label class="switch"><span><span class="title">${t}</span>${d ? `<br><span class="small muted">${d}</span>` : ''}</span>
       <input type="checkbox" data-pref="${k}" ${prefs[k] ? 'checked' : ''}></label>`).join('')
-    + (rooms || []).map(r => `<label class="switch" style="padding-left:28px"><span class="small">${esc(r.name)}</span>
-      <input type="checkbox" data-room="${esc(r.slug)}" ${prefs.muted_rooms?.includes(r.slug) ? '' : 'checked'}></label>`).join('');
+    + (group === 'Sonstiges' ? (rooms || []).map(r => `<label class="switch" style="padding-left:28px"><span class="small">${esc(r.name)}</span>
+      <input type="checkbox" data-room="${esc(r.slug)}" ${prefs.muted_rooms?.includes(r.slug) ? '' : 'checked'}></label>`).join('') : '')).join('');
   $('#prefs').addEventListener('change', async e => {
     const el = e.target;
     if(el.dataset.pref) prefs[el.dataset.pref] = el.checked;
@@ -191,12 +218,27 @@ async function render(){
       el.checked ? set.delete(el.dataset.room) : set.add(el.dataset.room);
       prefs.muted_rooms = [...set];
     }
-    const { error } = await supabase.from('notification_prefs').upsert({
-      user_id: m.user.id, results: prefs.results, rounds: prefs.rounds, chat: prefs.chat,
-      muted_rooms: prefs.muted_rooms || [], updated_at: new Date().toISOString(),
-    });
+    const row = { user_id: m.user.id, muted_rooms: prefs.muted_rooms || [], updated_at: new Date().toISOString() };
+    for(const k of keys) row[k] = prefs[k];
+    const { error } = await supabase.from('notification_prefs').upsert(row);
     if(error) toast(error.message, 'err');
   });
+  // ---------- Eigene Spiellocation ----------
+  if(profile.slug){
+    const { data: myLoc } = await supabase.from('play_locations').select('*').eq('owner_slug', profile.slug).maybeSingle();
+    if(myLoc){
+      $('#myLocSec').hidden = false;
+      $('#locAddr').value = myLoc.address;
+      $('#locBell').value = myLoc.bell || '';
+      $('#locForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const address = $('#locAddr').value.trim();
+        const { error } = await supabase.from('play_locations').update({ address, bell: $('#locBell').value.trim() || null,
+          maps_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` }).eq('id', myLoc.id);
+        toast(error ? error.message : 'Location gespeichert.', error ? 'err' : 'ok');
+      });
+    }
+  }
   if(location.hash === '#push') $('#push').scrollIntoView();
 
   // ---------- Konto ----------

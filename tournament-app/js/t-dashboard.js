@@ -2,6 +2,7 @@
 import { initShell, $, $$, esc, icon, supabase, loadPeople, personForName, openSheet } from '/js/app.js';
 import { formatLabel, flip } from './t-shared.js';
 import { loadWeekly, weeklyRanking, formatsOf, renderPerformance, fmtNum } from '/js/weekly.js';
+import { loadLocations, locationsListHtml, bindLocations } from '/js/locations.js';
 
 const m = await initShell({ tab: 'turniere', title: 'Weekly Turniere' });
 if(m.isMember) $('#newBtn').hidden = false;
@@ -107,3 +108,27 @@ if(m.profile?.slug && weekly.events.some(e => e.rows.some(r => r.key === m.profi
   $('#perfLink').href = `/player-profile.html?slug=${encodeURIComponent(m.profile.slug)}#weekly`;
   renderPerformance($('#perf'), weekly, m.profile.slug);
 }
+
+// ---------- Termine + Spiellocations (nur Mitglieder) ----------
+if(m.isMember){
+  $('#meetCard').hidden = false;
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const [locs, { data: nx }] = await Promise.all([
+    loadLocations(),
+    supabase.from('meetups').select('id,date,time,location_id').eq('status', 'open').gte('date', today).order('date').limit(1),
+  ]);
+  if(nx?.[0]){
+    const { count } = await supabase.from('meetup_votes').select('user_id', { count: 'exact', head: true }).eq('meetup_id', nx[0].id).eq('vote', 'in');
+    const d = new Date(nx[0].date + 'T12:00:00');
+    $('#meetCard').href = `/termine.html?id=${nx[0].id}`;
+    $('#meetSub').textContent = `${['So','Mo','Di','Mi','Do','Fr','Sa'][d.getDay()]} ${d.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })}, ${nx[0].time} · ${locs.find(l => l.id === nx[0].location_id)?.name || '?'} · ${count || 0}/8 dabei`;
+  } else {
+    $('#meetSub').textContent = 'Noch kein Termin – schlag einen vor!';
+  }
+  if(locs.length){
+    $('#locSec').hidden = false;
+    $('#locList').innerHTML = locationsListHtml(locs);
+    bindLocations($('#locList'), locs, people);
+  }
+}
+

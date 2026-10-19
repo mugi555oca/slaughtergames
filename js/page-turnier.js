@@ -45,7 +45,12 @@ if(isNext){
       <span class="who"><span class="title">${esc(p?.name || slug)}</span>
       ${NEXT_EVENT.wobblers.includes(slug) ? '<span class="wobbler">Wackelkandidat</span>' : ''}</span></a>`;
   }).join('') + `<div class="rank-row" style="background:var(--bg-2)"><span class="who"><span class="sub" style="font-weight:700;letter-spacing:.1em;text-transform:uppercase">⏳ Waiting Room</span></span></div>`
-    + NEXT_EVENT.waiting.map((n, i) => `<div class="rank-row"><span class="rank-no">${i + 1}</span><span class="who"><span class="title">${esc(n)}</span></span></div>`).join('');
+    + NEXT_EVENT.waiting.map((slug, i) => {
+      const p = person(slug);
+      return `<a class="rank-row" href="/player-profile.html?slug=${encodeURIComponent(slug)}"><span class="rank-no">${i + 1}</span>
+        <img class="avatar sm" src="${esc(p?.avatar)}" alt="" loading="lazy">
+        <span class="who"><span class="title">${esc(p?.name || slug)}</span><span class="sub">${esc(p?.real || '')}</span></span></a>`;
+    }).join('');
 } else if(g){
   document.title = `${g.title} (${g.year}) – Slaughter Games`;
   $('#tTitle').textContent = g.title;

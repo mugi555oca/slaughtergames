@@ -32,7 +32,7 @@ function route(){
   const sec = (location.hash || '#uebersicht').slice(1);
   $$('#sideNav a').forEach(a => a.classList.toggle('on', a.dataset.sec === sec));
   main.innerHTML = '<div class="spinner"></div>';
-  ({ uebersicht, mitglieder, abzeichen, turniere, galerie, chat }[sec] || uebersicht)().catch(err => {
+  ({ uebersicht, mitglieder, abzeichen, turniere, locations, galerie, chat }[sec] || uebersicht)().catch(err => {
     main.innerHTML = `<h1>Fehler</h1><p class="lead">${esc(err.message)}</p>`;
   });
 }
@@ -408,3 +408,51 @@ async function chat(){
     if(error) toast(error.message, 'err'); else b.closest('tr').remove();
   }));
 }
+
+// ---------------------------------------------------------------
+// Spiellocations
+// ---------------------------------------------------------------
+async function locations(){
+  const [{ data: locs }, { data: roster }] = await Promise.all([
+    supabase.from('play_locations').select('*').order('sort_order'),
+    supabase.from('roster').select('slug,real_name,name').order('real_name'),
+  ]);
+  const form = (l = {}) => `<form id="lForm" data-id="${l.id || ''}">
+      <div class="field"><label>Name</label><input id="lName" required value="${esc(l.name || '')}" placeholder="z. B. Niki"></div>
+      <div class="field"><label>Adresse</label><input id="lAddr" required value="${esc(l.address || '')}" placeholder="Straße Nr, PLZ Wien"></div>
+      <div class="field"><label>Anläuten / Tür</label><input id="lBell" value="${esc(l.bell || '')}" placeholder="z. B. Top 36"></div>
+      <div class="field"><label>Gastgeber (Profil)</label><select id="lOwner"><option value="">– keiner –</option>${roster.map(r => `<option value="${esc(r.slug)}" ${l.owner_slug === r.slug ? 'selected' : ''}>${esc(r.real_name || r.name)}</option>`).join('')}</select></div>
+      <div class="field"><label>Google-Maps-Link (leer = aus Adresse)</label><input id="lMaps" value="${esc(l.maps_url || '')}"></div>
+      <label class="switch" style="padding:4px 0 14px;border:0"><span>Aktiv</span><input type="checkbox" id="lActive" ${l.active === false ? '' : 'checked'}></label>
+      <button class="btn block" type="submit">${l.id ? 'Speichern' : 'Anlegen'}</button>
+    </form>`;
+  main.innerHTML = `<h1>Spiellocations</h1><p class="lead">Nur für eingeloggte Mitglieder sichtbar. Gastgeber sehen ihre Location im Profil und können sie selbst anpassen.</p>
+    <div class="split mobile-sheet"><div>
+      <div class="toolbar"><button class="btn sm" id="lNew">+ Neue Location</button></div>
+      <table class="atable"><thead><tr><th>Name</th><th>Adresse</th><th>Anläuten</th><th></th></tr></thead><tbody>
+      ${locs.map(l => `<tr class="click ${l.active ? '' : 'off'}" data-id="${l.id}"><td><b>${esc(l.name)}</b></td><td class="muted full">${esc(l.address)}</td><td>${esc(l.bell || '')}</td>
+        <td class="end"><a class="btn xs ghost" href="${esc(l.maps_url)}" target="_blank" rel="noopener">Maps</a></td></tr>`).join('')}</tbody></table>
+    </div><div class="panel" id="panel"><p class="muted">Location wählen oder neu anlegen.</p></div></div>`;
+  let sheet = null;
+  const show = html => {
+    if(matchMedia('(max-width:900px)').matches){ sheet?.close(); sheet = openSheet(html); } else $('#panel').innerHTML = html;
+    $('#lForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = e.target.dataset.id;
+      const addr = $('#lAddr').value.trim();
+      const row = { name: $('#lName').value.trim(), address: addr, bell: $('#lBell').value.trim() || null,
+        owner_slug: $('#lOwner').value || null, active: $('#lActive').checked,
+        maps_url: $('#lMaps').value.trim() || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}` };
+      const { error } = id ? await supabase.from('play_locations').update(row).eq('id', id) : await supabase.from('play_locations').insert(row);
+      if(error){ toast(error.message, 'err'); return; }
+      sheet?.close(); toast('Gespeichert.', 'ok'); locations();
+    });
+  };
+  $('#lNew').onclick = () => show('<h3>Neue Location</h3>' + form());
+  main.querySelectorAll('tr[data-id]').forEach(tr => tr.addEventListener('click', e => {
+    if(e.target.closest('a')) return;
+    const l = locs.find(x => x.id === tr.dataset.id);
+    show(`<h3>${esc(l.name)}</h3>` + form(l));
+  }));
+}
+

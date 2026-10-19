@@ -286,3 +286,15 @@ iPhone: Push nur in der installierten App (iOS 16.4+).
   Text ist ein kleines, sicheres Markdown (`js/markdown.js`). Die drei alten
   Artikel bleiben als Dateien in `blog_posts/`; Fotostrecken gehören in die
   Galerie, nicht in den Blog.
+
+### Nachtrag 19.10.2026
+
+- **Terminfinder** (`termine.html`, Tabellen `meetups`, `meetup_votes`): dabei/maybe/raus,
+  Ziel 8 Spieler (10/12 auch gut, 4–5 = Highländer). Aus einem Termin startet
+  „Weekly starten“ das Turnier mit allen Zusagen vorausgewählt.
+- **Spiellocations** (`play_locations`): nur für Mitglieder lesbar, Gastgeber
+  pflegt Adresse/Klingel im Profil, Admin alles unter /admin/#locations.
+- **Benachrichtigungen**: Texte (österreichisch, mit Zufallsvarianten) entstehen
+  in den Trigger-Funktionen der Migration `2026-10-19_termine_notify.sql`.
+  Jede Art ist pro Person abschaltbar (`notification_prefs`). Erinnerung am
+  Spieltag per pg_cron (`sg-meetup-reminders`, täglich 10:00 UTC).
