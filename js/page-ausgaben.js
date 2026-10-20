@@ -2,6 +2,7 @@
 // Nur eingetragene Teilnehmer sehen und buchen; der Admin pflegt die
 // Teilnehmerliste. Abrechnung = Salden mit moeglichst wenigen Ueberweisungen.
 import { initShell, $, $$, esc, icon, supabase, loadPeople, lockHtml, openSheet, confirmSheet, toast, busy, timeAgo } from './app.js';
+import { SUPABASE_URL } from '../tournament-app/js/config.js';
 
 const main = $('#aMain');
 const m = await initShell({ tab: 'chat', title: 'Ausgaben-Splitter', back: '/chat.html' });
@@ -231,12 +232,36 @@ async function adminSheet(){
     <button class="btn block mt" id="admSave">Teilnehmer speichern</button>
     <div class="btn-row mt"><button class="btn ghost" id="admClose">${ev.closed ? 'Wieder öffnen' : 'Abrechnung abschließen'}</button>
       <button class="btn ghost" id="admNew">Neues Event</button></div>`);
+  // Spieler ohne Login (z. B. neu im Stamm) - Login wird beim Antippen angelegt
+  const noLogin = people.list.filter(p => !p.id && p.active !== false).sort((a, b) => a.real.localeCompare(b.real, 'de'));
   const paint = () => {
     s.el.querySelector('#admWho').innerHTML = all.map(p => `<button type="button" class="pick ${sel.has(p.id) ? 'on' : ''}" data-u="${p.id}">
-      <img class="avatar" src="${esc(p.avatar)}" alt=""><span>${esc(p.real)}</span></button>`).join('');
+      <img class="avatar" src="${esc(p.avatar)}" alt=""><span>${esc(p.real)}</span></button>`).join('')
+      + noLogin.map(p => `<button type="button" class="pick" data-slug="${esc(p.slug)}" style="border-style:dashed">
+      <img class="avatar" src="${esc(p.avatar)}" alt="" style="opacity:.6"><span>${esc(p.real)}<br><span class="tiny faint">ohne Login</span></span></button>`).join('');
   };
   paint();
-  s.el.querySelector('#admWho').addEventListener('click', e => {
+  s.el.querySelector('#admWho').addEventListener('click', async e => {
+    const nb = e.target.closest('[data-slug]');
+    if(nb){
+      const p = noLogin.find(x => x.slug === nb.dataset.slug);
+      if(!await confirmSheet(`Login für ${p.real} anlegen?`, `${p.real} braucht einen Login, um mitzuzahlen: Name „${p.real}“, Passwort „timewalk“. Danach ist er gleich ausgewählt.`, 'Anlegen')) return;
+      try{
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-users`, { method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${session.access_token}` },
+          body: JSON.stringify({ action: 'create', sgName: p.name, realName: p.real, slug: p.slug }) });
+        const j = await res.json();
+        if(!res.ok) throw new Error(j.error || 'Fehler');
+        noLogin.splice(noLogin.indexOf(p), 1);
+        all.push({ ...p, id: j.userId });
+        all.sort((a, b) => a.real.localeCompare(b.real, 'de'));
+        sel.add(j.userId);
+        paint();
+        toast(`Login für ${p.real} angelegt (${p.real} / timewalk). Jetzt „Teilnehmer speichern“.`, 'ok');
+      }catch(err){ toast(err.message, 'err'); }
+      return;
+    }
     const b = e.target.closest('[data-u]'); if(!b) return;
     sel.has(b.dataset.u) ? sel.delete(b.dataset.u) : sel.add(b.dataset.u); paint();
   });

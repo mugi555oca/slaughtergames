@@ -179,7 +179,7 @@ function buildPeople({ profiles = [], roster = [], statics = [] }){
 
 async function fetchPeopleRaw(){
   const [profilesRes, rosterRes, statics] = await Promise.all([
-    supabase.from('profiles').select('id,slug,display_name,avatar_url,description,favourite_card'),
+    supabase.from('profiles').select('id,slug,display_name,avatar_url,description,favourite_card,favourite_card_print'),
     supabase.from('roster').select('slug,name,real_name,active'),
     fetch('/tournament-app/player_profiles.json').then(r => r.ok ? r.json() : []).catch(() => []),
   ]);

@@ -57,6 +57,9 @@ async function render(){
           <textarea id="description" maxlength="500" placeholder="Ein Satz über dich.">${esc(profile.description || '')}</textarea></div>
         <div class="field"><label for="favouriteCard">Lieblingskarte</label>
           <input id="favouriteCard" maxlength="120" placeholder="z. B. Lightning Bolt" value="${esc(profile.favourite_card || '')}">
+          <div class="row mt" style="gap:10px"><img id="favThumb" alt="" style="width:46px;border-radius:4px" hidden>
+            <span class="small muted grow" id="favPrintLabel">Neueste Edition</span>
+            <button type="button" class="btn xs ghost" id="favPrintBtn">Edition wählen</button></div>
           <span class="hint">Wird auf deinem Profil mit Kartenbild angezeigt.</span></div>
         <button class="btn block" type="submit">Speichern</button>
       </form>
@@ -116,10 +119,48 @@ async function render(){
         display_name: $('#displayName').value.trim(),
         description: $('#description').value.trim() || null,
         favourite_card: $('#favouriteCard').value.trim() || null,
+        favourite_card_print: favPrint,
       });
       toast('Profil gespeichert.', 'ok');
     }catch(err){ toast(err.message, 'err'); }
     finally{ busy(e.submitter, false); }
+  });
+
+  // ---------- Lieblingskarte: Edition waehlen (Scryfall) ----------
+  let favPrint = profile.favourite_card_print || null;
+  async function showPrint(){
+    if(!favPrint){ $('#favThumb').hidden = true; $('#favPrintLabel').textContent = 'Neueste Edition'; return; }
+    try{
+      const c = await (await fetch(`https://api.scryfall.com/cards/${encodeURIComponent(favPrint)}`)).json();
+      $('#favThumb').src = c.image_uris?.small || c.card_faces?.[0]?.image_uris?.small || '';
+      $('#favThumb').hidden = false;
+      $('#favPrintLabel').textContent = `${c.set_name} (${(c.released_at || '').slice(0, 4)})`;
+    }catch{}
+  }
+  showPrint();
+  $('#favouriteCard').addEventListener('change', () => { favPrint = null; showPrint(); });
+  $('#favPrintBtn').addEventListener('click', async () => {
+    const name = $('#favouriteCard').value.trim();
+    if(!name){ toast('Zuerst die Karte eintragen.', 'err'); return; }
+    const s = openSheet(`<h3>Welche Edition?</h3><div id="prints"><div class="spinner"></div></div>`);
+    try{
+      const named = await (await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`)).json();
+      if(!named.prints_search_uri) throw new Error('Karte nicht gefunden.');
+      const res = await (await fetch(named.prints_search_uri)).json();
+      const prints = (res.data || []).filter(c => c.image_uris?.small || c.card_faces?.[0]?.image_uris?.small);
+      s.el.querySelector('#prints').innerHTML = `<div class="photo-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;border-radius:0">${prints.map(c => `
+        <button type="button" data-id="${c.id}" style="aspect-ratio:auto;background:none;padding:0;border:2px solid ${c.id === favPrint ? 'var(--blood)' : 'transparent'};border-radius:8px">
+          <img src="${esc(c.image_uris?.small || c.card_faces[0].image_uris.small)}" alt="" style="border-radius:6px">
+          <span class="tiny" style="display:block;color:var(--muted);padding:3px 0">${esc(c.set_name)} ${esc((c.released_at || '').slice(0, 4))}</span></button>`).join('')}</div>`;
+      s.el.querySelectorAll('[data-id]').forEach(b => b.addEventListener('click', async () => {
+        favPrint = b.dataset.id;
+        $('#favouriteCard').value = named.name;
+        s.close();
+        await showPrint();
+        try{ await save({ favourite_card: named.name, favourite_card_print: favPrint }); toast('Edition gespeichert.', 'ok'); }
+        catch(err){ toast(err.message, 'err'); }
+      }));
+    }catch(err){ s.el.querySelector('#prints').innerHTML = `<p class="muted">${esc(err.message)}</p>`; }
   });
 
   // ---------- Profilbild ----------

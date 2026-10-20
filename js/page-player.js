@@ -82,12 +82,16 @@ if(!p){
     const link = `https://scryfall.com/search?q=${encodeURIComponent('!"' + fav + '"')}`;
     $('#ppFav').innerHTML = `<a class="card row" href="${link}" target="_blank" rel="noopener"><span class="grow" style="font-weight:700">🃏 ${esc(fav)}</span><span class="small muted">Scryfall ↗</span></a>`;
     try{
-      const res = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(fav)}`);
+      // gewaehlte Edition (Scryfall-ID) oder sonst die Standard-Version
+      const print = p.profile?.favourite_card_print;
+      const res = await fetch(print ? `https://api.scryfall.com/cards/${encodeURIComponent(print)}`
+                                    : `https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(fav)}`);
       if(res.ok){
         const c = await res.json();
         const img = c.image_uris?.normal || c.card_faces?.[0]?.image_uris?.normal;
-        if(img) $('#ppFav').innerHTML = `<a href="${link}" target="_blank" rel="noopener" style="display:block;max-width:260px;margin:0 auto">
-          <img src="${esc(img)}" alt="${esc(c.name)}" style="border-radius:13px;box-shadow:0 12px 30px rgba(0,0,0,.5)"></a>`;
+        if(img) $('#ppFav').innerHTML = `<a href="${esc(c.scryfall_uri || link)}" target="_blank" rel="noopener" style="display:block;max-width:260px;margin:0 auto">
+          <img src="${esc(img)}" alt="${esc(c.name)}" style="border-radius:13px;box-shadow:0 12px 30px rgba(0,0,0,.5)"></a>
+          <p class="tiny faint center mt">${esc(c.set_name || '')}${c.released_at ? ' · ' + c.released_at.slice(0, 4) : ''}</p>`;
       }
     }catch{}
   }
