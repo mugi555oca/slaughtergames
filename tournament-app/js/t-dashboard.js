@@ -8,15 +8,20 @@ const m = await initShell({ tab: 'turniere', title: 'Weekly Turniere' });
 if(m.isMember) $('#newBtn').hidden = false;
 
 // Alles Unabhaengige gleichzeitig starten statt nacheinander
+// Die Turnierliste kommt vom Server, das Ranking zuerst aus dem Handy-Speicher -
+// keins wartet aufs andere.
 const weeklyP = loadWeekly();
-const [people, { data: tournaments, error }] = await Promise.all([
-  loadPeople(),
-  supabase.from('tournaments').select('id,name,status,current_round,rounds_total,format_key,edi_code,created_at').order('created_at', { ascending: false }),
-]);
-if(error){ $('#done').innerHTML = `<div class="empty">${esc(error.message)}</div>`; throw error; }
-
-const live = tournaments.filter(t => t.status === 'active');
-const done = tournaments.filter(t => t.status !== 'active');
+const people = await loadPeople();
+let live = [];
+const listP = supabase.from('tournaments').select('id,name,status,current_round,rounds_total,format_key,edi_code,created_at')
+  .order('created_at', { ascending: false }).then(({ data: tournaments, error }) => {
+    if(error){ $('#done').innerHTML = `<div class="empty">${esc(error.message)}</div>`; return; }
+    live = tournaments.filter(t => t.status === 'active');
+    const done = tournaments.filter(t => t.status !== 'active');
+    if(live.length){ $('#liveSec').hidden = false; $('#live').innerHTML = live.map(item).join(''); }
+    $('#done').innerHTML = done.map(item).join('') || `<div class="empty">${icon('swords')}<h3>Noch keine Weeklys</h3></div>`;
+    myMatches();
+  });
 
 const item = t => `<a class="list-item" href="/tournament-app/round.html?tournament=${t.id}">
   ${t.status === 'active' ? '<span class="chip live" style="padding:0 8px">LIVE</span>' : `<span class="faint small" style="width:44px;text-align:center;line-height:1.1">${new Date(t.created_at).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })}<br>${new Date(t.created_at).getFullYear()}</span>`}
@@ -24,9 +29,6 @@ const item = t => `<a class="list-item" href="/tournament-app/round.html?tournam
   <div class="sub">${esc(formatLabel(t.format_key))}${t.edi_code ? ' · ' + esc(t.edi_code) : ''}${t.status === 'active' ? ` · Runde ${t.current_round}/${t.rounds_total}` : ''}</div></div>
   <span class="trail" data-winner="${t.id}"></span>${icon('chev', 'chev')}
 </a>`;
-
-if(live.length){ $('#liveSec').hidden = false; $('#live').innerHTML = live.map(item).join(''); }
-$('#done').innerHTML = done.map(item).join('') || `<div class="empty">${icon('swords')}<h3>Noch keine Weeklys</h3></div>`;
 
 // ---------- Deine Partie in laufenden Turnieren (2 Abfragen fuer alle) ----------
 async function myMatches(){
@@ -78,18 +80,17 @@ async function meetAndLocations(){
   }
 }
 
-myMatches();
 meetAndLocations();
 
 // ---------- Weekly Ranking ----------
 const weekly = await weeklyP;
 
 // Sieger der abgeschlossenen Weeklys (aus derselben Rechnung wie das Ranking)
-for(const e of weekly.events){
+listP.then(() => { for(const e of weekly.events){
   const w = e.rows[0];
   const el = document.querySelector(`[data-winner="${e.id}"]`);
   if(el && w) el.innerHTML = `<img class="avatar xs" src="${esc(w.person?.avatar || '/icons/icon-192.png')}" alt="" title="Sieger: ${esc(w.person?.real || w.name)}">`;
-}
+} });
 
 let mode = 'score', fmt = null;
 const fmts = formatsOf(weekly);
