@@ -11,8 +11,6 @@ const dt = d => new Date(d + 'T12:00:00').toLocaleDateString('de-AT');
 const TABS = [['draft', '🃏 Draft'], ['einzahlung', '💶 Einzahlung'], ['einkauf', '📦 Einkauf'], ['verkauf', '💰 Verkauf'],
   ['lager', '🔧 Lager'], ['konten', '👥 Konten'], ['setup', '⚙️ Einstellungen']];
 
-if(!m.user) location.replace('/login.html?next=/boosterpool-admin.html');
-else await reload();
 
 async function reload(){
   [P, people] = await Promise.all([loadPool(), loadPeople()]);
@@ -294,3 +292,7 @@ function setup(host){
     toast(error ? error.message : 'Gespeichert.', error ? 'err' : 'ok');
   });
 }
+
+// Start erst am Ende: vorher waeren die Helfer weiter unten noch nicht definiert
+if(!m.user) location.replace('/login.html?next=/boosterpool-admin.html');
+else await reload();

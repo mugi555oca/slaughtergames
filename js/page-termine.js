@@ -37,9 +37,6 @@ const tone = n => [8, 10, 12].includes(n) ? 'ok' : n >= 4 ? 'gold' : '';
 
 let people, locations = [], meetups = [], votes = [];
 
-if(!m.user) main.innerHTML = `<h1 class="page-title">Termine</h1>` + lockHtml('Nur für Mitglieder', 'Einloggen, um Weekly-Termine zu sehen und abzustimmen.');
-else if(!m.isMember) main.innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>';
-else await start();
 
 async function start(){
   people = await loadPeople();
@@ -173,3 +170,8 @@ function editSheet(mt = null){
     if(error) toast(error.message, 'err'); else load();
   });
 }
+
+// Start erst am Ende: vorher waeren die Helfer weiter unten noch nicht definiert
+if(!m.user) main.innerHTML = `<h1 class="page-title">Termine</h1>` + lockHtml('Nur für Mitglieder', 'Einloggen, um Weekly-Termine zu sehen und abzustimmen.');
+else if(!m.isMember) main.innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>';
+else await start();

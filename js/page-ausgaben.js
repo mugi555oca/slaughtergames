@@ -13,9 +13,6 @@ const parseCents = v => {
 
 let people, events = [], ev = null, members = [], expenses = [], shares = [], payments = [], view = 'list';
 
-if(!m.user) main.innerHTML = lockHtml('Nur für Mitglieder', 'Einloggen, um Ausgaben einzutragen.');
-else if(!m.isMember) main.innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>';
-else await start();
 
 async function start(){
   people = await loadPeople();
@@ -269,3 +266,8 @@ async function newEvent(){
   await supabase.from('split_members').insert({ event_id: data.id, user_id: m.user.id });
   location.href = `/ausgaben.html?event=${data.id}`;
 }
+
+// Start erst am Ende: vorher waeren die Helfer weiter unten noch nicht definiert
+if(!m.user) main.innerHTML = lockHtml('Nur für Mitglieder', 'Einloggen, um Ausgaben einzutragen.');
+else if(!m.isMember) main.innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>';
+else await start();
