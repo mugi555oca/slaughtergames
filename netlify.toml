@@ -1,0 +1,5 @@
+# Kein Framework, kein npm: der "Build" schreibt nur die Versionsnummer, an der
+# die App erkennt, dass ein neuer Deploy da ist (siehe js/app.js -> checkVersion).
+[build]
+  publish = "."
+  command = "printf '{\"v\":\"%s\"}' \"${COMMIT_REF:-dev}\" > version.json"

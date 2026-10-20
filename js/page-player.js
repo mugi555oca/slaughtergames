@@ -44,6 +44,8 @@ if(!p){
     ? `<div class="row wrap" style="gap:8px">${axes.map(a => `<span class="chip"><img src="${AXES[a.rarity].img}" alt="" style="width:16px;height:16px;object-fit:contain">${AXES[a.rarity].label} · SG${a.sg}</span>`).join('')}</div>`
     : '<span class="muted">Noch keine Axt.</span>';
 
+  // Abzeichen + Lieblingskarte laufen parallel zum Rest
+  (async () => {
   // Abzeichen
   const [{ data: defs }, { data: awarded }] = await Promise.all([
     supabase.from('badges').select('code,name,description,icon_key,sort_order'),
@@ -70,6 +72,8 @@ if(!p){
     $('#ppBadges').innerHTML = '<div class="card muted">Noch keine Abzeichen.</div>';
   }
 
+  })();
+  (async () => {
   // Lieblingskarte mit Bild von Scryfall
   const fav = p.profile?.favourite_card;
   if(!fav){
@@ -87,10 +91,11 @@ if(!p){
       }
     }catch{}
   }
+  })();
 }
 
 // ---------- Weekly Performance ----------
-if(p){
+if(p) (async () => {
   try{
     const weekly = await loadWeekly();
     const played = weekly.events.some(e => e.rows.some(r => r.key === slug));
@@ -98,7 +103,7 @@ if(p){
     else $('#ppWeekly').innerHTML = '<div class="card muted">Noch kein Weekly gespielt.</div>';
     if(location.hash === '#weekly') $('#weekly').scrollIntoView();
   }catch(err){ $('#ppWeekly').innerHTML = `<div class="card muted">${esc(err.message)}</div>`; }
-}
+})();
 
 // ---------- Spiellocation (nur Mitglieder sehen Adressen) ----------
 if(p && m.isMember){

@@ -218,10 +218,18 @@ Netlify-Team „Mugi Cooporation". Supabase-Projekt-Ref: `shzyksgqawknysbvhlwn`.
 ## 10. Die App (seit Oktober 2026)
 
 Die ganze Seite ist eine **PWA**: `manifest.webmanifest` + `sw.js` im Root.
-Installierbar über „Zum Startbildschirm“, aktualisiert sich bei jedem Deploy
-selbst (HTML/CSS/JS kommen immer zuerst aus dem Netz, der Cache ist nur
-Offline-Rückfall). **Kein Cache-Buster mehr nötig.** `VERSION` in `sw.js` nur
-ändern, wenn sich der Service Worker selbst ändert.
+Installierbar über „Zum Startbildschirm“. Seiten, CSS und JS kommen **sofort
+aus dem Cache** und werden im Hintergrund aufgefrischt. Damit trotzdem nie
+etwas veraltet ist, schreibt der Netlify-Build die Commit-Nummer in
+`version.json` (siehe `netlify.toml`); der Service Worker prüft sie bei jedem
+Seitenaufruf und leert bei einem neuen Deploy den Cache und lädt neu.
+**Kein Cache-Buster nötig.** `VERSION` in `sw.js` nur ändern, wenn sich der
+Service Worker selbst ändert.
+
+**Wichtig:** Wer `import`-Zeilen ändert oder neue Seiten anlegt, führt danach
+`python tools/preload.py` aus. Das schreibt in jede Seite die
+`<link rel="modulepreload">`-Liste, damit der Browser alle Skripte
+gleichzeitig lädt statt als Kette.
 
 ```
 app.css               Design-System für alle Seiten
@@ -307,3 +315,14 @@ iPhone: Push nur in der installierten App (iOS 16.4+).
 - Ansicht für alle Mitglieder: `boosterpool.html` (Chat-Tab). Verwaltung:
   `boosterpool-admin.html`, erlaubt für `pool_admins` (Frido, Mugi) + App-Admins.
 - Altdaten am 20.10.2026 aus dem Sheet importiert; Guthaben centgenau gleich.
+
+### Nachtrag 20.10.2026 – Ladezeiten
+
+- Service Worker: Cache zuerst + Versionscheck (siehe Abschnitt 10).
+- `me()` und `loadPeople()` kommen aus dem localStorage und frischen im
+  Hintergrund auf (`clearLocalCache()` bei Login/Logout).
+- `app_counters()` liefert Glocke, ungelesene Chats, Pool-Guthaben und den
+  nächsten Termin in einer Abfrage.
+- supabase-js ist auf 2.118.0 festgenagelt (die Vorlade-Liste kennt die
+  genauen CDN-Adressen). Beim Hochziehen `tools/preload.py` anpassen.
+

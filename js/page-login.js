@@ -1,4 +1,4 @@
-import { initShell, $, supabase, busy } from './app.js';
+import { initShell, $, supabase, busy, clearLocalCache } from './app.js';
 
 // Nur seiteninterne Ziele zulassen - kein offener Redirect.
 function safeNext(){
@@ -26,5 +26,6 @@ $('#loginForm').addEventListener('submit', async e => {
       ? 'Name oder Passwort stimmt nicht.' : error.message;
     return;
   }
+  clearLocalCache();
   location.replace(safeNext());
 });

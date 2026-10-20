@@ -1,6 +1,6 @@
 // Chat: Raumliste (chat.html) und Unterhaltung (chat.html?room=slug).
 // Live ueber Supabase Realtime; Push kommt per DB-Trigger -> Edge Function.
-import { initShell, $, esc, icon, supabase, loadPeople, lockHtml, openSheet, toast, timeAgo, fmtTime, fmtDay, confirmSheet, resizeImage } from './app.js';
+import { initShell, $, esc, icon, supabase, loadPeople, lockHtml, openSheet, toast, timeAgo, fmtTime, fmtDay, confirmSheet, resizeImage, counters } from './app.js';
 import { signUrls } from './gallery.js';
 
 const roomSlug = new URLSearchParams(location.search).get('room');
@@ -56,23 +56,15 @@ async function rooms(m){
     }).join('');
   }
   await paint();
-  // Boosterpool-Guthaben im Kopf
-  import('./pool.js').then(async ({ loadPool, eur }) => {
-    const P = await loadPool();
-    const mine = P.accounts.find(a => a.slug && a.slug === m.profile?.slug);
-    if(mine) $('#poolSub').textContent = `Dein Guthaben: ${eur(mine.balance)}`;
-  }).catch(() => {});
-  // naechster Termin im Kopf
-  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  const { data: nx } = await supabase.from('meetups').select('id,date,time,location_id').eq('status', 'open').gte('date', today).order('date').limit(1);
-  if(nx?.[0]){
-    const [{ count }, { data: loc }] = await Promise.all([
-      supabase.from('meetup_votes').select('user_id', { count: 'exact', head: true }).eq('meetup_id', nx[0].id).eq('vote', 'in'),
-      supabase.from('play_locations').select('name').eq('id', nx[0].location_id).maybeSingle(),
-    ]);
-    const d = new Date(nx[0].date + 'T12:00:00');
-    $('#meetSub').textContent = `${['So','Mo','Di','Mi','Do','Fr','Sa'][d.getDay()]} ${d.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })} · ${loc?.name || '?'} · ${count || 0}/8 dabei`;
-  }
+  // Kopfzeilen fuer Boosterpool und naechsten Termin aus einer einzigen Abfrage
+  counters().then(c => {
+    if(c.pool_balance != null) $('#poolSub').textContent = `Dein Guthaben: ${(c.pool_balance / 100).toLocaleString('de-AT', { style: 'currency', currency: 'EUR' })}`;
+    const nx = c.next_meetup;
+    if(nx){
+      const d = new Date(nx.date + 'T12:00:00');
+      $('#meetSub').textContent = `${['So','Mo','Di','Mi','Do','Fr','Sa'][d.getDay()]} ${d.toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })} · ${nx.location || '?'} · ${nx.in}/8 dabei`;
+    }
+  });
   supabase.channel('chat-list')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, () => paint())
     .subscribe();

@@ -70,20 +70,33 @@ export function icon(name, cls = ''){
 // Session / eigenes Profil
 // ---------------------------------------------------------------
 let mePromise = null;
+const ME_KEY = 'sg-me';
+const PEOPLE_KEY = 'sg-people';
+const lsGet = k => { try{ return JSON.parse(localStorage.getItem(k) || 'null'); }catch{ return null; } };
+const lsSet = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} };
+export function clearLocalCache(){ try{ localStorage.removeItem(ME_KEY); localStorage.removeItem(PEOPLE_KEY); }catch{} }
 
+// Eigenes Profil + Admin-Status. Kommt sofort aus dem Handy-Speicher und wird
+// im Hintergrund aufgefrischt; force = immer frisch vom Server.
 export function me(force = false){
   if(force) mePromise = null;
   if(!mePromise){
     mePromise = (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       const user = session?.user || null;
-      if(!user) return { user: null, profile: null, isAdmin: false, isMember: false };
-      const [{ data: profile }, { data: adminRows }] = await Promise.all([
+      if(!user){ clearLocalCache(); return { user: null, profile: null, isAdmin: false, isMember: false }; }
+      const fresh = Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
         supabase.from('app_admins').select('email').ilike('email', user.email || ''),
-      ]);
-      const isAdmin = Array.isArray(adminRows) && adminRows.length > 0;
-      return { user, profile, isAdmin, isMember: Boolean(profile?.slug) || isAdmin };
+      ]).then(([{ data: profile, error }, { data: adminRows }]) => {
+        if(error) throw error;
+        const v = { uid: user.id, profile, isAdmin: Array.isArray(adminRows) && adminRows.length > 0 };
+        lsSet(ME_KEY, v);
+        return v;
+      });
+      const cached = lsGet(ME_KEY);
+      const v = !force && cached?.uid === user.id ? (fresh.catch(() => {}), cached) : await fresh;
+      return { user, profile: v.profile, isAdmin: v.isAdmin, isMember: Boolean(v.profile?.slug) || v.isAdmin };
     })();
   }
   return mePromise;
@@ -119,50 +132,67 @@ function initialsAvatar(name){
 }
 export { initialsAvatar };
 
+function buildPeople({ profiles = [], roster = [], statics = [] }){
+  const staticBySlug = new Map(statics.map(p => [p.slug, p]));
+  const rosterBySlug = new Map(roster.map(r => [r.slug, r]));
+  const bySlug = new Map(), byId = new Map(), byName = new Map();
+  const slugs = new Set([...rosterBySlug.keys(), ...staticBySlug.keys()]);
+  for(const pr of profiles) if(pr.slug) slugs.add(pr.slug);
+  for(const slug of slugs){
+    const r = rosterBySlug.get(slug);
+    const st = staticBySlug.get(slug);
+    const pr = profiles.find(x => x.slug === slug);
+    const name = r?.name || st?.name || pr?.display_name || slug;
+    const real = r?.real_name || st?.realName || pr?.display_name || name;
+    const person = {
+      slug, id: pr?.id || null, name, real,
+      display: pr?.display_name || real,
+      avatar: pr?.avatar_url || (st?.profileImage ? '/' + st.profileImage.replace(/\.png$/, '.webp') : initialsAvatar(real)),
+      active: r ? r.active : true,
+      profile: pr || null, static: st || null,
+    };
+    bySlug.set(slug, person);
+    if(person.id) byId.set(person.id, person);
+    byName.set(name.toLowerCase(), person);
+  }
+  // Profile ohne slug (z. B. reine Admin-Accounts)
+  for(const pr of profiles){
+    if(byId.has(pr.id)) continue;
+    byId.set(pr.id, { slug: null, id: pr.id, name: pr.display_name || 'Mitglied', real: pr.display_name || 'Mitglied',
+      display: pr.display_name || 'Mitglied', avatar: pr.avatar_url || initialsAvatar(pr.display_name), profile: pr });
+  }
+  return { bySlug, byId, byName, list: [...bySlug.values()] };
+}
+
+async function fetchPeopleRaw(){
+  const [profilesRes, rosterRes, statics] = await Promise.all([
+    supabase.from('profiles').select('id,slug,display_name,avatar_url,description,favourite_card'),
+    supabase.from('roster').select('slug,name,real_name,active'),
+    fetch('/tournament-app/player_profiles.json').then(r => r.ok ? r.json() : []).catch(() => []),
+  ]);
+  if(profilesRes.error) throw profilesRes.error;
+  const raw = { profiles: profilesRes.data || [], roster: rosterRes.data || [], statics: statics || [] };
+  lsSet(PEOPLE_KEY, raw);
+  return raw;
+}
+
+// Alle Personen. Sofort aus dem Handy-Speicher, frisch im Hintergrund.
 export function loadPeople(){
   if(!peoplePromise){
-    peoplePromise = (async () => {
-      const [profilesRes, rosterRes, staticRes] = await Promise.all([
-        supabase.from('profiles').select('id,slug,display_name,avatar_url,description,favourite_card'),
-        supabase.from('roster').select('slug,name,real_name,active'),
-        fetch('/tournament-app/player_profiles.json').then(r => r.ok ? r.json() : []).catch(() => []),
-      ]);
-      const staticBySlug = new Map((staticRes || []).map(p => [p.slug, p]));
-      const rosterBySlug = new Map((rosterRes.data || []).map(r => [r.slug, r]));
-      const bySlug = new Map();
-      const byId = new Map();
-      const byName = new Map();
-
-      const slugs = new Set([...rosterBySlug.keys(), ...staticBySlug.keys()]);
-      for(const pr of profilesRes.data || []) if(pr.slug) slugs.add(pr.slug);
-
-      for(const slug of slugs){
-        const r = rosterBySlug.get(slug);
-        const s = staticBySlug.get(slug);
-        const pr = (profilesRes.data || []).find(x => x.slug === slug);
-        const name = r?.name || s?.name || pr?.display_name || slug;
-        const real = r?.real_name || s?.realName || pr?.display_name || name;
-        const person = {
-          slug, id: pr?.id || null, name, real,
-          display: pr?.display_name || real,
-          avatar: pr?.avatar_url || (s?.profileImage ? '/' + s.profileImage.replace(/\.png$/, '.webp') : initialsAvatar(real)),
-          active: r ? r.active : true,
-          profile: pr || null, static: s || null,
-        };
-        bySlug.set(slug, person);
-        if(person.id) byId.set(person.id, person);
-        byName.set(name.toLowerCase(), person);
-      }
-      // Profile ohne slug (z. B. reine Admin-Accounts)
-      for(const pr of profilesRes.data || []){
-        if(byId.has(pr.id)) continue;
-        byId.set(pr.id, { slug: null, id: pr.id, name: pr.display_name || 'Mitglied', real: pr.display_name || 'Mitglied',
-          display: pr.display_name || 'Mitglied', avatar: pr.avatar_url || initialsAvatar(pr.display_name), profile: pr });
-      }
-      return { bySlug, byId, byName, list: [...bySlug.values()] };
-    })();
+    const cached = lsGet(PEOPLE_KEY);
+    const fresh = fetchPeopleRaw();
+    peoplePromise = cached ? (fresh.catch(() => {}), Promise.resolve(buildPeople(cached))) : fresh.then(buildPeople);
   }
   return peoplePromise;
+}
+
+// Zaehler fuer Glocke, Chat, Pool-Guthaben, naechsten Termin - eine Abfrage.
+let countersPromise = null;
+export function counters(force = false){
+  if(force || !countersPromise){
+    countersPromise = supabase.rpc('app_counters').then(r => r.data || {}).catch(() => ({}));
+  }
+  return countersPromise;
 }
 
 export function personForName(people, name){
@@ -336,12 +366,13 @@ export async function initShell(opts = {}){
 
   const m = await me();
   if(m.user){
-    const people = await loadPeople().catch(() => null);
-    const mine = people?.byId.get(m.user.id);
-    const profTab = $('.tab[data-tab="profil"]');
-    if(profTab && mine?.avatar){
-      profTab.querySelector('svg').outerHTML = `<img class="tab-avatar" src="${esc(mine.avatar)}" alt="">`;
-    }
+    loadPeople().then(people => {
+      const mine = people?.byId.get(m.user.id);
+      const profTab = $('.tab[data-tab="profil"]');
+      if(profTab && mine?.avatar && profTab.querySelector('svg')){
+        profTab.querySelector('svg').outerHTML = `<img class="tab-avatar" src="${esc(mine.avatar)}" alt="">`;
+      }
+    }).catch(() => {});
     setupBell(m);
     if(tab !== 'chat') refreshChatBadge(m);
     if(m.isMember) autoPush(m);
@@ -360,9 +391,7 @@ async function setupBell(m){
   let unread = 0;
   const paint = () => { countEl.hidden = unread === 0; countEl.textContent = unread > 9 ? '9+' : String(unread); };
 
-  const { count } = await supabase.from('notifications').select('id', { count: 'exact', head: true })
-    .eq('user_id', m.user.id).is('read_at', null);
-  unread = count || 0; paint();
+  unread = Number((await counters()).notifications || 0); paint();
 
   supabase.channel('notif-' + m.user.id)
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${m.user.id}` }, payload => {
@@ -402,8 +431,7 @@ async function setupBell(m){
 export async function refreshChatBadge(m){
   const el = $('#chatCount');
   if(!el || !m?.isMember) return;
-  const { data } = await supabase.rpc('chat_overview');
-  const n = (data || []).reduce((s, r) => s + Number(r.unread || 0), 0);
+  const n = Number((await counters()).chat_unread || 0);
   el.hidden = n === 0;
   el.textContent = n > 99 ? '99+' : String(n);
 }

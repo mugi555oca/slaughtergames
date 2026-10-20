@@ -1,8 +1,10 @@
-import { initShell, $, esc, icon, supabase, loadPeople, toast, busy, resizeImage, openSheet,
+import { initShell, $, esc, icon, supabase, loadPeople, toast, busy, resizeImage, openSheet, me, clearLocalCache,
          canInstall, promptInstall, isStandalone, loginUrl } from './app.js';
 import { pushSupported, pushStatus, enablePush, disablePush, needsInstallForPush } from './push.js';
 
-const m = await initShell({ tab: 'profil', title: 'Profil' });
+const m0 = await initShell({ tab: 'profil', title: 'Profil' });
+// Im Profil immer frisch vom Server (der Rest der App nimmt den Handy-Speicher)
+const m = m0.user ? await me(true) : m0;
 const main = $('#profilMain');
 
 if(!m.user){
@@ -267,6 +269,7 @@ async function render(){
   $('#logoutBtn').addEventListener('click', async () => {
     await disablePush(false).catch(() => {});
     await supabase.auth.signOut();
+    clearLocalCache();
     location.href = '/';
   });
 }
