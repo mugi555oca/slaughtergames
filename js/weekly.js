@@ -6,35 +6,51 @@ import { buildStandings } from '../tournament-app/js/tournament.js';
 import { formatLabel } from '../tournament-app/js/t-shared.js';
 
 let cache = null;
+const KEY = 'sg-weekly';
 
+async function fetchRaw(){
+  const { data: ts, error } = await supabase.from('tournaments')
+    .select('id,name,created_at,format_key,edi_code,current_round,rounds_total,status')
+    .eq('status', 'finished').gt('current_round', 0).order('created_at');
+  if(error) throw error;
+  const ids = ts.map(t => t.id);
+  let players = [], matches = [];
+  if(ids.length){
+    const [p, m] = await Promise.all([
+      supabase.from('players').select('id,tournament_id,name,slug,dropped,had_bye').in('tournament_id', ids),
+      supabase.from('matches').select('tournament_id,round_no,player_a_id,player_b_id,result,is_bye').in('tournament_id', ids),
+    ]);
+    if(p.error || m.error) throw p.error || m.error;
+    players = p.data; matches = m.data;
+  }
+  const raw = { ts, players, matches };
+  try{ localStorage.setItem(KEY, JSON.stringify(raw)); }catch{}
+  return raw;
+}
+
+function build({ ts, players, matches }, people){
+  const events = ts.map(t => {
+    const ps = players.filter(p => p.tournament_id === t.id);
+    const st = buildStandings(ps, matches.filter(x => x.tournament_id === t.id), t.current_round);
+    const rows = st.map((s, i) => {
+      const pl = ps.find(p => p.id === s.id);
+      const person = (pl.slug && people.bySlug.get(pl.slug)) || personForName(people, pl.name);
+      const rounds = s.wins + s.losses + s.draws;
+      return { key: person?.slug || 'name:' + pl.name, person, name: pl.name, place: i + 1,
+               points: s.matchPoints, rounds, record: `${s.wins}-${s.losses}-${s.draws}` };
+    });
+    return { ...t, rows, size: rows.length };
+  });
+  return { events, people };
+}
+
+// Sofort aus dem Handy-Speicher (wenn vorhanden), frisch im Hintergrund
 export function loadWeekly(){
   if(!cache){
-    cache = (async () => {
-      const { data: ts, error } = await supabase.from('tournaments')
-        .select('id,name,created_at,format_key,edi_code,current_round,rounds_total,status')
-        .eq('status', 'finished').gt('current_round', 0).order('created_at');
-      if(error) throw error;
-      const ids = ts.map(t => t.id);
-      if(!ids.length) return { events: [], people: await loadPeople() };
-      const [{ data: players }, { data: matches }, people] = await Promise.all([
-        supabase.from('players').select('id,tournament_id,name,slug,dropped,had_bye').in('tournament_id', ids),
-        supabase.from('matches').select('tournament_id,round_no,player_a_id,player_b_id,result,is_bye').in('tournament_id', ids),
-        loadPeople(),
-      ]);
-      const events = ts.map(t => {
-        const ps = players.filter(p => p.tournament_id === t.id);
-        const st = buildStandings(ps, matches.filter(x => x.tournament_id === t.id), t.current_round);
-        const rows = st.map((s, i) => {
-          const pl = ps.find(p => p.id === s.id);
-          const person = (pl.slug && people.bySlug.get(pl.slug)) || personForName(people, pl.name);
-          const rounds = s.wins + s.losses + s.draws;
-          return { key: person?.slug || 'name:' + pl.name, person, name: pl.name, place: i + 1,
-                   points: s.matchPoints, rounds, record: `${s.wins}-${s.losses}-${s.draws}` };
-        });
-        return { ...t, rows, size: rows.length };
-      });
-      return { events, people };
-    })();
+    let cached = null;
+    try{ cached = JSON.parse(localStorage.getItem(KEY) || 'null'); }catch{}
+    const fresh = fetchRaw();
+    cache = Promise.all([cached ? (fresh.catch(() => {}), cached) : fresh, loadPeople()]).then(([raw, people]) => build(raw, people));
   }
   return cache;
 }
