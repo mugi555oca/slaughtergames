@@ -10,6 +10,19 @@ import { ensurePush, enablePush } from './push.js';
 
 export { supabase };
 
+// Fehler auf den Geraeten mitschreiben (Tabelle client_errors), max. 5 pro Seite
+let reported = 0;
+function reportError(message, stack){
+  if(reported++ >= 5) return;
+  supabase.from('client_errors').insert({
+    page: location.pathname + location.search, message: String(message || '').slice(0, 1900),
+    stack: String(stack || '').slice(0, 5900), user_agent: navigator.userAgent.slice(0, 300),
+    version: (() => { try{ return localStorage.getItem('sg-version'); }catch{ return null; } })(),
+  }).then(() => {}, () => {});
+}
+window.addEventListener('error', e => reportError(e.message, e.error?.stack || `${e.filename}:${e.lineno}`));
+window.addEventListener('unhandledrejection', e => reportError(e.reason?.message || e.reason, e.reason?.stack));
+
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
@@ -190,7 +203,10 @@ export function loadPeople(){
 let countersPromise = null;
 export function counters(force = false){
   if(force || !countersPromise){
-    countersPromise = supabase.rpc('app_counters').then(r => r.data || {}).catch(() => ({}));
+    countersPromise = supabase.rpc('app_counters').then(r => {
+      if(r.error){ reportError('app_counters: ' + r.error.message, r.error.details); return { failed: true }; }
+      return r.data || {};
+    }).catch(err => { reportError('app_counters: ' + err.message, err.stack); return { failed: true }; });
   }
   return countersPromise;
 }
