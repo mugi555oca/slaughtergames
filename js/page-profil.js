@@ -204,6 +204,7 @@ async function render(){
     ['Sonstiges', [
       ['chat', '💬 Chat-Nachrichten', 'Einzelne Gruppen unten stummschalten'],
       ['expenses', '💸 Ausgaben', 'Neue Ausgaben mit deinem Anteil, erhaltene Überweisungen'],
+      ['pool', '🎴 Boosterpool', 'Einzahlung angekommen, Draft abgebucht, Guthaben fast leer'],
       ['gallery', '📸 Neue Fotos', 'Wenn wer Fotos in eine Galerie lädt'],
       ['blog', '📰 Neue Blogartikel', ''],
       ['badges', '🏅 Abzeichen', 'Wenn du ein Abzeichen bekommst'],

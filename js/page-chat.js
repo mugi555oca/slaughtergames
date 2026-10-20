@@ -29,6 +29,10 @@ async function rooms(m){
       <span style="width:40px;height:40px;border-radius:12px;background:var(--blood);color:#fff;display:grid;place-items:center;font-size:20px;flex:0 0 auto">📅</span>
       <span class="grow"><b>Weekly-Termine</b><span class="small muted" style="display:block" id="meetSub">Wer is am Donnerstag dabei?</span></span>
       ${icon('chev', 'chev')}</a>
+    <a class="install" href="/boosterpool.html" style="margin-bottom:10px">
+      <span style="width:40px;height:40px;border-radius:12px;background:#2a6fdb;color:#fff;display:grid;place-items:center;font-size:20px;flex:0 0 auto">🎴</span>
+      <span class="grow"><b>Boosterpool</b><span class="small muted" style="display:block" id="poolSub">Guthaben und Lager</span></span>
+      ${icon('chev', 'chev')}</a>
     <a class="install mb" href="/ausgaben.html" id="splitCard" style="margin-bottom:14px">
       <span style="width:40px;height:40px;border-radius:12px;background:var(--gold);color:#1a1205;display:grid;place-items:center;font-weight:800;font-size:20px;flex:0 0 auto">€</span>
       <span class="grow"><b>Ausgaben-Splitter</b><span class="small muted" style="display:block" id="splitSub">Wer hat was bezahlt – und wer schuldet wem?</span></span>
@@ -52,6 +56,12 @@ async function rooms(m){
     }).join('');
   }
   await paint();
+  // Boosterpool-Guthaben im Kopf
+  import('./pool.js').then(async ({ loadPool, eur }) => {
+    const P = await loadPool();
+    const mine = P.accounts.find(a => a.slug && a.slug === m.profile?.slug);
+    if(mine) $('#poolSub').textContent = `Dein Guthaben: ${eur(mine.balance)}`;
+  }).catch(() => {});
   // naechster Termin im Kopf
   const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   const { data: nx } = await supabase.from('meetups').select('id,date,time,location_id').eq('status', 'open').gte('date', today).order('date').limit(1);

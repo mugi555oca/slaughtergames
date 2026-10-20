@@ -298,3 +298,12 @@ iPhone: Push nur in der installierten App (iOS 16.4+).
   in den Trigger-Funktionen der Migration `2026-10-19_termine_notify.sql`.
   Jede Art ist pro Person abschaltbar (`notification_prefs`). Erinnerung am
   Spieltag per pg_cron (`sg-meetup-reminders`, täglich 10:00 UTC).
+
+### Nachtrag 20.10.2026 – Boosterpool
+
+- Ersetzt Fridos Google Sheet „Magic Boosterpool“. Tabellen `pool_*`, Logik in
+  `js/pool.js` (Guthaben = Einzahlungen − Drafts; Konto = Einzahlungen − Einkäufe
+  + Verkäufe; Lager = Booster − gedraftet − verkauft + Korrekturen).
+- Ansicht für alle Mitglieder: `boosterpool.html` (Chat-Tab). Verwaltung:
+  `boosterpool-admin.html`, erlaubt für `pool_admins` (Frido, Mugi) + App-Admins.
+- Altdaten am 20.10.2026 aus dem Sheet importiert; Guthaben centgenau gleich.
