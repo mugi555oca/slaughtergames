@@ -25,7 +25,9 @@
   <link rel="modulepreload" href="/js/supabase.js">
   <link rel="modulepreload" href="/js/timer.js">
   <link rel="modulepreload" href="/tournament-app/js/config.js">
+  <link rel="modulepreload" href="/tournament-app/js/supabase-client.js">
   <link rel="modulepreload" href="/tournament-app/js/t-life.js">
+  <link rel="modulepreload" href="/tournament-app/js/tournament.js">
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm" crossorigin>
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/auth-js@2.118.0/+esm" crossorigin>
   <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/postgrest-js@2.118.0/+esm" crossorigin>
@@ -43,23 +45,33 @@
       <button class="zone plus" aria-label="Gegner plus 1"></button>
       <button class="zone minus" aria-label="Gegner minus 1"></button>
       <div class="lp-in"><div class="who"><img class="pav" alt="" hidden><span class="pname">Gegner</span></div>
-        <div class="life">30</div><div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+        <span class="turnTag"></span>
+        <div class="lifebox"><div class="life">30</div><div class="mini"></div></div>
+        <div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+      <button class="go" type="button" aria-label="Zug beenden">GO</button>
+      <button class="skull" type="button" hidden aria-label="Game verloren">💀<small>Game werten</small></button>
     </section>
     <div class="lbar">
       <a class="lbtn" id="backBtn" href="/tournament-app/dashboard.html" aria-label="Zurück"></a>
-      <div class="lmid"><span id="tName" class="tiny"></span><span id="rLabel" class="tiny muted"></span><span id="gameNo" class="tiny gold"></span></div>
+      <button class="lscore" id="score" aria-label="Spielstand"></button>
+      <div class="lmid"><span id="tName" class="tiny"></span><span id="rLabel" class="tiny muted"></span></div>
       <div class="ltimer" id="tmr" hidden>–</div>
       <button class="lbtn" id="diceBtn" aria-label="Würfeln">🎲</button>
       <button class="lbtn" id="histBtn" aria-label="Verlauf">📜</button>
-      <button class="lbtn" id="newGameBtn" aria-label="Neues Game">↺</button>
+      <button class="axe-start" id="axeStart" aria-label="Axt werfen: wer beginnt?" hidden></button>
     </div>
     <section class="lp bottom" id="p1">
       <button class="zone plus" aria-label="Ich plus 1"></button>
       <button class="zone minus" aria-label="Ich minus 1"></button>
       <div class="lp-in"><div class="who"><img class="pav" alt="" hidden><span class="pname">Ich</span></div>
-        <div class="life">30</div><div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+        <span class="turnTag"></span>
+        <div class="lifebox"><div class="life">30</div><div class="mini"></div></div>
+        <div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+      <button class="go" type="button" aria-label="Zug beenden">GO</button>
+      <button class="skull" type="button" hidden aria-label="Game verloren">💀<small>Game werten</small></button>
     </section>
   </div>
+  <div id="axeLayer" class="axe-layer"></div>
   <script type="module" src="/tournament-app/js/t-life.js"></script>
 </body>
 </html>

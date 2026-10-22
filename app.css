@@ -585,3 +585,33 @@ body.life-page{overflow:hidden;height:100dvh;touch-action:manipulation;user-sele
 .ltimer.soon{color:var(--gold)}
 .ltimer.over{color:var(--danger);animation:pulse 1s infinite}
 .dice-out{font-size:64px;font-weight:800;text-align:center;padding:18px 0 22px}
+
+/* Lifecounter: Zug, Mini-Verlauf, Axt, Totenkopf, Spielstand */
+.lp.active::after{content:"";position:absolute;inset:6px;border-radius:22px;border:3px solid var(--gold);box-shadow:0 0 26px rgba(242,185,75,.45),inset 0 0 30px rgba(242,185,75,.15);pointer-events:none;z-index:1}
+.lp .turnTag{min-height:16px;font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.04em}
+.lp .lifebox{position:relative}
+.lp .mini{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:14px;display:flex;flex-direction:column;gap:2px;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lp .mini span{opacity:.85}
+.lp .mini span:nth-child(n+2){opacity:.55;font-size:12px}
+.lp .mini span:nth-child(n+4){opacity:.35}
+.lp .mini .neg{color:#ff9a90}.lp .mini .pos{color:#8ff0b6}
+.lp .mini i{font-style:normal;font-weight:600;font-size:10px;color:rgba(255,255,255,.45);margin-left:4px}
+.lp .go{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:3;width:56px;height:56px;border-radius:50%;border:2px solid var(--gold);background:rgba(0,0,0,.35);color:var(--gold);font-weight:900;font-size:16px;letter-spacing:.06em;cursor:pointer}
+.lp .go:disabled{opacity:.18;border-color:rgba(255,255,255,.4);color:#fff}
+.lp .go:not(:disabled){animation:pulse 1.6s infinite}
+.lp .skull{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;border:0;background:rgba(0,0,0,.55);border-radius:24px;padding:10px 18px;font-size:64px;line-height:1;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.lp .skull small{font-size:13px;font-weight:700;margin-top:6px}
+.lbar{position:relative}
+.lscore{min-width:64px;height:42px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);display:flex;align-items:center;justify-content:center;gap:2px;font-size:20px;font-weight:800;cursor:pointer;flex:0 0 auto;padding:0 8px}
+.lscore small{font-size:10px;font-weight:700;color:var(--gold);margin-left:6px}
+.axe-start{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:50%;border:3px solid var(--gold);background:radial-gradient(circle,#3a0d0d,#140404);box-shadow:0 0 28px rgba(214,42,42,.6);cursor:pointer;z-index:5;padding:10px;animation:axepulse 1.4s infinite}
+.axe-start svg{width:100%;height:100%}
+@keyframes axepulse{50%{box-shadow:0 0 42px rgba(242,185,75,.7);transform:translate(-50%,-50%) scale(1.06)}}
+.axe-layer{position:fixed;inset:0;pointer-events:none;z-index:6;transition:opacity .8s}
+.axe-layer.fade{opacity:.25}
+.axe-layer .axe{position:absolute;width:96px;height:96px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.6))}
+.axe-layer .axe svg,.axe-layer .blood svg{width:100%;height:100%}
+.axe-layer .blood{position:absolute;width:150px;height:150px;opacity:0}
+.axe-layer .blood.splat{animation:splat .35s ease-out forwards}
+@keyframes splat{from{opacity:0;scale:.2}to{opacity:.92;scale:1}}
+.score-edit{display:flex;align-items:center;justify-content:space-around;text-align:center;font-size:30px;padding:8px 0}
