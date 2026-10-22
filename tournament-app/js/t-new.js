@@ -125,6 +125,7 @@ $('#toStep2').addEventListener('click', () => {
 $('#back1').addEventListener('click', () => step(1));
 $('#toStep3').addEventListener('click', () => { paintStart(); step(3); });
 $('#back2').addEventListener('click', () => step(2));
+$('#tTimer').addEventListener('change', () => { $('#timerMinBox').hidden = !$('#tTimer').checked; });
 
 $$('#modeSeg button').forEach(b => b.addEventListener('click', () => {
   mode = b.dataset.mode;
@@ -141,6 +142,7 @@ $('#createBtn').addEventListener('click', async () => {
     const t = await createTournament(m.user.id, {
       name: $('#tName').value.trim(), roundsTotal: Number($('#tRounds').value),
       avoidRematches: true, allowBye: $('#tBye').checked,
+      roundMinutes: $('#tTimer').checked ? Math.min(180, Math.max(5, Number($('#tTimerMin').value) || 50)) : null,
       playerNames: [...seating], seatingOrder: [...seating], formatKey, ediCode: formatKey === 'aktuelle-edi' ? edi : null,
     });
     await generateNextRound(t.id, { firstRoundMode: mode });

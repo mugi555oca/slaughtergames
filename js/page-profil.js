@@ -240,9 +240,11 @@ async function render(){
       ['reminders', '⏰ Erinnerung am Spieltag', 'Mittags: heute Weekly, wo und wie viele'],
     ]],
     ['Weekly-Turniere', [
-      ['rounds', '🃏 Paarungen', 'Turnierstart, deine Gegner und Tische, Byes'],
+      ['rounds', '🃏 Paarungen', 'Turnierstart, deine Gegner, Byes'],
       ['results', '💀 Deine Ergebnisse', 'Sieg, Niederlage, Remis, dein Endplatz'],
       ['results_all', '📣 Alle Ergebnisse im Weekly', 'Wer wen verschiert – nur Push, wird pro Weekly zusammengefasst'],
+      ['timer', '⏰ Rundentimer', '„Zeit is aus“, wenn die Runde um ist'],
+      ['weekly_winner', '🏆 Weekly-Sieger', 'Wer ein Weekly gewonnen hat – geht an alle'],
     ]],
     ['Sonstiges', [
       ['chat', '💬 Chat-Nachrichten', 'Einzelne Gruppen unten stummschalten'],

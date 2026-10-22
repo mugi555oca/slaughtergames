@@ -85,6 +85,14 @@
       <div class="card small muted">
         <b style="color:var(--text)">Ab Runde 2</b> wird automatisch nach Tabelle gepaart: nie ein Rematch, dann Punkte → OMW% → GW% → OGW%.
       </div>
+      <div class="list">
+        <label class="switch"><span><span class="title">⏱ Rundentimer</span><br><span class="small muted">Klingelt am Ende jeder Runde, Push „Zeit is aus“</span></span>
+          <input type="checkbox" id="tTimer"></label>
+        <div class="switch" id="timerMinBox" hidden style="cursor:default">
+          <span>Minuten pro Runde</span>
+          <input id="tTimerMin" type="number" min="5" max="180" value="50" inputmode="numeric" class="input" style="width:90px;min-height:40px;padding:6px 10px">
+        </div>
+      </div>
       <div class="list" id="byeBox" hidden>
         <label class="switch"><span>Bye bei ungerader Anzahl</span><input type="checkbox" id="tBye" checked></label>
       </div>

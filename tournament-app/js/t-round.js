@@ -8,6 +8,7 @@ import {
   finishTournament, setPlayerDropped, reopenTournament, resetRoundsAfter, formatPct, standingsToCsvRows,
 } from './tournament.js';
 import { formatLabel, flip, outcome, myPlayerIds } from './t-shared.js';
+import { countdown, unlockAudio } from '/js/timer.js';
 
 const tid = new URLSearchParams(location.search).get('tournament');
 const m = await initShell({ tab: 'turniere', title: 'Weekly', back: '/tournament-app/dashboard.html' });
@@ -55,12 +56,47 @@ function render(){
     <h1 style="font-size:24px;margin:10px 2px 0">${esc(t.name)}</h1>
     <p class="small muted" style="margin:2px 2px 0">${new Date(t.created_at).toLocaleDateString('de-AT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>`;
 
+  renderTimer();
   renderMine();
   renderRound();
   renderTable();
   renderHistory();
   renderActions();
   renderAdmin();
+}
+
+// ---------------------------------------------------------------
+// Rundentimer (Endzeit vom Server, klingelt bei 0)
+// ---------------------------------------------------------------
+let stopTimer = null;
+unlockAudio();
+function renderTimer(){
+  const host = $('#timer');
+  stopTimer?.(); stopTimer = null;
+  const t = B.tournament;
+  const cur = Number(t.current_round) || 0;
+  const rd = B.rounds.find(r => r.round_no === cur);
+  if(t.status !== 'active' || !rd){ host.innerHTML = ''; return; }
+  const can = m.isMember;
+  if(!rd.timer_ends_at){
+    host.innerHTML = can ? `<button class="btn ghost sm mt" id="tmStart">⏱ Timer für Runde ${cur} starten (${t.round_minutes || 50} min)</button>` : '';
+  } else {
+    host.innerHTML = `<div class="timer-card mt">
+      <div><div class="tiny muted">Runde ${cur} · Restzeit</div><div class="timer-big" id="tmLeft">–</div></div>
+      ${can ? `<div class="btn-row" style="flex:0 0 auto"><button class="btn xs ghost" data-add="5">+5</button><button class="btn xs ghost" data-add="-5">−5</button><button class="btn xs ghost" id="tmStop">Stopp</button></div>` : ''}
+    </div>`;
+    stopTimer = countdown($('#tmLeft'), rd.timer_ends_at, rd.id, () => toast('⏰ Zeit is aus! Ergebnisse eintragen.', 'err'));
+  }
+  const setEnd = async iso => {
+    const { error } = await supabase.from('rounds').update({ timer_ends_at: iso }).eq('id', rd.id);
+    if(error) toast(error.message, 'err'); else load();
+  };
+  $('#tmStart')?.addEventListener('click', () => setEnd(new Date(Date.now() + (t.round_minutes || 50) * 60000).toISOString()));
+  host.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () =>
+    setEnd(new Date(new Date(rd.timer_ends_at).getTime() + Number(b.dataset.add) * 60000).toISOString())));
+  $('#tmStop')?.addEventListener('click', async () => {
+    if(await confirmSheet('Timer stoppen?', 'Der Timer dieser Runde wird entfernt.', 'Stoppen')) setEnd(null);
+  });
 }
 
 // ---------------------------------------------------------------
@@ -94,6 +130,7 @@ function renderMine(){
     </div>
     <div class="small muted mb">${myRes ? 'Falsch? Einfach neu tippen:' : 'Ergebnis aus deiner Sicht eintragen:'}</div>
     <div class="result-pad">${pad.map(r => `<button type="button" data-my="${r}" class="${myRes === r ? 'on' : ''}">${r}<small>${sub(r)}</small></button>`).join('')}</div>
+    <a class="btn ghost block mt" href="/tournament-app/life.html?tournament=${tid}">❤️ Lifecounter</a>
   </div>`;
   host.querySelectorAll('[data-my]').forEach(b => b.addEventListener('click', async () => {
     const r = iAmA ? b.dataset.my : flip(b.dataset.my);
@@ -247,6 +284,7 @@ function renderActions(){
   }
   host.innerHTML = `${main}
     <div class="btn-row mt">
+      <a class="btn ghost sm" href="/tournament-app/life.html?tournament=${tid}">❤️ Lifecounter</a>
       <button class="btn ghost sm" id="shareBtn">${icon('share')} Teilen</button>
       <button class="btn ghost sm" id="csvBtn">${icon('download')} CSV</button>
     </div>`;
@@ -347,6 +385,7 @@ function subscribe(){
   supabase.channel('t-' + tid)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'matches', filter: `tournament_id=eq.${tid}` }, reload)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'tournaments', filter: `id=eq.${tid}` }, reload)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'rounds', filter: `tournament_id=eq.${tid}` }, reload)
     .subscribe();
   document.addEventListener('visibilitychange', () => { if(!document.hidden) load(); });
 }

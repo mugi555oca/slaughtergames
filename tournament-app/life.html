@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Slaughter Games">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+  <title>Lifecounter – Slaughter Games</title>
+  <!-- preload:start (tools/preload.py) -->
+  <link rel="preconnect" href="https://shzyksgqawknysbvhlwn.supabase.co" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/push.js">
+  <link rel="modulepreload" href="/js/supabase.js">
+  <link rel="modulepreload" href="/js/timer.js">
+  <link rel="modulepreload" href="/tournament-app/js/config.js">
+  <link rel="modulepreload" href="/tournament-app/js/t-life.js">
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/auth-js@2.118.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/postgrest-js@2.118.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/realtime-js@2.118.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/storage-js@2.118.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/functions-js@2.118.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@supabase/phoenix@0.4.5/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/tslib@2.8.1/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/iceberg-js@0.8.1/+esm" crossorigin>
+  <!-- preload:end -->
+</head>
+<body class="life-page">
+  <div class="life-wrap">
+    <section class="lp top" id="p0">
+      <button class="zone plus" aria-label="Gegner plus 1"></button>
+      <button class="zone minus" aria-label="Gegner minus 1"></button>
+      <div class="lp-in"><div class="who"><img class="pav" alt="" hidden><span class="pname">Gegner</span></div>
+        <div class="life">30</div><div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+    </section>
+    <div class="lbar">
+      <a class="lbtn" id="backBtn" href="/tournament-app/dashboard.html" aria-label="Zurück"></a>
+      <div class="lmid"><span id="tName" class="tiny"></span><span id="rLabel" class="tiny muted"></span><span id="gameNo" class="tiny gold"></span></div>
+      <div class="ltimer" id="tmr" hidden>–</div>
+      <button class="lbtn" id="diceBtn" aria-label="Würfeln">🎲</button>
+      <button class="lbtn" id="histBtn" aria-label="Verlauf">📜</button>
+      <button class="lbtn" id="newGameBtn" aria-label="Neues Game">↺</button>
+    </div>
+    <section class="lp bottom" id="p1">
+      <button class="zone plus" aria-label="Ich plus 1"></button>
+      <button class="zone minus" aria-label="Ich minus 1"></button>
+      <div class="lp-in"><div class="who"><img class="pav" alt="" hidden><span class="pname">Ich</span></div>
+        <div class="life">30</div><div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+    </section>
+  </div>
+  <script type="module" src="/tournament-app/js/t-life.js"></script>
+</body>
+</html>

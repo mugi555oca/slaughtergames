@@ -348,6 +348,7 @@ export async function createTournament(ownerId, payload){
       rounds_total: payload.roundsTotal,
       avoid_rematches: payload.avoidRematches,
       allow_bye: payload.allowBye,
+      round_minutes: payload.roundMinutes || null,
       current_round: 0,
       status: 'active',
       format_key: payload.formatKey || 'other-cube',
