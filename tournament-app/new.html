@@ -42,7 +42,10 @@
 <body>
   <main class="app-main">
     <h1 class="page-title">Neues Weekly</h1>
-    <form id="newForm" class="stack">
+    <div class="steps" id="steps"><span class="on">1 Spieler</span><span>2 Sitzordnung</span><span>3 Start</span></div>
+    <p class="msg err" id="newMsg"></p>
+
+    <section id="step1" class="stack">
       <div class="card">
         <div class="field"><label for="tName">Name</label><input id="tName" required maxlength="80"></div>
         <div class="row" style="gap:12px;align-items:flex-start">
@@ -51,33 +54,42 @@
         </div>
         <div class="field" id="ediField" hidden><label for="tEdi">Edition (Kürzel, 2–5 Buchstaben)</label><input id="tEdi" maxlength="5" placeholder="z. B. DFT" autocapitalize="characters"></div>
       </div>
-
       <div class="card">
-        <div class="row between mb"><b>Spieler</b><span class="chip" id="pickCount">0 gewählt</span></div>
+        <div class="row between mb"><b>Wer spielt?</b><span class="chip" id="pickCount">0 gewählt</span></div>
         <div class="pick-grid" id="picker"></div>
         <p class="hint mt">4–16 Spieler. Gäste zählen mit.</p>
       </div>
+      <button class="btn block" type="button" id="toStep2">Weiter: Sitzordnung</button>
+    </section>
 
+    <section id="step2" class="stack" hidden>
+      <div class="card">
+        <div class="row between"><b>Sitzordnung beim Draft</b><button type="button" class="btn xs ghost" id="shuffleBtn">🎲 Neu mischen</button></div>
+        <p class="hint mt">Zufällig gemischt. Zum Tauschen zwei Plätze nacheinander antippen.</p>
+        <div class="draft-table" id="table"></div>
+        <ol class="seat-list" id="seatList"></ol>
+      </div>
+      <div class="btn-row"><button class="btn ghost" type="button" id="back1">Zurück</button><button class="btn" type="button" id="toStep3">Weiter: Start</button></div>
+    </section>
+
+    <section id="step3" class="stack" hidden>
       <div class="card">
         <b>Paarung Runde 1</b>
         <div class="seg mt" id="modeSeg">
           <button type="button" class="on" data-mode="random">Zufällig</button>
-          <button type="button" data-mode="cross">Cross (Sitzordnung)</button>
+          <button type="button" data-mode="cross">Cross (gegenüber)</button>
         </div>
-        <div id="seatBox" class="mt" hidden>
-          <div class="row between"><span class="small muted">Sitzordnung – 1. Hälfte gegen 2. Hälfte</span><button type="button" class="btn xs ghost" id="shuffleBtn">Mischen</button></div>
-          <ol id="seating" class="small" style="margin:8px 0 0;padding-left:22px;columns:2"></ol>
-        </div>
+        <p class="small muted mt" id="modeHint"></p>
+        <div class="list mt" id="pairPreview" hidden></div>
       </div>
-
-      <div class="list">
-        <label class="switch"><span>Rematches vermeiden</span><input type="checkbox" id="tAvoid" checked></label>
+      <div class="card small muted">
+        <b style="color:var(--text)">Ab Runde 2</b> wird automatisch nach Tabelle gepaart: nie ein Rematch, dann Punkte → OMW% → GW% → OGW%.
+      </div>
+      <div class="list" id="byeBox" hidden>
         <label class="switch"><span>Bye bei ungerader Anzahl</span><input type="checkbox" id="tBye" checked></label>
       </div>
-
-      <button class="btn block" type="submit" id="createBtn">Weekly starten</button>
-      <p class="msg err" id="newMsg"></p>
-    </form>
+      <div class="btn-row"><button class="btn ghost" type="button" id="back2">Zurück</button><button class="btn" type="button" id="createBtn">🃏 Weekly starten</button></div>
+    </section>
   </main>
   <script type="module" src="/tournament-app/js/t-new.js"></script>
 </body>

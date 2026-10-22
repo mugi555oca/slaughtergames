@@ -221,6 +221,10 @@ function renderHistory(){
       </div>`;
     }).join('')}</div>`;
   }
+  const seats = [...B.players].filter(p => p.seat).sort((a, b) => a.seat - b.seat);
+  if(seats.length) html = `<div class="section-head"><h2>Sitzordnung beim Draft</h2></div>
+    <div class="card"><ol class="seat-list" style="color:var(--text)">${seats.map(p => `<li>${esc(nameOf(p))}</li>`).join('')}</ol></div>
+    <div style="height:18px"></div>` + html;
   $('#vHistory').innerHTML = html;
 }
 
@@ -249,23 +253,11 @@ function renderActions(){
 
   $('#nextBtn')?.addEventListener('click', async e => {
     const btn = e.currentTarget;
-    let finalMode = 'swiss';
-    if(cur + 1 === total && total === 3){
-      finalMode = await new Promise(resolve => {
-        let picked = null;
-        const s = openSheet(`<h3>Finalrunde – wie paaren?</h3><div class="stack">
-          <button class="btn block" data-m="swiss">Standard Swiss</button>
-          <button class="btn block ghost" data-m="bracket">Bracket-Pairing</button>
-          <p class="hint">Bracket: Platz 1 gegen 2, 3 gegen 4 … nach dem Stand nach Runde 2.</p></div>`,
-          { onClose: () => resolve(picked) });
-        s.el.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { picked = b.dataset.m; s.close(); });
-      });
-      if(!finalMode) return;
-    }
+    // Ab Runde 2 immer nach Tabelle (Swiss): nie Rematch, dann Punkte, OMW, GW, OGW
     busy(btn, true, 'Lose aus…');
     try{
       if(cur > 0) await finalizeCurrentRound(tid);
-      const gen = await generateNextRound(tid, { finalRoundMode: finalMode });
+      const gen = await generateNextRound(tid, { finalRoundMode: 'swiss' });
       toast(`Runde ${gen.roundNo} ausgelost${gen.rematchCount ? ` – ${gen.rematchCount} Rematch(es) unvermeidbar` : ''}.`, 'ok');
       viewRound = gen.roundNo;
       await load();

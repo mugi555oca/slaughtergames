@@ -537,3 +537,19 @@ button.list-item:first-child{border-top:0}
 .vote-row button.on.in{background:var(--ok);border-color:var(--ok);color:#06210f}
 .vote-row button.on.maybe{background:var(--gold);border-color:var(--gold);color:#1a1205}
 .vote-row button.on.out{background:#3a1d1d;border-color:var(--danger);color:#ffb0a8}
+
+/* ---------- Neues Weekly: Schritte + Draft-Tisch ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:-4px 0 14px}
+.steps span{text-align:center;font-size:12px;font-weight:700;color:var(--faint);padding:8px 4px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.steps span.on{color:#fff;background:var(--blood);border-color:var(--blood)}
+.steps span.done{color:var(--ok)}
+.draft-table{position:relative;width:100%;max-width:420px;aspect-ratio:1;margin:12px auto 4px}
+.draft-table::before{content:"";position:absolute;inset:22%;border-radius:50%;background:radial-gradient(circle,#1f3a24,#12261a);border:3px solid #3b2a1a;box-shadow:inset 0 0 24px rgba(0,0,0,.6)}
+.dt-center{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-family:var(--display);font-size:20px;color:rgba(255,255,255,.75);pointer-events:none}
+.dt-center span{font-family:var(--font);font-size:11px;color:rgba(255,255,255,.5)}
+.seat{position:absolute;transform:translate(-50%,-50%);width:66px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;color:var(--text);cursor:pointer;padding:0}
+.seat img,.seat .g{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--surface-3);background:var(--surface-2);display:grid;place-items:center;font-weight:700}
+.seat b{position:absolute;top:-4px;left:6px;min-width:18px;height:18px;border-radius:9px;background:var(--gold);color:#1a1205;font-size:11px;line-height:18px}
+.seat em{font-style:normal;font-size:11px;font-weight:600;line-height:1.1;max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seat.on img,.seat.on .g{border-color:var(--blood-2);box-shadow:0 0 0 3px rgba(214,42,42,.4)}
+.seat-list{columns:2;font-size:13px;margin:8px 0 0;padding-left:22px;color:var(--muted)}
