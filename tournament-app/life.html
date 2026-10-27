@@ -44,30 +44,47 @@
     <section class="lp top" id="p0">
       <button class="zone plus" aria-label="Gegner plus 1"></button>
       <button class="zone minus" aria-label="Gegner minus 1"></button>
-      <div class="lp-in"><div class="who"><img class="pav" alt="" hidden><span class="pname">Gegner</span></div>
+      <div class="lp-in">
+        <div class="who"><img class="pav" alt="" hidden><span class="pname">Gegner</span></div>
         <span class="turnTag"></span>
-        <div class="lifebox"><div class="life">30</div><div class="mini"></div></div>
-        <div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+        <div class="life">20</div>
+        <div class="delta"></div>
+        <div class="counters">
+          <span class="ctr" data-c="poison">🧪 <b>0</b><button data-d="-1" aria-label="Gift minus">−</button><button data-d="1" aria-label="Gift plus">+</button></span>
+          <span class="ctr" data-c="energy">⚡ <b>0</b><button data-d="-1" aria-label="Energie minus">−</button><button data-d="1" aria-label="Energie plus">+</button></span>
+        </div>
+      </div>
+      <div class="hist" aria-label="Verlauf"></div>
       <button class="go" type="button" aria-label="Zug beenden">GO</button>
+      <button class="concede" type="button" aria-label="Aufgeben">🏳️</button>
       <button class="skull" type="button" hidden aria-label="Game verloren">💀<small>Game werten</small></button>
     </section>
     <div class="lbar">
-      <a class="lbtn" id="backBtn" href="/tournament-app/dashboard.html" aria-label="Zurück"></a>
+      <a class="lbtn" id="backBtn" href="/chat.html" aria-label="Zurück"></a>
       <button class="lscore" id="score" aria-label="Spielstand"></button>
       <div class="lmid"><span id="tName" class="tiny"></span><span id="rLabel" class="tiny muted"></span></div>
-      <div class="ltimer" id="tmr" hidden>–</div>
+      <div class="ltimers"><span class="ltimer" id="tmr" hidden>–</span><span class="lclock" id="playClock" hidden></span></div>
+      <button class="lbtn" id="micBtn" aria-label="Sprachsteuerung Go">🎙️</button>
       <button class="lbtn" id="diceBtn" aria-label="Würfeln">🎲</button>
-      <button class="lbtn" id="histBtn" aria-label="Verlauf">📜</button>
+      <button class="lbtn" id="histBtn" aria-label="Ganzer Verlauf">📜</button>
       <button class="axe-start" id="axeStart" aria-label="Axt werfen: wer beginnt?" hidden></button>
     </div>
     <section class="lp bottom" id="p1">
       <button class="zone plus" aria-label="Ich plus 1"></button>
       <button class="zone minus" aria-label="Ich minus 1"></button>
-      <div class="lp-in"><div class="who"><img class="pav" alt="" hidden><span class="pname">Ich</span></div>
+      <div class="lp-in">
+        <div class="who"><img class="pav" alt="" hidden><span class="pname">Ich</span></div>
         <span class="turnTag"></span>
-        <div class="lifebox"><div class="life">30</div><div class="mini"></div></div>
-        <div class="delta"></div><div class="hint-pm"><span>＋</span><span>−</span></div></div>
+        <div class="life">20</div>
+        <div class="delta"></div>
+        <div class="counters">
+          <span class="ctr" data-c="poison">🧪 <b>0</b><button data-d="-1" aria-label="Gift minus">−</button><button data-d="1" aria-label="Gift plus">+</button></span>
+          <span class="ctr" data-c="energy">⚡ <b>0</b><button data-d="-1" aria-label="Energie minus">−</button><button data-d="1" aria-label="Energie plus">+</button></span>
+        </div>
+      </div>
+      <div class="hist" aria-label="Verlauf"></div>
       <button class="go" type="button" aria-label="Zug beenden">GO</button>
+      <button class="concede" type="button" aria-label="Aufgeben">🏳️</button>
       <button class="skull" type="button" hidden aria-label="Game verloren">💀<small>Game werten</small></button>
     </section>
   </div>

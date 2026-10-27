@@ -38,7 +38,8 @@ const canEdit = () => m.isAdmin || (m.isMember && B.tournament.status === 'activ
 const playerById = id => B.players.find(p => p.id === id);
 const personOf = pl => pl?.slug ? people.bySlug.get(pl.slug) : personForName(people, pl?.name);
 const avatarOf = pl => personOf(pl)?.avatar || '/icons/icon-192.png';
-const nameOf = pl => pl ? (personOf(pl)?.real || pl.name) : '?';
+const nameOf = pl => pl ? pl.name : '?';                          // langer Magic-Name
+const shortOf = pl => pl ? (personOf(pl)?.real || pl.name) : '?';
 
 function render(){
   const t = B.tournament;
@@ -49,7 +50,7 @@ function render(){
 
   $('#tHead').innerHTML = `
     <div class="row wrap" style="gap:6px">
-      ${live ? `<span class="chip live">LIVE · Runde ${cur}/${t.rounds_total}</span>` : '<span class="chip done">Beendet</span>'}
+      ${live ? (cur ? `<span class="chip live">LIVE · Runde ${cur}/${t.rounds_total}</span>` : '<span class="chip gold">Draft-Phase</span>') : '<span class="chip done">Beendet</span>'}
       <span class="chip">${esc(formatLabel(t.format_key))}${t.edi_code ? ' · ' + esc(t.edi_code) : ''}</span>
       <span class="chip">${B.players.filter(p => !p.dropped).length} Spieler</span>
     </div>
@@ -174,7 +175,7 @@ function matchCard(x, editable){
 function renderRound(){
   const host = $('#vRound');
   const cur = Number(B.tournament.current_round) || 0;
-  if(cur === 0){ host.innerHTML = `<div class="card empty">${icon('swords')}<h3>Noch keine Runde</h3><p>Runde 1 unten auslosen.</p></div>`; return; }
+  if(cur === 0){ renderSeating(host); return; }
   const matches = B.matches.filter(x => x.round_no === viewRound);
   const open = matches.filter(x => x.result === 'pending').length;
   const editable = canEdit();
@@ -186,6 +187,49 @@ function renderRound(){
     ${matches.map(x => matchCard(x, editable)).join('')}`;
   host.querySelectorAll('[data-r]').forEach(b => b.addEventListener('click', () => { viewRound = Number(b.dataset.r); renderRound(); }));
   host.querySelectorAll('[data-match]').forEach(b => b.addEventListener('click', () => resultSheet(B.matches.find(x => x.id === b.dataset.match))));
+}
+
+// Draft-Phase (Runde 0): Sitzordnung am runden Tisch, neu mischen / tauschen
+let swapFrom = null;
+function renderSeating(host){
+  const seats = [...B.players].sort((a, b) => (a.seat || 99) - (b.seat || 99));
+  const n = seats.length;
+  const editable = canEdit() && B.tournament.status === 'active';
+  host.innerHTML = `<div class="card">
+      <div class="row between"><b>Sitzordnung beim Draft</b>${editable ? '<button type="button" class="btn xs ghost" id="reseat">🎲 Neu mischen</button>' : ''}</div>
+      ${editable ? '<p class="hint mt">Zum Tauschen zwei Plätze nacheinander antippen.</p>' : ''}
+      <div class="draft-table" id="dtable"><div class="dt-center">Draft-Tisch<br><span>${n} Plätze</span></div>${seats.map((pl, i) => {
+        const ang = (i / n) * 2 * Math.PI - Math.PI / 2;
+        const x = 50 + 40 * Math.cos(ang), y = 50 + 40 * Math.sin(ang);
+        const mineCls = mine.has(pl.id) ? ' mine' : '';
+        return `<button type="button" class="seat${swapFrom === pl.id ? ' on' : ''}${mineCls}" data-pid="${pl.id}" style="left:${x}%;top:${y}%" ${editable ? '' : 'disabled'}>
+          <img src="${esc(avatarOf(pl))}" alt=""><b>${pl.seat || i + 1}</b><em>${esc(shortOf(pl))}</em></button>`;
+      }).join('')}</div>
+      <ol class="seat-list" style="color:var(--text)">${seats.map(pl => `<li${mine.has(pl.id) ? ' style="color:var(--gold);font-weight:700"' : ''}>${esc(nameOf(pl))}</li>`).join('')}</ol>
+    </div>`;
+  if(!editable) return;
+  host.querySelectorAll('[data-pid]').forEach(b => b.addEventListener('click', async () => {
+    const pid = b.dataset.pid;
+    if(!swapFrom){ swapFrom = pid; renderSeating(host); return; }
+    if(swapFrom === pid){ swapFrom = null; renderSeating(host); return; }
+    const a = B.players.find(x => x.id === swapFrom), c = B.players.find(x => x.id === pid);
+    swapFrom = null;
+    const [r1, r2] = await Promise.all([
+      supabase.from('players').update({ seat: c.seat }).eq('id', a.id),
+      supabase.from('players').update({ seat: a.seat }).eq('id', c.id),
+    ]);
+    if(r1.error || r2.error) toast((r1.error || r2.error).message, 'err');
+    await load();
+  }));
+  $('#reseat').addEventListener('click', async () => {
+    if(!await confirmSheet('Neu mischen?', 'Alle bekommen ihren neuen Seat aufs Handy.', 'Mischen')) return;
+    const order = [...B.players];
+    for(let i = order.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    await Promise.all(order.map((pl, i) => supabase.from('players').update({ seat: i + 1 }).eq('id', pl.id)));
+    await supabase.rpc('notify_seating', { tid });
+    toast('Neu gemischt – Seats verschickt.', 'ok');
+    await load();
+  });
 }
 
 function resultSheet(x){
@@ -277,7 +321,8 @@ function renderActions(){
   let main = '';
 
   if(t.status === 'active' && m.isMember){
-    if(cur === 0) main = `<button class="btn block" id="nextBtn">Runde 1 auslosen</button>`;
+    if(cur === 0) main = `<button class="btn block" id="nextBtn">⚔️ Runde 1 starten${t.round_minutes ? ` · Timer ${t.round_minutes} min` : ''}</button>
+      <p class="hint center mt">Erst wenn alle gedraftet und ihr Deck gebaut haben.</p>`;
     else if(open) main = `<div class="card small muted center">Noch ${open} Ergebnis${open === 1 ? '' : 'se'} offen – danach geht's weiter.</div>`;
     else if(cur < total) main = `<button class="btn block" id="nextBtn">${icon('refresh')} Runde ${cur + 1} auslosen</button>`;
     else main = `<button class="btn block gold" id="finishBtn">${icon('trophy')} Turnier abschließen</button>`;
@@ -295,7 +340,7 @@ function renderActions(){
     busy(btn, true, 'Lose aus…');
     try{
       if(cur > 0) await finalizeCurrentRound(tid);
-      const gen = await generateNextRound(tid, { finalRoundMode: 'swiss' });
+      const gen = await generateNextRound(tid, { firstRoundMode: t.first_round_mode || 'random', finalRoundMode: 'swiss' });
       toast(`Runde ${gen.roundNo} ausgelost${gen.rematchCount ? ` – ${gen.rematchCount} Rematch(es) unvermeidbar` : ''}.`, 'ok');
       viewRound = gen.roundNo;
       await load();

@@ -114,7 +114,7 @@ if(p && m.isMember){
   const locs = (await loadLocations()).filter(l => l.owner_slug === slug);
   if(locs.length){
     $('#ppLocSec').hidden = false;
-    $('#ppLoc').innerHTML = locationsListHtml(locs);
+    $('#ppLoc').innerHTML = locationsListHtml(locs, people);
     bindLocations($('#ppLoc'), locs, people);
   }
 }

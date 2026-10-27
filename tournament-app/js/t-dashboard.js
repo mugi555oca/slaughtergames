@@ -26,7 +26,7 @@ const listP = supabase.from('tournaments').select('id,name,status,current_round,
 const item = t => `<a class="list-item" href="/tournament-app/round.html?tournament=${t.id}">
   ${t.status === 'active' ? '<span class="chip live" style="padding:0 8px">LIVE</span>' : `<span class="faint small" style="width:44px;text-align:center;line-height:1.1">${new Date(t.created_at).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit' })}<br>${new Date(t.created_at).getFullYear()}</span>`}
   <div class="grow"><div class="title ellipsis">${esc(t.name)}</div>
-  <div class="sub">${esc(formatLabel(t.format_key))}${t.edi_code ? ' · ' + esc(t.edi_code) : ''}${t.status === 'active' ? ` · Runde ${t.current_round}/${t.rounds_total}` : ''}</div></div>
+  <div class="sub">${esc(formatLabel(t.format_key))}${t.edi_code ? ' · ' + esc(t.edi_code) : ''}${t.status === 'active' ? (t.current_round ? ` · Runde ${t.current_round}/${t.rounds_total}` : ' · Draft-Phase') : ''}</div></div>
   <span class="trail" data-winner="${t.id}"></span>${icon('chev', 'chev')}
 </a>`;
 
@@ -48,7 +48,7 @@ async function myMatches(){
     if(!x.is_bye){
       const opp = (pls || []).find(p => p.id === (x.player_a_id === me.id ? x.player_b_id : x.player_a_id));
       const p = (opp?.slug && people.bySlug.get(opp.slug)) || personForName(people, opp?.name);
-      oppName = p?.real || opp?.name || '?';
+      oppName = opp?.name || p?.name || '?';
     }
     const res = x.result === 'pending' ? null : (x.player_a_id === me.id ? x.result : flip(x.result));
     cards.push(`<a class="match-card mine" href="/tournament-app/round.html?tournament=${t.id}" style="display:block">
@@ -84,7 +84,7 @@ async function meetAndLocations(){
   }
   if(locs.length){
     $('#locSec').hidden = false;
-    $('#locList').innerHTML = locationsListHtml(locs);
+    $('#locList').innerHTML = locationsListHtml(locs, people);
     bindLocations($('#locList'), locs, people);
   }
 }
@@ -98,7 +98,7 @@ const weekly = await weeklyP;
 listP.then(() => { for(const e of weekly.events){
   const w = e.rows[0];
   const el = document.querySelector(`[data-winner="${e.id}"]`);
-  if(el && w) el.innerHTML = `<img class="avatar xs" src="${esc(w.person?.avatar || '/icons/icon-192.png')}" alt="" title="Sieger: ${esc(w.person?.real || w.name)}">`;
+  if(el && w) el.innerHTML = `<img class="avatar xs" src="${esc(w.person?.avatar || '/icons/icon-192.png')}" alt="" title="Sieger: ${esc(w.name)}">`;
 } });
 
 let mode = 'score', fmt = null;
@@ -115,7 +115,7 @@ function paintRank(){
     <a class="rank-row" ${r.person?.slug ? `href="/player-profile.html?slug=${encodeURIComponent(r.person.slug)}#weekly"` : ''}>
       <span class="rank-no">${i + 1}</span>
       <img class="avatar sm" src="${esc(r.person?.avatar || '/icons/icon-192.png')}" alt="">
-      <span class="who"><span class="title">${esc(r.person?.real || r.name)}</span>
+      <span class="who"><span class="title">${esc(r.person?.name || r.name)}</span>
         <span class="sub">${r.n} Weekly${r.n === 1 ? '' : 's'} · ${r.rounds} Runden${r.wins ? ` · 🏆 ${r.wins}` : ''}</span></span>
       <span class="pts">${val(r)}</span>
     </a>`).join('') || '<div class="empty">Noch keine abgeschlossenen Weeklys.</div>';

@@ -66,7 +66,7 @@ async function render(){
       const list = [...P.accounts].filter(a => a.active || a.balance).sort((a, b) => b.balance - a.balance);
       host.innerHTML = `<div class="rank-list">${list.map(a => `<div class="rank-row" ${a.id === mine?.id ? 'style="background:var(--gold-dim)"' : ''}>
         ${avatar(a) ? `<img class="avatar sm" src="${esc(avatar(a))}" alt="">` : `<span class="avatar sm" style="display:grid;place-items:center;font-weight:700">${esc(a.name[0])}</span>`}
-        <span class="who"><span class="title">${esc(a.name)}</span><span class="sub">${a.draftCount} Drafts · eingezahlt ${eur(a.in)}</span></span>
+        <span class="who"><span class="title">${esc((a.slug && people.bySlug.get(a.slug)?.name) || a.name)}</span><span class="sub">${a.draftCount} Drafts · eingezahlt ${eur(a.in)}</span></span>
         <span class="pts" style="color:${col(a.balance)}">${eur(a.balance)}</span></div>`).join('')}</div>`;
     }
     if(view === 'stock'){

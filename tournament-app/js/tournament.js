@@ -349,6 +349,7 @@ export async function createTournament(ownerId, payload){
       avoid_rematches: payload.avoidRematches,
       allow_bye: payload.allowBye,
       round_minutes: payload.roundMinutes || null,
+      first_round_mode: payload.firstRoundMode === 'cross' ? 'cross' : 'random',
       current_round: 0,
       status: 'active',
       format_key: payload.formatKey || 'other-cube',

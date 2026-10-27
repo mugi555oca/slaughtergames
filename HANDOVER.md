@@ -326,3 +326,16 @@ iPhone: Push nur in der installierten App (iOS 16.4+).
 - supabase-js ist auf 2.118.0 festgenagelt (die Vorlade-Liste kennt die
   genauen CDN-Adressen). Beim Hochziehen `tools/preload.py` anpassen.
 
+
+### Nachtrag 27.10.2026
+
+- Weekly-Ablauf: Neues Weekly (Spieler + Optionen) → Start = Runde 0 „Draft-Phase“:
+  Sitzordnung zufällig, Seat-Push an alle (`notify_seating`), auf der Turnierseite
+  mischen/tauschen → „Runde 1 starten“ (Paarung nach `tournaments.first_round_mode`,
+  Rundentimer startet erst dann).
+- Tab „Chat“ heißt „Tools“ (Chat, Termine, Boosterpool, Ausgaben, Lifecounter).
+- In der App stehen lange Magic-Namen (`players.name`/`roster.name`), in Push-Texten
+  die kurzen Rufnamen – außer bei der Weekly-Sieger-Meldung.
+- Lifecounter: Weekly 20 Leben, frei 20/30; Verlauf rechts je Zug (Tipper < 2,5 s
+  werden zusammengefasst), Gift/Energie, Aufgeben, Spielzeit, Sprach-„Go“ (braucht
+  `microphone=(self)` in `_headers`).

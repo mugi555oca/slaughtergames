@@ -13,6 +13,8 @@ export { supabase };
 // Fehler auf den Geraeten mitschreiben (Tabelle client_errors), max. 5 pro Seite
 let reported = 0;
 function reportError(message, stack){
+  // Rauschen von Browser-Erweiterungen / fremden Skripten ignorieren
+  if(/^Script error\.?$|ethereum|kein Mitglied/i.test(String(message || ''))) return;
   if(reported++ >= 5) return;
   supabase.from('client_errors').insert({
     page: location.pathname + location.search, message: String(message || '').slice(0, 1900),
@@ -39,6 +41,7 @@ const P = {
   trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3v2a4 4 0 0 1-4 4M7 5H4v2a4 4 0 0 0 4 4"/>',
   swords:'<path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6M16 16l4 4M19 21l2-2"/><path d="M14.5 6.5 18 3h3v3l-3.5 3.5"/><path d="m5 14 4 4M7 17l-3 3M3 19l2 2"/>',
   chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"/>',
+  tools:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><circle cx="17.25" cy="17.25" r="3.9"/>',
   user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
   users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
   bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/>',
@@ -314,7 +317,7 @@ const TABS = [
   { key: 'home',     href: '/',                              label: 'Home',     icon: 'home' },
   { key: 'ranking',  href: '/ranking.html',                  label: 'Ranking',  icon: 'trophy' },
   { key: 'turniere', href: '/tournament-app/dashboard.html', label: 'Weekly', icon: 'swords' },
-  { key: 'chat',     href: '/chat.html',                     label: 'Chat',     icon: 'chat' },
+  { key: 'chat',     href: '/chat.html',                     label: 'Tools',    icon: 'tools' },
   { key: 'profil',   href: '/profil.html',                   label: 'Profil',   icon: 'user' },
 ];
 
@@ -328,6 +331,17 @@ export async function promptInstall(){
   deferredInstall = null;
   return res?.outcome === 'accepted';
 }
+// iPhone/iPad: installieren geht sicher nur in Safari (Firefox/Chrome erst ab iOS 16.4)
+export function iosInstallInfo(){
+  const ua = navigator.userAgent;
+  const ios = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const otherBrowser = /CriOS|FxiOS|EdgiOS|OPiOS|GSA|Instagram|FBAN|FBAV/i.test(ua);
+  return { ios, otherBrowser,
+    text: !ios ? '' : otherBrowser
+      ? 'Am iPhone geht Installieren nur in Safari: Link kopieren, in Safari öffnen, dann Teilen → „Zum Home-Bildschirm“.'
+      : 'Teilen-Symbol (□↑) → „Zum Home-Bildschirm“.' };
+}
+
 export function isStandalone(){
   return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 }

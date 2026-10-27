@@ -1,4 +1,4 @@
-import { initShell, $, esc, icon, loadPeople, supabase, canInstall, promptInstall, isStandalone } from './app.js';
+import { initShell, $, esc, icon, loadPeople, supabase, canInstall, promptInstall, isStandalone, iosInstallInfo, toast } from './app.js';
 import { NEXT_EVENT, GRAND_SLAUGHTERER, CUBES, loadTournaments, eternalRanking, axesHtml } from './data.js';
 import { loadAllPosts } from './blog.js';
 
@@ -27,16 +27,17 @@ tick(); setInterval(tick, 30000);
 function renderInstall(){
   const slot = $('#installSlot');
   if(isStandalone() || localStorage.getItem('sg-install-dismissed')){ slot.innerHTML = ''; return; }
-  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const { ios, otherBrowser, text: iosText } = iosInstallInfo();
   if(!canInstall() && !ios){ slot.innerHTML = ''; return; }
   slot.innerHTML = `<div class="install">
     <img src="/icons/icon-192.png" alt="">
     <div class="grow"><div style="font-weight:700">Als App installieren</div>
-      <div class="small muted">${ios ? 'Teilen-Symbol → „Zum Home-Bildschirm“' : 'Ein Tipp – immer aktuell, mit Push.'}</div></div>
-    ${ios ? '' : '<button class="btn sm" id="installBtn">Installieren</button>'}
+      <div class="small muted">${ios ? iosText : 'Ein Tipp – immer aktuell, mit Push.'}</div></div>
+    ${ios ? (otherBrowser ? '<button class="btn sm" id="copyLink">Link kopieren</button>' : '') : '<button class="btn sm" id="installBtn">Installieren</button>'}
     <button class="icon-btn" id="installX" aria-label="Ausblenden">${icon('x')}</button>
   </div>`;
   $('#installBtn')?.addEventListener('click', async () => { await promptInstall(); renderInstall(); });
+  $('#copyLink')?.addEventListener('click', async () => { await navigator.clipboard?.writeText('https://slaughtergames.at'); toast('Link kopiert – jetzt in Safari einfügen.', 'ok'); });
   $('#installX').addEventListener('click', () => { localStorage.setItem('sg-install-dismissed', '1'); renderInstall(); });
 }
 renderInstall();
@@ -84,7 +85,7 @@ if(live?.length){
     <a class="list-item" href="/tournament-app/round.html?tournament=${t.id}">
       <span class="chip live">LIVE</span>
       <div class="grow"><div class="title ellipsis">${esc(t.name)}</div>
-      <div class="sub">Runde ${t.current_round} von ${t.rounds_total}</div></div>
+      <div class="sub">${t.current_round ? `Runde ${t.current_round} von ${t.rounds_total}` : 'Draft-Phase'}</div></div>
       ${icon('chev', 'chev')}
     </a>`).join('')}</div>`;
 }

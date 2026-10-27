@@ -13,8 +13,13 @@ if(roomSlug){
   else if(!m.isMember) main.innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>';
   else await room(m);
 } else {
-  const m = await initShell({ tab: 'chat', title: 'Chat' });
-  if(!m.user) main.innerHTML = `<h1 class="page-title">Chat</h1>` + lockHtml('Chat nur für Mitglieder', 'Hot Grannies, Slaughter Games und die SG-Teams – einloggen, um mitzureden.');
+  const m = await initShell({ tab: 'chat', title: 'Tools' });
+  if(!m.user) main.innerHTML = `<h1 class="page-title">Tools</h1>
+    <a class="install" href="/tournament-app/life.html" style="margin-bottom:10px">
+      <span style="width:40px;height:40px;border-radius:12px;background:#1d3557;color:#fff;display:grid;place-items:center;font-size:20px;flex:0 0 auto">❤️</span>
+      <span class="grow"><b>Lifecounter</b><span class="small muted" style="display:block">Freies Spiel · 20 oder 30 Leben</span></span>
+      ${icon('chev', 'chev')}</a>
+` + lockHtml('Chat & Co. nur für Mitglieder', 'Chat, Termine, Boosterpool und Ausgaben – einloggen, um mitzumachen.');
   else if(!m.isMember) main.innerHTML = '<div class="card muted">Dein Account ist noch keinem Spieler zugeordnet.</div>';
   else await rooms(m);
 }
@@ -24,7 +29,11 @@ if(roomSlug){
 // ---------------------------------------------------------------
 async function rooms(m){
   const people = await loadPeople();
-  main.innerHTML = `<h1 class="page-title">Chat</h1>
+  main.innerHTML = `<h1 class="page-title">Tools</h1>
+    <a class="install" href="/tournament-app/life.html" style="margin-bottom:10px">
+      <span style="width:40px;height:40px;border-radius:12px;background:#1d3557;color:#fff;display:grid;place-items:center;font-size:20px;flex:0 0 auto">❤️</span>
+      <span class="grow"><b>Lifecounter</b><span class="small muted" style="display:block">Freies Spiel · 20 oder 30 Leben</span></span>
+      ${icon('chev', 'chev')}</a>
     <a class="install" href="/termine.html" id="meetCard" style="margin-bottom:10px">
       <span style="width:40px;height:40px;border-radius:12px;background:var(--blood);color:#fff;display:grid;place-items:center;font-size:20px;flex:0 0 auto">📅</span>
       <span class="grow"><b>Weekly-Termine</b><span class="small muted" style="display:block" id="meetSub">Wer is am Donnerstag dabei?</span></span>
@@ -37,6 +46,7 @@ async function rooms(m){
       <span style="width:40px;height:40px;border-radius:12px;background:var(--gold);color:#1a1205;display:grid;place-items:center;font-weight:800;font-size:20px;flex:0 0 auto">€</span>
       <span class="grow"><b>Ausgaben-Splitter</b><span class="small muted" style="display:block" id="splitSub">Wer hat was bezahlt – und wer schuldet wem?</span></span>
       ${icon('chev', 'chev')}</a>
+    <div class="section-head mt"><h2>Chat</h2></div>
     <div class="list" id="rooms"><div class="skel" style="height:460px"></div></div>`;
 
   async function paint(){

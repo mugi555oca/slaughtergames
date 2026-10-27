@@ -7,7 +7,7 @@ const [people, tournaments] = await Promise.all([loadPeople(), loadTournaments()
 const count = slug => tournaments.filter(t => t.ranking.some(r => r.slug === slug)).length;
 const list = people.list.filter(p => p.active !== false)
   .map(p => ({ ...p, n: count(p.slug) }))
-  .sort((a, b) => a.real.localeCompare(b.real, 'de'));
+  .sort((a, b) => a.name.localeCompare(b.name, 'de'));
 
 function render(q = ''){
   const needle = q.trim().toLowerCase();
@@ -15,7 +15,7 @@ function render(q = ''){
   $('#pList').innerHTML = rows.map(p => `
     <a class="list-item" href="/player-profile.html?slug=${encodeURIComponent(p.slug)}">
       <img class="avatar" src="${esc(p.avatar)}" alt="" loading="lazy">
-      <div class="grow"><div class="title">${esc(p.real)}</div><div class="sub ellipsis">${esc(p.name)}</div></div>
+      <div class="grow"><div class="title">${esc(p.name)}</div><div class="sub ellipsis">${esc(p.real)}</div></div>
       <div class="trail">${p.n ? `${p.n}× SG` : 'neu'}${icon('chev', 'chev')}</div>
     </a>`).join('') || '<div class="empty">Niemand gefunden.</div>';
 }

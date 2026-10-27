@@ -1,5 +1,5 @@
 import { initShell, $, esc, icon, supabase, loadPeople, toast, busy, resizeImage, openSheet, me, clearLocalCache,
-         canInstall, promptInstall, isStandalone, loginUrl } from './app.js';
+         canInstall, promptInstall, isStandalone, loginUrl, iosInstallInfo } from './app.js';
 import { pushSupported, pushStatus, enablePush, disablePush, needsInstallForPush } from './push.js';
 
 const m0 = await initShell({ tab: 'profil', title: 'Profil' });
@@ -96,9 +96,9 @@ async function render(){
   // ---------- Install ----------
   const paintInstall = () => {
     if(!$('#installBox')) return;
-    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const { ios, text: iosText } = iosInstallInfo();
     $('#installBtn').hidden = !canInstall();
-    $('#installHint').textContent = ios ? 'Safari: Teilen-Symbol → „Zum Home-Bildschirm“'
+    $('#installHint').textContent = ios ? iosText
       : canInstall() ? 'Immer aktuell, mit Push-Nachrichten.' : 'Im Browser-Menü „App installieren“ wählen.';
   };
   paintInstall();

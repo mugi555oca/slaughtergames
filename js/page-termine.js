@@ -2,7 +2,7 @@
 // sehen wie sich der Tisch fuellt. Nur fuer Mitglieder (Locations sind privat).
 import { initShell, $, $$, esc, icon, supabase, loadPeople, lockHtml, openSheet, confirmSheet, toast, busy } from './app.js';
 import { FORMATS } from '../tournament-app/js/t-shared.js';
-import { loadLocations, locationsListHtml, locSheet } from './locations.js';
+import { loadLocations, locationsListHtml, locSheet, locTitle } from './locations.js';
 
 const main = $('#tMain');
 const focusId = new URLSearchParams(location.search).get('id');
@@ -91,7 +91,7 @@ function card(mt){
         ${canEdit && !past ? `<button class="icon-btn" data-edit="${mt.id}" aria-label="Bearbeiten" style="width:34px;height:34px">${icon('edit')}</button>` : ''}</div>
     </div>
     <button class="meet-loc" data-loc="${mt.location_id || ''}">
-      <span class="pin">📍</span><span class="grow"><b>${esc(loc?.name || 'Location offen')}</b>${loc ? `<span class="small muted" style="display:block">${esc(loc.address)}</span>` : ''}</span>${loc ? icon('chev', 'chev') : ''}
+      <span class="pin">📍</span><span class="grow"><b>${esc(loc ? locTitle(loc, people) : 'Location offen')}</b>${loc ? `<span class="small muted" style="display:block">${esc(loc.address)}</span>` : ''}</span>${loc ? icon('chev', 'chev') : ''}
     </button>
     ${mt.note ? `<p class="small" style="margin:8px 2px 0">${esc(mt.note)}</p>` : ''}
     <div class="meet-bar"><i style="width:${pct}%" class="${tone(n)}"></i>${[4, 8, 10, 12].map(k => `<b style="left:${k / 12 * 100}%"></b>`).join('')}</div>
@@ -103,7 +103,7 @@ function card(mt){
       <button data-vote="maybe" data-m="${mt.id}" class="${mine === 'maybe' ? 'on maybe' : ''}">🤷 Maybe</button>
       <button data-vote="out" data-m="${mt.id}" class="${mine === 'out' ? 'on out' : ''}">❌ Raus</button>
     </div>` : ''}
-    <div class="row between tiny faint" style="margin-top:10px"><span>von ${esc(who(mt.created_by).real)}</span>
+    <div class="row between tiny faint" style="margin-top:10px"><span>von ${esc(who(mt.created_by).name || who(mt.created_by).real)}</span>
       ${!cancelled && n >= 4 && !mt.tournament_id ? `<a class="btn xs" href="/tournament-app/new.html?meetup=${mt.id}">Weekly starten</a>` : ''}
       ${mt.tournament_id ? `<a class="btn xs ghost" href="/tournament-app/round.html?tournament=${mt.tournament_id}">Zum Weekly</a>` : ''}</div>
   </article>`;
@@ -116,7 +116,7 @@ function render(){
     ${upcoming.length ? upcoming.map(card).join('') : `<div class="card empty">${icon('calendar')}<h3>Kein Termin offen</h3><p>Schlag den nächsten Donnerstag vor – unten rechts.</p></div>`}
     ${past.length ? `<div class="section-head mt-l"><h2>Letzte Woche</h2></div>${past.map(card).join('')}` : ''}
     <div class="section-head mt-l"><h2>Spiellocations</h2></div>
-    ${locationsListHtml(locations)}`;
+    ${locationsListHtml(locations, people)}`;
 
   main.querySelectorAll('[data-vote]').forEach(b => b.addEventListener('click', () => vote(b.dataset.m, b.dataset.vote)));
   main.querySelectorAll('[data-loc]').forEach(b => b.addEventListener('click', () => b.dataset.loc && locSheet(locOf(b.dataset.loc), people)));
@@ -144,7 +144,7 @@ function editSheet(mt = null){
         <div class="field grow"><label for="mDate">Datum</label><input id="mDate" type="date" required value="${esc(mt?.date || nextThursday())}"></div>
         <div class="field" style="width:120px"><label for="mTime">Uhrzeit</label><input id="mTime" type="time" required value="${esc(mt?.time || '19:00')}"></div>
       </div>
-      <div class="field"><label for="mLoc">Wo?</label><select id="mLoc">${locations.map(l => `<option value="${l.id}" ${(mt ? mt.location_id === l.id : myLoc?.id === l.id) ? 'selected' : ''}>${esc(l.name)}${l.id === myLoc?.id ? ' (bei dir)' : ''}</option>`).join('')}</select></div>
+      <div class="field"><label for="mLoc">Wo?</label><select id="mLoc">${locations.map(l => `<option value="${l.id}" ${(mt ? mt.location_id === l.id : myLoc?.id === l.id) ? 'selected' : ''}>${esc(locTitle(l, people))}${l.id === myLoc?.id ? ' (bei dir)' : ''}</option>`).join('')}</select></div>
       <div class="field"><label for="mFmt">Format</label><select id="mFmt">${FMT.map(([k, n]) => `<option value="${k}" ${(mt?.format_key || '') === k ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
         <span class="hint">Bei 4–5 Leuten spielen wir Highländer.</span></div>
       <div class="field"><label for="mNote">Notiz (optional)</label><input id="mNote" maxlength="300" value="${esc(mt?.note || '')}" placeholder="z. B. Pizza wird bestellt"></div>

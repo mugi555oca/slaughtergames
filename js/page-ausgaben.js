@@ -45,7 +45,7 @@ async function load(){
   render();
 }
 
-const who = uid => people.byId.get(uid) || { real: 'Unbekannt', avatar: '/icons/icon-192.png' };
+const who = uid => { const p = people.byId.get(uid); return p ? { ...p, real: p.name } : { real: 'Unbekannt', avatar: '/icons/icon-192.png' }; };
 const name = uid => uid === m.user.id ? 'Du' : who(uid).real;
 
 function balances(){
