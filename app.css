@@ -561,8 +561,8 @@ button.list-item:first-child{border-top:0}
 .timer-big.over{color:var(--danger);animation:pulse 1s infinite}
 
 /* ---------- Lifecounter ---------- */
-body.life-page{overflow:hidden;height:100dvh;touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.life-wrap{display:flex;flex-direction:column;height:100dvh;padding-top:var(--safe-t);padding-bottom:var(--safe-b)}
+body.life-page{overflow:hidden;height:100vh;height:100dvh;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.life-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-top:var(--safe-t);padding-bottom:max(var(--safe-b),6px)}
 .lp{position:relative;flex:1;overflow:hidden}
 .lp.top{background:radial-gradient(120% 90% at 40% 100%,#1d3557,#0d1420);transform:rotate(180deg)}
 .lp.bottom{background:radial-gradient(120% 90% at 40% 100%,#5a1515,#1a0606)}
@@ -592,7 +592,7 @@ body.life-page{overflow:hidden;height:100dvh;touch-action:manipulation;user-sele
 .lp .go{position:absolute;left:10px;top:50%;transform:translateY(-50%);z-index:3;width:54px;height:54px;border-radius:50%;border:2px solid var(--gold);background:rgba(0,0,0,.35);color:var(--gold);font-weight:900;font-size:16px;letter-spacing:.06em;cursor:pointer}
 .lp .go:disabled{opacity:.16;border-color:rgba(255,255,255,.4);color:#fff}
 .lp .go:not(:disabled){animation:pulse 1.6s infinite}
-.lp .concede{position:absolute;left:10px;bottom:12px;z-index:3;width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.3);font-size:17px;cursor:pointer}
+.lp .concede{position:absolute;left:10px;top:12px;z-index:3;width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.3);font-size:17px;cursor:pointer}
 .lp .skull{position:absolute;left:calc(50% - 42px);top:50%;transform:translate(-50%,-50%);z-index:4;border:0;background:rgba(0,0,0,.6);border-radius:24px;padding:10px 18px;font-size:60px;line-height:1;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center}
 .lp .skull small{font-size:13px;font-weight:700;margin-top:6px}
 .lp.active::after{content:"";position:absolute;inset:6px 90px 6px 6px;border-radius:22px;border:3px solid var(--gold);box-shadow:0 0 26px rgba(242,185,75,.45),inset 0 0 30px rgba(242,185,75,.12);pointer-events:none;z-index:1}
@@ -624,3 +624,20 @@ body.life-page{overflow:hidden;height:100dvh;touch-action:manipulation;user-sele
 .steps.two{grid-template-columns:repeat(2,1fr)}
 .seat.mine img{border-color:var(--gold);box-shadow:0 0 0 3px rgba(242,185,75,.45)}
 .seat:disabled{cursor:default}
+.lp.bottom .lp-in{padding-bottom:10px}
+.lbtn.hit{background:var(--ok);border-color:var(--ok)}
+.dice-stage{height:170px;display:grid;place-items:center;perspective:700px;overflow:hidden}
+.dice-res{font-size:30px;font-weight:800;min-height:40px;margin:-6px 0 10px}
+.d6{width:96px;height:96px;border-radius:18px;background:linear-gradient(145deg,#fff,#d9d4cc);box-shadow:0 10px 24px rgba(0,0,0,.5),inset 0 -4px 0 rgba(0,0,0,.12);display:grid;grid-template-columns:repeat(3,1fr);padding:14px;gap:4px}
+.d6 i{display:block;border-radius:50%}
+.d6 i.on{background:radial-gradient(circle at 35% 35%,#c22,#600)}
+.d20{position:relative;width:110px;height:110px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55))}
+.d20 svg{width:100%;height:100%}
+.d20 polygon{fill:#7a1616;stroke:#f2b94b;stroke-width:2.5}
+.d20 polygon.in{fill:#a51f1f}
+.d20 b{position:absolute;inset:0;display:grid;place-items:center;padding-top:14px;font-size:28px;font-weight:900;color:#fff}
+.coin{position:relative;width:110px;height:110px;transform-style:preserve-3d}
+.coin .face{position:absolute;inset:0;border-radius:50%;display:grid;place-content:center;text-align:center;font-size:40px;font-weight:900;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:radial-gradient(circle at 35% 30%,#ffe7a3,#c99a2e 60%,#8a6516);color:#3b2a06;box-shadow:inset 0 0 0 6px rgba(255,255,255,.25),0 10px 22px rgba(0,0,0,.5)}
+.coin .face small{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.coin .back{transform:rotateY(180deg)}

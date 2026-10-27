@@ -8,6 +8,7 @@
 import { $, esc, icon, supabase, me, loadPeople, personForName, openSheet, confirmSheet, toast } from '/js/app.js';
 import { correctMatchResult } from './tournament.js';
 import { countdown, unlockAudio, fmtLeft } from '/js/timer.js';
+import { startGo, stopGo, LEVELS } from '/js/voice-go.js';
 
 const tid = new URLSearchParams(location.search).get('tournament');
 const WEEKLY_LIFE = 20;
@@ -159,27 +160,34 @@ function passTurn(who = st.active){
   if(navigator.vibrate) navigator.vibrate(15);
 }
 
-// ---------- Sprachsteuerung: "Go" ----------
-let rec = null, listening = false, lastGo = 0;
-function voiceToggle(){
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){ toast('Dieser Browser kann keine Spracherkennung.', 'err'); return; }
-  if(listening){ listening = false; rec?.stop(); paintMic(); return; }
-  rec = new SR();
-  rec.lang = 'de-DE'; rec.continuous = true; rec.interimResults = true;
-  rec.onresult = e => {
-    for(let i = e.resultIndex; i < e.results.length; i++){
-      const txt = ' ' + e.results[i][0].transcript.toLowerCase() + ' ';
-      if(/[\s.,!](go|gou|goh|gö|gogo)[\s.,!]/.test(txt) && Date.now() - lastGo > 1800){
-        lastGo = Date.now();
-        if(st.active !== null){ passTurn(); toast(`🎙️ Go – ${names[st.active]} ist dran`); }
-      }
+// ---------- Sprachsteuerung: "Go" (lautlos, am Geraet) ----------
+let listening = false;
+async function voiceToggle(){
+  if(listening){ listening = false; await stopGo(); paintMic(); toast('🎙️ aus'); return; }
+  let level = 'normal'; try{ level = localStorage.getItem('sg-go-level') || 'normal'; }catch{}
+  const s = openSheet(`<h3>🎙️ Zug mit „Go“ weitergeben</h3>
+    <p class="muted mb">Sag laut und deutlich <b>„Go“</b> – wie ein Tipp auf GO. Läuft lautlos und nur auf deinem Handy.</p>
+    <div class="label mb">Wer darf auslösen?</div>
+    <div class="stack">${Object.entries(LEVELS).map(([k, v]) => `<button class="btn block ${k === level ? '' : 'ghost'}" data-l="${k}">${v.label}</button>`).join('')}</div>
+    <p class="hint mt">Beim ersten Mal wird das Sprachmodell geladen (ca. 6 MB) und das Handy fragt nach dem Mikrofon.</p>`);
+  s.el.querySelectorAll('[data-l]').forEach(btn => btn.addEventListener('click', async () => {
+    const lv = btn.dataset.l;
+    try{ localStorage.setItem('sg-go-level', lv); }catch{}
+    s.close();
+    toast('🎙️ Lade Sprachmodell …');
+    try{
+      await startGo(() => {
+        if(st.active === null) return;
+        passTurn();
+        $('#micBtn').classList.add('hit'); setTimeout(() => $('#micBtn').classList.remove('hit'), 600);
+      }, lv);
+      listening = true; paintMic();
+      toast('🎙️ Bereit – sag „Go“.', 'ok');
+    }catch(err){
+      listening = false; paintMic();
+      toast(/denied|NotAllowed|Permission/i.test(err.name + err.message) ? 'Mikrofon nicht erlaubt.' : err.message, 'err');
     }
-  };
-  rec.onerror = e => { if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){ listening = false; paintMic(); toast('Mikrofon nicht erlaubt.', 'err'); } };
-  rec.onend = () => { if(listening) try{ rec.start(); }catch{} };
-  try{ rec.start(); listening = true; toast('🎙️ Sag „Go“, um den Zug weiterzugeben.'); }catch(err){ toast(err.message, 'err'); }
-  paintMic();
+  }));
 }
 function paintMic(){ $('#micBtn').classList.toggle('on', listening); }
 
@@ -307,17 +315,37 @@ async function loadMatch(){
 }
 
 // ---------- Freies Spiel (Tools) ----------
+function myIdentity(){
+  const p = m.user ? people.byId.get(m.user.id) : null;
+  return p ? [p.name, p.avatar] : ['Ich', null];
+}
 function freeStart(){
   load();
-  if(st){ names = st.names || ['Spieler 2', 'Spieler 1']; paint(); startClock(); return; }
-  names = ['Spieler 2', 'Spieler 1'];
+  const [myName, myAv] = myIdentity();
+  if(st){
+    names = [st.names?.[0] || 'Gegner', myName];
+    avatars = [st.avatars?.[0] || null, myAv];
+    paint(); startClock(); return;
+  }
+  names = ['Gegner', myName]; avatars = [null, myAv];
   st = fresh(20); paint();
   const s = openSheet(`<h3>Neues Spiel</h3><p class="muted mb">Mit wie vielen Leben startet ihr?</p>
     <div class="stack"><button class="btn block" data-n="20">20 Leben · normal</button>
     <button class="btn block ghost" data-n="30">30 Leben · Commander</button></div>`);
   s.el.querySelectorAll('[data-n]').forEach(b => b.addEventListener('click', () => {
-    st = fresh(Number(b.dataset.n)); st.names = names; save(); s.close(); paint(); startClock();
+    st = fresh(Number(b.dataset.n)); st.names = names; st.avatars = avatars; save(); s.close(); paint(); startClock();
+    pickOpponent();
   }));
+}
+
+function pickOpponent(){
+  const list = people.list ? people.list.filter(p => p.active !== false && p.id !== m.user?.id).sort((a, b) => a.name.localeCompare(b.name, 'de')) : [];
+  const s = openSheet(`<h3>Gegen wen?</h3>
+    <div class="row" style="gap:8px"><input class="input grow" id="oppFree" placeholder="Name eintippen" maxlength="40"><button class="btn sm" id="oppOk">OK</button></div>
+    ${list.length ? `<div class="label mt mb">oder aus den Spielerprofilen</div><div class="pick-grid">${list.map(p => `<button type="button" class="pick" data-slug="${esc(p.slug)}"><img class="avatar" src="${esc(p.avatar)}" alt=""><span>${esc(p.name)}</span></button>`).join('')}</div>` : ''}`);
+  const set = (n, av) => { names[OPP] = n; avatars[OPP] = av; st.names = names; st.avatars = avatars; save(); paint(); s.close(); };
+  s.el.querySelector('#oppOk').addEventListener('click', () => { const n = s.el.querySelector('#oppFree').value.trim(); if(n) set(n.slice(0, 40), null); });
+  s.el.querySelectorAll('[data-slug]').forEach(b => b.addEventListener('click', () => { const p = people.bySlug.get(b.dataset.slug); set(p.name, p.avatar); }));
 }
 
 // ---------- Bedienung ----------
@@ -343,29 +371,67 @@ function bind(){
       e.stopPropagation();
       bump(who, Number(b.dataset.d), b.closest('[data-c]').dataset.c);
     }));
-    if(!tid) el.querySelector('.pname').addEventListener('click', () => {
-      const n = prompt('Name:', names[who]);
-      if(n){ names[who] = n.trim().slice(0, 30); st.names = names; save(); paint(); }
-    });
+    if(!tid && who === OPP) el.querySelector('.pname').addEventListener('click', pickOpponent);
   }
   $('#axeStart').addEventListener('click', throwAxe);
   $('#score').addEventListener('click', resultSheet);
   $('#histBtn').addEventListener('click', fullHistorySheet);
   $('#micBtn').addEventListener('click', voiceToggle);
-  $('#diceBtn').addEventListener('click', () => {
-    const s = openSheet(`<h3>Würfeln</h3><div class="dice-out" id="diceOut">🎲</div>
-      <div class="btn-row"><button class="btn" data-d="6">W6</button><button class="btn" data-d="20">W20</button><button class="btn ghost" data-d="2">Münze</button></div>
-      <button class="btn block ghost mt" data-close>Schließen</button>`);
-    s.el.querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => {
-      const n = Number(b.dataset.d), out = s.el.querySelector('#diceOut');
-      let k = 0;
-      const spin = setInterval(() => {
-        const v = 1 + Math.floor(Math.random() * n);
-        out.textContent = n === 2 ? (v === 1 ? 'Kopf' : 'Zahl') : v;
-        if(++k > 10){ clearInterval(spin); if(navigator.vibrate) navigator.vibrate(30); }
-      }, 60);
-    }));
-  });
+  $('#diceBtn').addEventListener('click', diceSheet);
+}
+
+// ---------- Wuerfel & Muenze (animiert) ----------
+const PIPS = { 1: [5], 2: [1, 9], 3: [1, 5, 9], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] };
+const d6Html = v => `<div class="d6">${Array.from({ length: 9 }, (_, i) => `<i class="${PIPS[v].includes(i + 1) ? 'on' : ''}"></i>`).join('')}</div>`;
+const d20Html = v => `<div class="d20"><svg viewBox="0 0 100 100"><polygon points="50,3 93,27 93,73 50,97 7,73 7,27" /><polygon points="50,22 76,66 24,66" class="in"/></svg><b>${v}</b></div>`;
+const coinHtml = () => `<div class="coin"><div class="face front">🪓<small>Kopf</small></div><div class="face back">20<small>Zahl</small></div></div>`;
+
+function diceSheet(){
+  const s = openSheet(`<h3>Würfeln</h3><div class="dice-stage" id="diceStage">${d6Html(6)}</div><p class="center dice-res" id="diceRes">&nbsp;</p>
+    <div class="btn-row"><button class="btn" data-d="6">W6</button><button class="btn" data-d="20">W20</button><button class="btn ghost" data-d="2">Münze</button></div>
+    <button class="btn block ghost mt" data-close>Schließen</button>`);
+  const stage = s.el.querySelector('#diceStage'), res = s.el.querySelector('#diceRes');
+  s.el.querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => {
+    const n = Number(b.dataset.d);
+    const v = 1 + Math.floor(Math.random() * n);
+    res.innerHTML = '&nbsp;';
+    if(n === 2){
+      stage.innerHTML = coinHtml();
+      const coin = stage.querySelector('.coin');
+      const turns = 6 + Math.floor(Math.random() * 3);
+      const endY = turns * 360 + (v === 1 ? 0 : 180);
+      const anim = coin.animate([
+        { transform: 'translateY(0) rotateY(0deg) scale(1)' },
+        { transform: `translateY(-120px) rotateY(${endY / 2}deg) scale(1.25)`, offset: .5 },
+        { transform: `translateY(0) rotateY(${endY}deg) scale(1)` },
+      ], { duration: 1300, easing: 'cubic-bezier(.3,.6,.4,1)', fill: 'forwards' });
+      let shown = false;
+      const done = () => { if(shown) return; shown = true; res.textContent = v === 1 ? '🪓 Kopf' : '20 Zahl'; if(navigator.vibrate) navigator.vibrate(30); };
+      anim.onfinish = done;
+      setTimeout(() => { try{ anim.finish(); }catch{} done(); }, 1450);
+      return;
+    }
+    const html = n === 6 ? d6Html : d20Html;
+    let k = 0;
+    stage.innerHTML = html(1 + Math.floor(Math.random() * n));
+    const die = () => stage.firstElementChild;
+    die().animate([
+      { transform: 'translate(-90px,-60px) rotate(0deg) scale(.7)' },
+      { transform: 'translate(40px,10px) rotate(380deg) scale(1.1)', offset: .45 },
+      { transform: 'translate(-15px,-12px) rotate(560deg) scale(.95)', offset: .75 },
+      { transform: 'translate(0,0) rotate(720deg) scale(1)' },
+    ], { duration: 1000, easing: 'cubic-bezier(.2,.7,.3,1)' });
+    const spin = setInterval(() => {
+      if(++k > 12){ clearInterval(spin); stage.innerHTML = html(v); res.textContent = String(v); if(navigator.vibrate) navigator.vibrate(30); return; }
+      const keep = die().getAnimations()[0];
+      const t = keep?.currentTime;
+      stage.innerHTML = html(1 + Math.floor(Math.random() * n));
+      if(keep && t != null){
+        const a2 = die().animate(keep.effect.getKeyframes(), { duration: 1000, easing: 'cubic-bezier(.2,.7,.3,1)' });
+        a2.currentTime = t;
+      }
+    }, 75);
+  }));
 }
 
 // ---------- Start ----------
@@ -384,6 +450,6 @@ if(tid){
     .subscribe();
 } else {
   $('#tName').textContent = 'Freies Spiel';
-  $('#rLabel').textContent = 'Namen antippen zum Ändern';
+  $('#rLabel').textContent = 'Gegner antippen zum Wählen';
   freeStart();
 }
