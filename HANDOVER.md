@@ -344,3 +344,5 @@ iPhone: Push nur in der installierten App (iOS 16.4+).
 - Weekly-Start = ein RPC `create_weekly(tid, …, seating[], meetup)` (Turnier + Spieler in Sitzordnung + Termin-Link + Seat-Push). Client erzeugt die id, Wiederholen nach 15-s-Timeout legt nichts doppelt an.
 - Termine: `meetups.location_text` (freie Location); weder Location noch Text = TBD. Pushes nutzen `meetup_loc(id, text)`. Standardzeit 18:30.
 - Lifecounter-Höhe kommt aus JS (`--life-h` = visualViewport-Höhe), `.life-wrap` ist `position:fixed` – 100dvh war in der installierten Android-App zu hoch.
+- Lifecounter: „🏁 Match beenden“ (Spielstand-Menü und Zurück-Pfeil, sobald etwas gezählt wurde) – optional Ergebnis eintragen, löscht den lokalen Stand.
+- Terminfinder: Ersteller/Admin trägt für andere ein (Policy `votes_by_creator`); die Person bekommt „📝 X hat di eingetragen“.

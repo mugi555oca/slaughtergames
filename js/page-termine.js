@@ -102,7 +102,8 @@ function card(mt){
       <button data-vote="in" data-m="${mt.id}" class="${mine === 'in' ? 'on in' : ''}">✅ Dabei</button>
       <button data-vote="maybe" data-m="${mt.id}" class="${mine === 'maybe' ? 'on maybe' : ''}">🤷 Maybe</button>
       <button data-vote="out" data-m="${mt.id}" class="${mine === 'out' ? 'on out' : ''}">❌ Raus</button>
-    </div>` : ''}
+    </div>
+    ${canEdit ? `<button class="btn sm ghost block mt" data-others="${mt.id}">👥 Andere eintragen (z. B. per WhatsApp zugesagt)</button>` : ''}` : ''}
     <div class="row between tiny faint" style="margin-top:10px"><span>von ${esc(who(mt.created_by).name || who(mt.created_by).real)}</span>
       ${!cancelled && n >= 4 && !mt.tournament_id ? `<a class="btn xs" href="/tournament-app/new.html?meetup=${mt.id}">Weekly starten</a>` : ''}
       ${mt.tournament_id ? `<a class="btn xs ghost" href="/tournament-app/round.html?tournament=${mt.tournament_id}">Zum Weekly</a>` : ''}</div>
@@ -123,6 +124,7 @@ function render(){
     if(b.dataset.loc) locSheet(locOf(b.dataset.loc), people);
     else if(b.dataset.maps) window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(b.dataset.maps), '_blank', 'noopener');
   }));
+  main.querySelectorAll('[data-others]').forEach(b => b.addEventListener('click', () => othersSheet(meetups.find(x => x.id === b.dataset.others))));
   main.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => editSheet(meetups.find(x => x.id === b.dataset.edit))));
   if(focusId && !render.scrolled){ render.scrolled = true; document.getElementById(`m-${focusId}`)?.scrollIntoView({ block: 'center' }); }
 }
@@ -137,6 +139,34 @@ async function vote(id, v){
     if(navigator.vibrate) navigator.vibrate(12);
   }
   await load();
+}
+
+// Ersteller/Admin traegt fuer andere ein (dabei / maybe / raus, nochmal tippen = Eintrag weg)
+function othersSheet(mt){
+  const list = people.list.filter(p => p.id && p.active !== false && p.id !== m.user.id)
+    .sort((a, b) => a.name.localeCompare(b.name, 'de'));
+  const voteOf = uid => votes.find(v => v.meetup_id === mt.id && v.user_id === uid)?.vote;
+  const row = p => { const v = voteOf(p.id); return `<div class="list-item" style="min-height:52px">
+      <img class="avatar sm" src="${esc(p.avatar)}" alt="">
+      <div class="grow"><div class="title small ellipsis">${esc(p.name)}</div></div>
+      <div class="row" style="gap:4px">${[['in', '✅'], ['maybe', '🤷'], ['out', '❌']].map(([k, e]) =>
+        `<button class="btn xs ${v === k ? '' : 'ghost'}" data-u="${p.id}" data-v="${k}" aria-label="${k}" style="min-width:40px">${e}</button>`).join('')}</div>
+    </div>`; };
+  const s = openSheet(`<h3>👥 Andere eintragen</h3>
+    <p class="small muted">Für alle, die dir anders Bescheid gegeben haben. Nochmal tippen nimmt den Eintrag weg. Die Person kriegt eine Nachricht.</p>
+    <div class="list mt" id="oList">${list.map(row).join('')}</div>`);
+  s.el.querySelector('#oList').addEventListener('click', async e => {
+    const b = e.target.closest('[data-u]'); if(!b) return;
+    const uid = b.dataset.u, v = b.dataset.v;
+    b.closest('.row').querySelectorAll('button').forEach(x => x.disabled = true);
+    const { error } = voteOf(uid) === v
+      ? await supabase.from('meetup_votes').delete().eq('meetup_id', mt.id).eq('user_id', uid)
+      : await supabase.from('meetup_votes').upsert({ meetup_id: mt.id, user_id: uid, vote: v, updated_at: new Date().toISOString() });
+    if(error){ toast(error.message, 'err'); }
+    await load();
+    const p = list.find(x => x.id === uid);
+    b.closest('.list-item').outerHTML = row(p);
+  });
 }
 
 function editSheet(mt = null){

@@ -236,7 +236,9 @@ function resultSheet(){
     <div class="btn-row mt"><button class="btn ghost" id="newGame">Neues Game</button><button class="btn ghost" id="axeAgain">🪓 Neu auswerfen</button></div>
     <div class="label mt">Startleben</div>
     <div class="btn-row">${[20, 30, 40].map(n => `<button class="btn sm ${n === st.start ? '' : 'ghost'}" data-n="${n}">${n}${n === 30 ? ' Commander' : ''}</button>`).join('')}</div>
-    <button class="btn block danger mt" id="resetAll">Match zurücksetzen</button>`);
+    <button class="btn block mt" id="endMatch">🏁 Match beenden</button>
+    <button class="btn block danger ghost mt" id="resetAll">Match zurücksetzen</button>`);
+  s.el.querySelector('#endMatch').addEventListener('click', () => { s.close(); endSheet(); });
   s.el.querySelectorAll('[data-w]').forEach(b => b.addEventListener('click', () => {
     const [who, d] = b.dataset.w.split(',').map(Number);
     st.wins[who] = Math.max(0, Math.min(2, st.wins[who] + d)); save(); paint(); s.close(); resultSheet();
@@ -262,6 +264,31 @@ function resultSheet(){
     if(tid){ st = fresh(WEEKLY_LIFE); save(); $('#axeLayer').innerHTML = ''; paint(); startClock(); }
     else { localStorage.removeItem(key); location.reload(); }
   });
+}
+
+// Match beenden: optional Ergebnis eintragen, Stand loeschen, raus aus dem Lifecounter
+const backUrl = () => tid ? `/tournament-app/round.html?tournament=${tid}` : '/chat.html';
+function endSheet(){
+  const valid = ['2:0', '2:1', '1:2', '0:2', '1:1', '1:0', '0:1'].includes(resultFor());
+  const canSubmit = tid && match && !match.is_bye && m.isMember && valid;
+  const score = `${st.wins[ME]}:${st.wins[OPP]}`;
+  const s = openSheet(`<h3>🏁 Match beenden</h3>
+    <p class="small muted">${esc(names[ME])} ${score} ${esc(names[OPP])} · Leben, Verlauf und Spielzeit werden gelöscht.</p>
+    ${canSubmit ? `<button class="btn block mt" id="endSend">Ergebnis ${esc(score)} eintragen &amp; beenden</button>` : ''}
+    <button class="btn block ${canSubmit ? 'ghost' : ''} mt" id="endOnly">${canSubmit ? 'Ohne Ergebnis beenden' : 'Beenden'}</button>
+    <button class="btn block ghost mt" id="endPause">Nur zurück – Stand bleibt</button>`);
+  const finish = async () => {
+    if(listening){ listening = false; try{ await stopGo(); }catch{} }
+    try{ localStorage.removeItem(key); }catch{}
+    location.replace(backUrl());
+  };
+  s.el.querySelector('#endSend')?.addEventListener('click', async e => {
+    e.target.disabled = true;
+    try{ await correctMatchResult(match.id, resultFor()); toast(`Ergebnis ${score} eingetragen ✔`, 'ok'); await finish(); }
+    catch(err){ e.target.disabled = false; toast(/row-level|policy/i.test(err.message) ? 'Keine Berechtigung (Weekly abgeschlossen?).' : err.message, 'err'); }
+  });
+  s.el.querySelector('#endOnly').addEventListener('click', finish);
+  s.el.querySelector('#endPause').addEventListener('click', () => location.href = backUrl());
 }
 
 function fullHistorySheet(){
@@ -447,8 +474,9 @@ function diceSheet(){
 // ---------- Start ----------
 m = await me();
 people = await loadPeople().catch(() => ({ bySlug: new Map(), byName: new Map(), byId: new Map() }));
-$('#backBtn').href = tid ? `/tournament-app/round.html?tournament=${tid}` : '/chat.html';
+$('#backBtn').href = backUrl();
 $('#backBtn').innerHTML = icon('back');
+$('#backBtn').addEventListener('click', e => { if(st?.log?.length || st?.wins?.some(Boolean)){ e.preventDefault(); endSheet(); } });
 $('#axeStart').innerHTML = AXE_SVG;
 bind();
 if(tid){
