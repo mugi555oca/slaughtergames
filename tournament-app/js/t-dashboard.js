@@ -69,10 +69,10 @@ async function meetAndLocations(){
   if(c.failed){
     // Rueckfall, falls die Sammelabfrage scheitert
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    const { data } = await supabase.from('meetups').select('id,date,time,location_id').eq('status', 'open').gte('date', today).order('date').limit(1);
+    const { data } = await supabase.from('meetups').select('id,date,time,location_id,location_text').eq('status', 'open').gte('date', today).order('date').limit(1);
     if(data?.[0]){
       const { count } = await supabase.from('meetup_votes').select('user_id', { count: 'exact', head: true }).eq('meetup_id', data[0].id).eq('vote', 'in');
-      nx = { ...data[0], in: count || 0, location: locs.find(l => l.id === data[0].location_id)?.name };
+      nx = { ...data[0], in: count || 0, location: locs.find(l => l.id === data[0].location_id)?.name || data[0].location_text || 'TBD' };
     }
   }
   if(nx){

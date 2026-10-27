@@ -339,42 +339,27 @@ function bracketFinalRoundPairings(pool, standings, matches, playedSet, avoidRem
   return { pairs, leftover: null, rematches, explored, mode: 'bracket', notes };
 }
 
+// randomUUID fehlt auf alten iPhones (Safari < 15.4)
+export const uuid = () => crypto.randomUUID ? crypto.randomUUID()
+  : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+
+// Ein Aufruf statt vieler: Turnier, Spieler in Sitzordnung, Termin-Link und Seat-Push
+// laufen in der Datenbank (create_weekly). payload.id vom Client -> Wiederholen legt nichts doppelt an.
 export async function createTournament(ownerId, payload){
-  const { data: tRows, error: tErr } = await supabase
-    .from('tournaments')
-    .insert({
-      owner_id: ownerId,
-      name: payload.name,
-      rounds_total: payload.roundsTotal,
-      avoid_rematches: payload.avoidRematches,
-      allow_bye: payload.allowBye,
-      round_minutes: payload.roundMinutes || null,
-      first_round_mode: payload.firstRoundMode === 'cross' ? 'cross' : 'random',
-      current_round: 0,
-      status: 'active',
-      format_key: payload.formatKey || 'other-cube',
-      edi_code: payload.ediCode || null
-    })
-    .select('*');
-  if(tErr) throw tErr;
-
-  const tournament = tRows[0];
-  const playersInsert = payload.playerNames.map((n, i) => ({ tournament_id: tournament.id, name: n, seat: i+1 }));
-  const { data: pRows, error: pErr } = await supabase.from('players').insert(playersInsert).select('*');
-  if(pErr) throw pErr;
-
-  if(payload.seatingOrder && Array.isArray(payload.seatingOrder) && payload.seatingOrder.length){
-    let seatNo = 1;
-    for(const name of payload.seatingOrder){
-      const row = pRows.find(r => r.name === name);
-      if(!row) continue;
-      const { error: sErr } = await supabase.from('players').update({ seat: seatNo }).eq('id', row.id);
-      if(sErr) throw sErr;
-      seatNo++;
-    }
-  }
-
-  return tournament;
+  const { data: id, error } = await supabase.rpc('create_weekly', {
+    tid: payload.id || uuid(),
+    tname: payload.name,
+    rounds: payload.roundsTotal,
+    allow_bye: payload.allowBye,
+    first_mode: payload.firstRoundMode === 'cross' ? 'cross' : 'random',
+    round_minutes: payload.roundMinutes || null,
+    fmt: payload.formatKey || 'other-cube',
+    edi: payload.ediCode || null,
+    seating: payload.seatingOrder?.length ? payload.seatingOrder : payload.playerNames,
+    meetup: payload.meetupId || null,
+  });
+  if(error) throw error;
+  return { id };
 }
 
 export async function listTournaments(){

@@ -22,6 +22,16 @@ const OPP = 0, ME = 1;
 unlockAudio();
 
 // ---------- Wake Lock ----------
+// Hoehe = wirklich sichtbare Flaeche (100dvh ist bei installierten Android-Apps zu gross)
+function fitHeight(){
+  const h = Math.round(window.visualViewport?.height || window.innerHeight);
+  document.documentElement.style.setProperty('--life-h', h + 'px');
+}
+fitHeight();
+window.addEventListener('resize', fitHeight);
+window.visualViewport?.addEventListener('resize', fitHeight);
+window.addEventListener('orientationchange', () => setTimeout(fitHeight, 300));
+
 async function keepAwake(){ try{ if('wakeLock' in navigator && !document.hidden) await navigator.wakeLock.request('screen'); }catch{} }
 document.addEventListener('visibilitychange', () => { if(!document.hidden){ keepAwake(); if(tid) loadMatch(); } });
 keepAwake();

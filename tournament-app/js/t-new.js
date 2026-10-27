@@ -1,6 +1,6 @@
 // Neues Weekly anlegen (nur Mitglieder): 1 Spieler -> 2 Sitzordnung -> 3 Start.
 import { initShell, $, $$, esc, supabase, loadPeople, busy, requireLogin } from '/js/app.js';
-import { createTournament, generateNextRound } from './tournament.js';
+import { createTournament, generateNextRound, uuid } from './tournament.js';
 import { FORMATS } from './t-shared.js';
 
 await initShell({ tab: 'turniere', title: 'Neues Weekly', back: '/tournament-app/dashboard.html' });
@@ -26,6 +26,7 @@ let mode = 'random';
 // Ich selbst bin meistens dabei
 const meName = (roster || []).find(r => r.slug === m.profile?.slug)?.name;
 const meetupId = new URLSearchParams(location.search).get('meetup');
+let startId = null, seating = null;   // Weekly-Start: gleiche id beim Wiederholen
 if(meetupId){
   // Aus dem Terminfinder: alle mit "dabei" vorauswaehlen, Format uebernehmen
   const [{ data: mt }, { data: vs }] = await Promise.all([
@@ -83,7 +84,7 @@ $('#toStep2').addEventListener('click', () => {
   if($('#tFormat').value === 'aktuelle-edi' && !/^[A-Z]{2,5}$/.test($('#tEdi').value.trim().toUpperCase())) return msg('Edition-Kürzel mit 2–5 Buchstaben angeben.');
   paintStart(); step(2);
 });
-$('#back1').addEventListener('click', () => step(1));
+$('#back1').addEventListener('click', () => { startId = null; step(1); });
 $('#tTimer').addEventListener('change', () => { $('#timerMinBox').hidden = !$('#tTimer').checked; });
 
 $$('#modeSeg button').forEach(b => b.addEventListener('click', () => {
@@ -92,26 +93,32 @@ $$('#modeSeg button').forEach(b => b.addEventListener('click', () => {
   paintStart();
 }));
 
-// Start: Sitzordnung zufaellig, Weekly anlegen (Runde 0 = Draft-Phase), Seat-Push an alle
+// Start: Sitzordnung zufaellig, Weekly anlegen (Runde 0 = Draft-Phase), Seat-Push an alle.
+// Alles in einem Datenbank-Aufruf; haengt das Netz, kann man mit derselben id nochmal.
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
 $('#createBtn').addEventListener('click', async () => {
   const formatKey = $('#tFormat').value;
   const edi = $('#tEdi').value.trim().toUpperCase();
-  const seating = [...picked];
-  for(let i = seating.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [seating[i], seating[j]] = [seating[j], seating[i]]; }
+  if(!startId){
+    startId = uuid();
+    seating = [...picked];
+    for(let i = seating.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [seating[i], seating[j]] = [seating[j], seating[i]]; }
+  }
   const btn = $('#createBtn');
   busy(btn, true, 'Starte…');
   try{
-    const t = await createTournament(m.user.id, {
-      name: $('#tName').value.trim(), roundsTotal: Number($('#tRounds').value),
-      avoidRematches: true, allowBye: $('#tBye').checked, firstRoundMode: mode,
+    const t = await withTimeout(createTournament(m.user.id, {
+      id: startId, name: $('#tName').value.trim(), roundsTotal: Number($('#tRounds').value),
+      allowBye: $('#tBye').checked, firstRoundMode: mode, meetupId,
       roundMinutes: $('#tTimer').checked ? Math.min(180, Math.max(5, Number($('#tTimerMin').value) || 50)) : null,
       playerNames: seating, seatingOrder: seating, formatKey, ediCode: formatKey === 'aktuelle-edi' ? edi : null,
-    });
-    await supabase.rpc('notify_seating', { tid: t.id });
-    if(meetupId) await supabase.from('meetups').update({ tournament_id: t.id }).eq('id', meetupId);
+    }), 15000);
     location.replace(`/tournament-app/round.html?tournament=${t.id}`);
   }catch(err){
-    msg(err.message);
     busy(btn, false);
+    if(err.message === 'timeout'){
+      msg('Das Netz hängt grad. Nochmal auf „Weekly starten“ – es wird nix doppelt angelegt.');
+      btn.textContent = 'Nochmal versuchen';
+    } else msg(err.message);
   }
 });

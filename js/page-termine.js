@@ -90,8 +90,8 @@ function card(mt){
         ${cancelled ? '<span class="chip">abgesagt</span>' : past ? '<span class="chip">vorbei</span>' : ''}
         ${canEdit && !past ? `<button class="icon-btn" data-edit="${mt.id}" aria-label="Bearbeiten" style="width:34px;height:34px">${icon('edit')}</button>` : ''}</div>
     </div>
-    <button class="meet-loc" data-loc="${mt.location_id || ''}">
-      <span class="pin">📍</span><span class="grow"><b>${esc(loc ? locTitle(loc, people) : 'Location offen')}</b>${loc ? `<span class="small muted" style="display:block">${esc(loc.address)}</span>` : ''}</span>${loc ? icon('chev', 'chev') : ''}
+    <button class="meet-loc" data-loc="${mt.location_id || ''}" data-maps="${!loc && mt.location_text ? esc(mt.location_text) : ''}">
+      <span class="pin">📍</span><span class="grow"><b>${esc(loc ? locTitle(loc, people) : mt.location_text || 'TBD')}</b>${loc ? `<span class="small muted" style="display:block">${esc(loc.address)}</span>` : !mt.location_text ? '<span class="small muted" style="display:block">Ort wird noch ausgemacht</span>' : ''}</span>${loc || mt.location_text ? icon('chev', 'chev') : ''}
     </button>
     ${mt.note ? `<p class="small" style="margin:8px 2px 0">${esc(mt.note)}</p>` : ''}
     <div class="meet-bar"><i style="width:${pct}%" class="${tone(n)}"></i>${[4, 8, 10, 12].map(k => `<b style="left:${k / 12 * 100}%"></b>`).join('')}</div>
@@ -119,7 +119,10 @@ function render(){
     ${locationsListHtml(locations, people)}`;
 
   main.querySelectorAll('[data-vote]').forEach(b => b.addEventListener('click', () => vote(b.dataset.m, b.dataset.vote)));
-  main.querySelectorAll('[data-loc]').forEach(b => b.addEventListener('click', () => b.dataset.loc && locSheet(locOf(b.dataset.loc), people)));
+  main.querySelectorAll('[data-loc]').forEach(b => b.addEventListener('click', () => {
+    if(b.dataset.loc) locSheet(locOf(b.dataset.loc), people);
+    else if(b.dataset.maps) window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(b.dataset.maps), '_blank', 'noopener');
+  }));
   main.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => editSheet(meetups.find(x => x.id === b.dataset.edit))));
   if(focusId && !render.scrolled){ render.scrolled = true; document.getElementById(`m-${focusId}`)?.scrollIntoView({ block: 'center' }); }
 }
@@ -138,24 +141,33 @@ async function vote(id, v){
 
 function editSheet(mt = null){
   const myLoc = locations.find(l => l.owner_slug && l.owner_slug === m.profile?.slug);
+  const locSel = mt ? (mt.location_id || (mt.location_text ? '__text' : '')) : (myLoc?.id || '');
   const s = openSheet(`<h3>${mt ? 'Termin bearbeiten' : 'Weekly vorschlagen'}</h3>
     <form id="mForm">
       <div class="row" style="gap:10px">
         <div class="field grow"><label for="mDate">Datum</label><input id="mDate" type="date" required value="${esc(mt?.date || nextThursday())}"></div>
-        <div class="field" style="width:120px"><label for="mTime">Uhrzeit</label><input id="mTime" type="time" required value="${esc(mt?.time || '19:00')}"></div>
+        <div class="field" style="width:120px"><label for="mTime">Uhrzeit</label><input id="mTime" type="time" required value="${esc(mt?.time || '18:30')}"></div>
       </div>
-      <div class="field"><label for="mLoc">Wo?</label><select id="mLoc">${locations.map(l => `<option value="${l.id}" ${(mt ? mt.location_id === l.id : myLoc?.id === l.id) ? 'selected' : ''}>${esc(locTitle(l, people))}${l.id === myLoc?.id ? ' (bei dir)' : ''}</option>`).join('')}</select></div>
+      <div class="field"><label for="mLoc">Wo?</label><select id="mLoc">
+        <option value="" ${locSel === '' ? 'selected' : ''}>TBD – wird noch ausgemacht</option>
+        ${locations.map(l => `<option value="${l.id}" ${locSel === l.id ? 'selected' : ''}>${esc(locTitle(l, people))}${l.id === myLoc?.id ? ' (bei dir)' : ''}</option>`).join('')}
+        <option value="__text" ${locSel === '__text' ? 'selected' : ''}>✏️ Andere Location eintippen…</option></select>
+        <input id="mLocText" class="mt" maxlength="200" placeholder="z. B. Café Ritter, Ottakringer Str. 117" value="${esc(mt?.location_text || '')}" ${locSel === '__text' ? '' : 'hidden'}></div>
       <div class="field"><label for="mFmt">Format</label><select id="mFmt">${FMT.map(([k, n]) => `<option value="${k}" ${(mt?.format_key || '') === k ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select>
         <span class="hint">Bei 4–5 Leuten spielen wir Highländer.</span></div>
       <div class="field"><label for="mNote">Notiz (optional)</label><input id="mNote" maxlength="300" value="${esc(mt?.note || '')}" placeholder="z. B. Pizza wird bestellt"></div>
       <button class="btn block" type="submit">${mt ? 'Speichern' : 'Vorschlagen'}</button>
       ${mt ? '<button type="button" class="btn block danger mt" id="mCancel">Termin absagen</button>' : ''}
     </form>`);
+  const locIn = s.el.querySelector('#mLoc'), locText = s.el.querySelector('#mLocText');
+  locIn.addEventListener('change', () => { locText.hidden = locIn.value !== '__text'; if(!locText.hidden) locText.focus(); });
   s.el.querySelector('#mForm').addEventListener('submit', async e => {
     e.preventDefault();
+    const freeLoc = locIn.value === '__text' ? locText.value.trim() : '';
+    if(locIn.value === '__text' && !freeLoc){ toast('Wo genau? Location eintippen oder TBD wählen.', 'err'); locText.focus(); return; }
     busy(e.submitter, true, 'Speichere…');
     const row = { date: s.el.querySelector('#mDate').value, time: s.el.querySelector('#mTime').value,
-      location_id: s.el.querySelector('#mLoc').value || null, format_key: s.el.querySelector('#mFmt').value || null,
+      location_id: locIn.value && locIn.value !== '__text' ? locIn.value : null, location_text: freeLoc || null, format_key: s.el.querySelector('#mFmt').value || null,
       note: s.el.querySelector('#mNote').value.trim() || null };
     const { error } = mt
       ? await supabase.from('meetups').update(row).eq('id', mt.id)

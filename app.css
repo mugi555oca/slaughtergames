@@ -562,8 +562,8 @@ button.list-item:first-child{border-top:0}
 
 /* ---------- Lifecounter ---------- */
 body.life-page{overflow:hidden;height:100vh;height:100dvh;touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.life-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;padding-top:var(--safe-t);padding-bottom:max(var(--safe-b),6px)}
-.lp{position:relative;flex:1;overflow:hidden}
+.life-wrap{position:fixed;inset:0;display:flex;flex-direction:column;height:var(--life-h,100%);padding-top:var(--safe-t);padding-bottom:max(var(--safe-b),6px)}
+.lp{position:relative;flex:1 1 0;min-height:0;overflow:hidden}
 .lp.top{background:radial-gradient(120% 90% at 40% 100%,#1d3557,#0d1420);transform:rotate(180deg)}
 .lp.bottom{background:radial-gradient(120% 90% at 40% 100%,#5a1515,#1a0606)}
 .lp .zone{position:absolute;left:0;right:84px;height:50%;border:0;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent;transition:background .25s}
